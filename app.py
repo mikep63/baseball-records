@@ -41,7 +41,18 @@ RATE_BATTING = {"AVG", "OBP", "SLG", "OPS"}
 RATE_PITCHING = {"ERA", "WHIP"}
 ASCENDING = {"ERA", "WHIP"}  # lower is better
 
+# Leaderboards rank major-league play only. Lahman also carries independent
+# and touring ball (IND, WES, EAS, NAC, INT) — a handful of recorded games
+# against whoever turned up, which is not a season anyone led. This is the
+# recognised set: the early majors, plus the seven Negro major leagues MLB
+# recognised in 2020. The National Association is kept because it is the only
+# organised ball played from 1871 to 1875, which the app covers.
+MAJOR_LEAGUES = ("NA", "NL", "AA", "UA", "PL", "AL", "FL",
+                 "NNL", "ECL", "ANL", "EWL", "NSL", "NN2", "NAL")
+
 # Shortest schedule treated as a real season when setting a rate qualifier.
+# Even a recognised league can post a stub season — the ECL folded seven
+# games into 1928 — so the floor backs up the list above.
 MIN_SCHEDULE = 40
 
 def batting_expr(stat, p="b"):
@@ -359,9 +370,11 @@ def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
              MIN({p}.teamID) AS teamID, {sums}{lg}
       FROM {table} {p}
       WHERE {p}.yearID BETWEEN ? AND ?
+        AND {p}.lgID IN ({majors})
       GROUP BY {group}'''.format(
         p=prefix, year_col=('%s.yearID' % prefix) if per_season else 'NULL',
-        sums=sum_cols, lg=lg_games, table=table, group=group)
+        sums=sum_cols, lg=lg_games, table=table, group=group,
+        majors=", ".join("'%s'" % lg for lg in MAJOR_LEAGUES))
 
     # Qualifiers for rate stats (min playing time). Single seasons follow the
     # official rule — 3.1 PA (or 1 IP) per game the player's league played.

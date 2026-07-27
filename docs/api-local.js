@@ -39,6 +39,15 @@ window.LocalAPI = (function () {
   const RATE_PITCHING = ['ERA', 'WHIP'];
   const ASCENDING = ['ERA', 'WHIP'];
 
+  /* Leaderboards rank major-league play only. Lahman also carries independent
+     and touring ball (IND, WES, EAS, NAC, INT) — a handful of recorded games
+     against whoever turned up, which is not a season anyone led. This is the
+     recognised set: the early majors, plus the seven Negro major leagues MLB
+     recognised in 2020. The National Association is kept because it is the
+     only organised ball played from 1871 to 1875, which the app covers. */
+  const MAJOR_LEAGUES = new Set(['NA', 'NL', 'AA', 'UA', 'PL', 'AL', 'FL',
+    'NNL', 'ECL', 'ANL', 'EWL', 'NSL', 'NN2', 'NAL']);
+
   const D = {};          // file -> array of row objects
   const IDX = {};        // built indexes
   let readyResolve;
@@ -391,6 +400,7 @@ window.LocalAPI = (function () {
     const agg = new Map();
     for (const r of rows) {
       if (r.yearID < y0 || r.yearID > y1) continue;
+      if (!MAJOR_LEAGUES.has(r.lgID)) continue;
       const key = perSeason ? r.playerID + '|' + r.yearID : r.playerID;
       let a = agg.get(key);
       if (!a) {
