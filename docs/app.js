@@ -322,6 +322,13 @@ async function runRange() {
     cat = $('#range-cat').value, stat = $('#range-stat').value,
     limit = $('#range-limit').value;
   const el = $('#range-results');
+  const note = $('#range-note');
+  if (+end < +start) {
+    note.innerHTML = `<span class="warn">⚠ The ending year (${esc(end)}) is before the starting year (${esc(start)}) — please swap them.</span>`;
+    el.innerHTML = '';
+    return;
+  }
+  note.textContent = '';
   el.innerHTML = '<p class="loading">Crunching…</p>';
   const d = await api(`leaders_range?start=${start}&end=${end}&stat=${stat}&cat=${cat}&limit=${limit}`);
   const label = (cat === 'pitching' ? META.pitchingStats : META.battingStats)[stat];
