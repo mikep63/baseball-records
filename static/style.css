@@ -121,6 +121,10 @@ a.player-link:hover, a.team-link:hover { text-decoration: underline; }
 }
 .badge.hof { background: #8a6d1a; }
 .badge.ws { background: var(--accent); }
+.badge.active {
+  background: #e4efe2; color: #1d6b3f; border: 1px solid #a9cbb2;
+  font-size: .62rem; padding: .1rem .4rem; vertical-align: .06rem;
+}
 
 .result-list { display: flex; flex-direction: column; gap: .3rem; margin-bottom: 1rem; }
 .result-item {

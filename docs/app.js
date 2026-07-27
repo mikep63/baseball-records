@@ -549,14 +549,21 @@ async function runLeaders() {
         `<strong>${fmtStat(stat, r.value)}</strong>`] })),
       { txtCols: [1, 2] });
   } else {
+    // a career reaching the latest season in the data is still going
+    const active = d.leaders.filter((r) => r.lastYear === META.maxYear).length;
     html += table(['#', 'Player', 'Seasons', 'Span', label],
       d.leaders.map((r, i) => ({ cells: [
         `<span class="rank-num">${i + 1}</span>`,
-        playerLink(r.playerID, r.name),
+        playerLink(r.playerID, r.name) +
+          (r.lastYear === META.maxYear ? ' <span class="badge active">active</span>' : ''),
         fmtInt(r.nyears),
         r.firstYear === r.lastYear ? `${r.firstYear}` : `${r.firstYear}–${r.lastYear}`,
         `<strong>${fmtStat(stat, r.value)}</strong>`] })),
       { txtCols: [1, 3] });
+    if (active) {
+      html += `<p class="note">${active} active player${active > 1 ? 's' : ''}
+        — still playing as of the ${META.maxYear} season.</p>`;
+    }
   }
   el.innerHTML = html;
 }
