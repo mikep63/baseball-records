@@ -75,8 +75,9 @@ use Safari's *Add to Home Screen* to run it like an app.
 - **Players** — search any of 24,000+ players by name; see full career
   year-by-year batting, pitching, and fielding with career totals, plus
   awards, All-Star selections, and Hall of Fame status.
-- **Teams** — pick a year (1871–2025), see every team's record grouped by
-  league/division; click a team for its full roster with high-level stats.
+- **Teams** — pick a year (1871–2025) for a dashboard of every league's
+  Triple Crown leaders, then the standings grouped by league/division; click
+  a team for its full roster, or a stat for the full leaderboard.
 - **Franchises** — all 203 franchises by their current name, with the cities
   they played in before (Dodgers *formerly Brooklyn*, Nationals *formerly
   Montreal*). Open one for its location timeline, every name it has ever
@@ -129,8 +130,8 @@ any official rule: 400 PA (or 130 IP) per year in the span, capped at
 | `static/` | single-page frontend (vanilla HTML/CSS/JS) |
 
 API endpoints: `/api/meta`, `/api/search?q=`, `/api/player/<id>`,
-`/api/teams?year=`, `/api/roster?year=&team=`, `/api/franchises`,
-`/api/franchise/<franchID>`,
+`/api/teams?year=`, `/api/roster?year=&team=`, `/api/postseason?year=`,
+`/api/season_leaders?year=`, `/api/franchises`, `/api/franchise/<franchID>`,
 `/api/leaders?year=&stat=&cat=`, `/api/leaders_range?start=&end=&stat=&cat=`.
 
 ### Franchise history

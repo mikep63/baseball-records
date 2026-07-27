@@ -461,6 +461,97 @@ window.LocalAPI = (function () {
     }
   }
 
+  /* The two Triple Crowns, which is what a season is remembered by.
+     Deliberately not the full stat catalogue — the Leaders tab is there for
+     that, and this panel earns its place by being glanceable. */
+  const DASHBOARD_STATS = [['batting', 'AVG'], ['batting', 'HR'],
+    ['batting', 'RBI'], ['pitching', 'W'], ['pitching', 'ERA'],
+    ['pitching', 'SO']];
+
+  function dashboardTop(rows, valueOf, qualifies, ascending) {
+    let best = null, winners = [];
+    for (const r of rows) {
+      if (!qualifies(r)) continue;
+      let v = valueOf(r);
+      if (v == null) continue;
+      v = Math.round(v * 1e9) / 1e9;
+      if (best == null || (ascending ? v < best : v > best)) {
+        best = v; winners = [r];
+      } else if (v === best) winners.push(r);
+    }
+    return { best, winners };
+  }
+
+  function apiSeasonDashboard(q) {
+    const year = +q.year || 0;
+    const games = new Map();
+    for (const t of D.teams) {
+      if (t.yearID !== year || !MAJOR_LEAGUES.has(t.lgID)) continue;
+      if ((t.G || 0) > (games.get(t.lgID) || 0)) games.set(t.lgID, t.G);
+    }
+    if (!games.size) return { year, leagues: [] };
+
+    // one pass per table, aggregating each player within each league
+    const agg = (rows, cols) => {
+      const m = new Map();
+      for (const r of rows) {
+        if (r.yearID !== year || !MAJOR_LEAGUES.has(r.lgID)) continue;
+        const k = r.lgID + '|' + r.playerID;
+        let a = m.get(k);
+        if (!a) {
+          a = { lgID: r.lgID, playerID: r.playerID, teamID: r.teamID };
+          m.set(k, a);
+        }
+        if (r.teamID < a.teamID) a.teamID = r.teamID;
+        for (const c of cols) a[c] = nz(a[c]) + nz(r[c]);
+        a.PA = nz(a.PA) + paOf(r);
+      }
+      return m;
+    };
+    const bat = agg(D.batting, ['H', 'AB', 'HR', 'RBI']);
+    const pit = agg(D.pitching, ['W', 'SO', 'IPouts', 'ER']);
+    const byLg = new Map();
+    for (const a of bat.values()) {
+      if (!byLg.has(a.lgID)) byLg.set(a.lgID, { b: [], p: [] });
+      byLg.get(a.lgID).b.push(a);
+    }
+    for (const a of pit.values()) {
+      if (!byLg.has(a.lgID)) byLg.set(a.lgID, { b: [], p: [] });
+      byLg.get(a.lgID).p.push(a);
+    }
+
+    const named = (r) => {
+      const pe = IDX.person.get(r.playerID);
+      return { playerID: r.playerID, teamID: r.teamID,
+        name: pe ? pe.nameFirst + ' ' + pe.nameLast : r.playerID };
+    };
+
+    const leagues = Array.from(games.keys()).sort().map((lg) => {
+      const rows = byLg.get(lg) || { b: [], p: [] };
+      const bar = Math.max(games.get(lg) || 0, MIN_SCHEDULE);
+      const tiles = DASHBOARD_STATS.map(([cat, stat]) => {
+        let res, label;
+        if (cat === 'batting') {
+          label = BATTING_STATS[stat];
+          res = stat === 'AVG'
+            ? dashboardTop(rows.b, (r) => (r.AB ? r.H / r.AB : null),
+              (r) => nz(r.PA) >= 3.1 * bar, false)
+            : dashboardTop(rows.b, (r) => nz(r[stat]), () => true, false);
+        } else {
+          label = PITCHING_STATS[stat];
+          res = stat === 'ERA'
+            ? dashboardTop(rows.p, (r) => (r.IPouts ? 9.0 * nz(r.ER) / (r.IPouts / 3.0) : null),
+              (r) => nz(r.IPouts) / 3.0 >= bar, true)
+            : dashboardTop(rows.p, (r) => nz(r[stat]), () => true, false);
+        }
+        return { cat, stat, label, value: res.best,
+          leaders: res.winners.slice(0, 3).map(named), tied: res.winners.length };
+      });
+      return { lgID: lg, games: games.get(lg), tiles };
+    });
+    return { year, leagues };
+  }
+
   /* Franchise history is precomputed by build_site.py (franchises.py owns
      the name/location era logic); here it only needs reshaping. */
   function franchiseSummary(f) {
@@ -538,6 +629,7 @@ window.LocalAPI = (function () {
     if (route === 'roster') return apiRoster(q);
     if (route === 'leaders') return apiLeaders(q);
     if (route === 'leaders_range') return apiLeadersRange(q);
+    if (route === 'season_leaders') return apiSeasonDashboard(q);
     if (route === 'franchises') return apiFranchises();
     if (route.startsWith('franchise/')) return apiFranchise(decodeURIComponent(route.slice(10)));
     throw new Error('unknown route: ' + route);

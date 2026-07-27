@@ -140,7 +140,23 @@ function route() {
   if (parts[0] === 'team' && parts[2]) showRoster(+parts[1], parts[2]);
   if (parts[0] === 'franchise' && parts[1]) showFranchise(parts[1]);
   if (parts[0] === 'franchises') showFranchiseList();
+  // #leaders/<year>/<cat>/<stat> — where the season dashboard tiles point
+  if (parts[0] === 'leaders' && parts[1]) openLeaders(+parts[1], parts[2], parts[3]);
   window.scrollTo(0, 0);
+}
+
+function openLeaders(year, cat, stat) {
+  if (!META || !(year >= META.leaderMinYear && year <= META.maxYear)) return;
+  const c = cat === 'pitching' ? 'pitching' : 'batting';
+  const stats = c === 'pitching' ? META.pitchingStats : META.battingStats;
+  const s = stat in stats ? stat : (c === 'pitching' ? 'W' : 'HR');
+  $('#lead-mode').value = 'season';
+  $('#lead-year').value = year;
+  $('#lead-cat').value = c;
+  fillStats($('#lead-stat'), c, s);
+  $('#lead-stat').value = s;   // set it outright, not via the selected attribute
+  syncLeaderControls();
+  runLeaders();
 }
 
 /* ---------------------------------------------------------- players tab */
@@ -393,10 +409,39 @@ function backToSeason(year) {
   showTeams(year);
 }
 
+/* Season dashboard: each league's Triple Crown leaders, above the standings.
+   Renames are trivia but leaders are the headline, so this is what the tab
+   should open with. Stat names deep-link into the Leaders tab for the full
+   top 10/25/50. */
+async function showSeasonDashboard(year) {
+  const el = $('#season-dashboard');
+  const d = await api('season_leaders?year=' + year);
+  if (!d.leagues.length) { el.innerHTML = ''; return; }
+  el.innerHTML = d.leagues.map((lg) => {
+    const tiles = lg.tiles.map((t) => {
+      let who;
+      if (!t.leaders.length) who = '<span class="tile-none">no qualifier</span>';
+      else if (t.tied > 2) who = `<span class="tile-tied">${t.tied} tied</span>`;
+      else who = t.leaders.map((l) => playerLink(l.playerID, l.name)).join(' / ');
+      const team = t.leaders.length === 1
+        ? `<span class="tile-team">${esc(t.leaders[0].teamID)}</span>` : '';
+      return `<div class="tile">
+        <a class="tile-stat" href="#leaders/${year}/${t.cat}/${esc(t.stat)}">${esc(t.label)}</a>
+        <div class="tile-value">${t.value == null ? '—' : fmtStat(t.stat, t.value)}</div>
+        <div class="tile-who">${who}${team}</div>
+      </div>`;
+    }).join('');
+    return `<div class="dashboard-lg"><h3>${esc(lg.lgID)} leaders
+      <span class="note">${lg.games}-game schedule</span></h3>
+      <div class="tile-grid">${tiles}</div></div>`;
+  }).join('');
+}
+
 async function showTeams(year) {
   const el = $('#team-list');
   el.innerHTML = '<p class="loading">Loading…</p>';
   $('#postseason').innerHTML = '';
+  showSeasonDashboard(year);
   const d = await api('teams?year=' + year);
   if (!d.teams.length) { el.innerHTML = '<p class="note">No teams for ' + year + '.</p>'; return; }
   const groups = {};
@@ -434,6 +479,7 @@ async function showRoster(year, teamID) {
   $('#team-year').value = year;
   $('#team-list').innerHTML = '';
   $('#postseason').innerHTML = '';
+  $('#season-dashboard').innerHTML = '';
   const el = $('#team-roster');
   el.innerHTML = '<p class="loading">Loading roster…</p>';
   const d = await api(`roster?year=${year}&team=${encodeURIComponent(teamID)}`);

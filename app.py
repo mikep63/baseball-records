@@ -301,6 +301,100 @@ def api_roster(q, conn):
             "batters": batters, "pitchers": pitchers}
 
 
+# The two Triple Crowns, which is what a season is remembered by. Deliberately
+# not the full stat catalogue — the Leaders tab is there for that, and this
+# panel earns its place by being glanceable.
+DASHBOARD_STATS = [("batting", "AVG"), ("batting", "HR"), ("batting", "RBI"),
+                ("pitching", "W"), ("pitching", "ERA"), ("pitching", "SO")]
+
+
+def _dashboard_top(rows, value_of, qualifies, ascending=False):
+    """Leader(s) of one stat in one league, keeping ties together."""
+    best, winners = None, []
+    for r in rows:
+        if not qualifies(r):
+            continue
+        v = value_of(r)
+        if v is None:
+            continue
+        v = round(v, 9)
+        if best is None or (v < best if ascending else v > best):
+            best, winners = v, [r]
+        elif v == best:
+            winners.append(r)
+    return best, winners
+
+
+def api_season_leaders(q, conn):
+    """Every league's leaders for one season, for the Seasons tab panel."""
+    year = int(q.get("year", ["0"])[0])
+    majors = ", ".join("'%s'" % lg for lg in MAJOR_LEAGUES)
+
+    games = {r["lgID"]: r["g"] for r in conn.execute(
+        'SELECT lgID, MAX(G) g FROM Teams WHERE yearID = ? AND lgID IN (%s) '
+        'GROUP BY lgID' % majors, (year,))}
+    if not games:
+        return {"year": year, "leagues": []}
+
+    bat = rows_to_dicts(conn.execute('''
+      SELECT b.lgID, b.playerID, pe.nameFirst || ' ' || pe.nameLast AS name,
+             MIN(b.teamID) AS teamID, SUM(b.H) H, SUM(b.AB) AB,
+             SUM(b.HR) HR, SUM(b.RBI) RBI,
+             SUM(COALESCE(b.AB,0)+COALESCE(b.BB,0)+COALESCE(b.HBP,0)
+                 +COALESCE(b.SH,0)+COALESCE(b.SF,0)) AS PA
+      FROM Batting b JOIN People pe ON pe.playerID = b.playerID
+      WHERE b.yearID = ? AND b.lgID IN (%s)
+      GROUP BY b.lgID, b.playerID''' % majors, (year,)))
+    pit = rows_to_dicts(conn.execute('''
+      SELECT p.lgID, p.playerID, pe.nameFirst || ' ' || pe.nameLast AS name,
+             MIN(p.teamID) AS teamID, SUM(p.W) W, SUM(p.SO) SO,
+             SUM(p.IPouts) AS IPouts, SUM(p.ER) ER
+      FROM Pitching p JOIN People pe ON pe.playerID = p.playerID
+      WHERE p.yearID = ? AND p.lgID IN (%s)
+      GROUP BY p.lgID, p.playerID''' % majors, (year,)))
+
+    by_lg = {}
+    for r in bat:
+        by_lg.setdefault(r["lgID"], ([], []))[0].append(r)
+    for r in pit:
+        by_lg.setdefault(r["lgID"], ([], []))[1].append(r)
+
+    leagues = []
+    for lg in sorted(games):
+        rows_b, rows_p = by_lg.get(lg, ([], []))
+        bar = max(games[lg] or 0, MIN_SCHEDULE)
+        tiles = []
+        for cat, stat in DASHBOARD_STATS:
+            if cat == "batting":
+                if stat == "AVG":
+                    value_of = lambda r: (r["H"] / r["AB"]) if r["AB"] else None
+                    qualifies = lambda r: (r["PA"] or 0) >= 3.1 * bar
+                else:
+                    value_of = lambda r, s=stat: r[s]
+                    qualifies = lambda r: True
+                best, who = _dashboard_top(rows_b, value_of, qualifies)
+                label = BATTING_STATS[stat]
+            else:
+                if stat == "ERA":
+                    value_of = (lambda r: 9.0 * (r["ER"] or 0) / (r["IPouts"] / 3.0)
+                                if r["IPouts"] else None)
+                    qualifies = lambda r: (r["IPouts"] or 0) / 3.0 >= bar
+                else:
+                    value_of = lambda r, s=stat: r[s]
+                    qualifies = lambda r: True
+                best, who = _dashboard_top(rows_p, value_of, qualifies,
+                                        ascending=(stat in ASCENDING))
+                label = PITCHING_STATS[stat]
+            tiles.append({
+                "cat": cat, "stat": stat, "label": label, "value": best,
+                "leaders": [{"playerID": r["playerID"], "name": r["name"],
+                             "teamID": r["teamID"]} for r in who[:3]],
+                "tied": len(who),
+            })
+        leagues.append({"lgID": lg, "games": games[lg], "tiles": tiles})
+    return {"year": year, "leagues": leagues}
+
+
 # Franchise history costs a full pass over Teams to build, and the database
 # is read-only while the server runs, so build it once.
 _FRANCHISES = None
@@ -458,6 +552,7 @@ ROUTES = {
     "leaders": api_leaders,
     "leaders_range": api_leaders_range,
     "franchises": api_franchises,
+    "season_leaders": api_season_leaders,
 }
 
 
