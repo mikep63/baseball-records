@@ -33,7 +33,10 @@ def read_csv(name):
 def write_csv(name, header, rows):
     path = os.path.join(DATA_OUT, name)
     with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
+        # LF, not the csv module's default CRLF: .gitattributes normalizes
+        # these to LF on commit, so writing CRLF leaves every exported file
+        # showing as modified after each build with no content change.
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(header)
         w.writerows(rows)
     print("  %-14s %8d rows  %6.1f KB" % (name, sum(1 for _ in open(path)) - 1,
