@@ -67,6 +67,15 @@ h3 { font-size: 1.05rem; margin: 1rem 0 .35rem; color: var(--green); }
 .note { color: var(--muted); font-size: .82rem; margin: .3rem 0 .6rem; }
 .warn { color: var(--accent); font-weight: bold; font-size: .95rem; }
 
+.honor-line { font-size: .92rem; margin: .1rem 0 .7rem; }
+details.more-awards { margin-bottom: 1rem; }
+details.more-awards summary {
+  cursor: pointer; color: var(--muted); font-size: .85rem;
+  padding: .35rem 0; user-select: none;
+}
+details.more-awards summary:hover { color: var(--green); }
+details.more-awards[open] summary { margin-bottom: .35rem; }
+
 .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; margin-bottom: 1rem; }
 table { border-collapse: collapse; width: 100%; font-size: .88rem; }
 th, td { padding: .35rem .55rem; text-align: right; white-space: nowrap; }

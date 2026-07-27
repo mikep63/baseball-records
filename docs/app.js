@@ -4,6 +4,22 @@
 const $ = (sel) => document.querySelector(sel);
 let META = null;
 
+/* Awards shown in the main table. Everything else — press selections
+   (Baseball Magazine, Sporting News) and weekly/monthly honors — is
+   collapsed into a summary below it. */
+const MAJOR_AWARDS = new Set([
+  'Most Valuable Player', 'Cy Young Award', 'Rookie of the Year',
+  'Triple Crown', 'Pitching Triple Crown',
+  'Gold Glove', 'Platinum Glove', 'Silver Slugger',
+  'World Series MVP', 'ALCS MVP', 'NLCS MVP', 'All-Star Game MVP',
+  'Reliever of the Year Award', 'Reliever of the Year',
+  'Comeback Player of the Year', 'Outstanding DH Award',
+  'All-MLB Team - First Team', 'All-MLB Team - Second Team',
+  'Roberto Clemente Award', 'Hank Aaron Award',
+  'Lou Gehrig Memorial Award', 'Babe Ruth Award',
+  'Branch Rickey Award', 'Hutch Award',
+]);
+
 /* ---------------------------------------------------------- formatting */
 function fmtRate3(v) { // .342
   if (v == null) return '—';
@@ -183,11 +199,47 @@ async function showPlayer(pid) {
       { txtCols: [0] });
   }
 
-  if (d.awards.length) {
-    html += '<h3>Awards</h3>';
-    html += table(['Year', 'Award', 'Lg'],
-      d.awards.map((a) => ({ cells: [a.yearID, esc(a.awardID), esc(a.lgID || '')] })),
-      { txtCols: [1, 2] });
+  const major = d.awards.filter((a) => MAJOR_AWARDS.has(a.awardID));
+  const minor = d.awards.filter((a) => !MAJOR_AWARDS.has(a.awardID));
+
+  if (d.allstar.length || d.awards.length) {
+    html += '<h3>Awards &amp; Honors</h3>';
+    if (d.allstar.length) {
+      html += `<p class="honor-line"><strong>MLB All-Star</strong>
+        (${d.allstar.length}×) — ${d.allstar.join(', ')}</p>`;
+    }
+    if (major.length) {
+      // one row per award+year (the source lists some awards once per league)
+      const seen = new Set();
+      const rows = [];
+      major.forEach((a) => {
+        const key = a.awardID + '|' + a.yearID;
+        if (seen.has(key)) return;
+        seen.add(key);
+        rows.push({ cells: [a.yearID, esc(a.awardID), esc(a.lgID || '')] });
+      });
+      html += table(['Year', 'Award', 'Lg'], rows, { txtCols: [1, 2] });
+    } else if (!d.allstar.length) {
+      html += '<p class="note">No major awards.</p>';
+    }
+    if (minor.length) {
+      // collapse press / weekly / monthly awards to one row each
+      const g = new Map();
+      minor.forEach((a) => {
+        let years = g.get(a.awardID);
+        if (!years) { years = new Set(); g.set(a.awardID, years); }
+        years.add(a.yearID);
+      });
+      const rows = Array.from(g.entries())
+        .sort((x, y) => y[1].size - x[1].size || x[0].localeCompare(y[0]))
+        .map(([award, years]) => ({ cells: [
+          esc(award), years.size,
+          Array.from(years).sort((a, b) => a - b).join(', ')] }));
+      html += `<details class="more-awards">
+        <summary>Other selections &amp; monthly awards (${g.size} types)</summary>
+        ${table(['Award', 'Seasons', 'Years'], rows, { txtCols: [0, 2] })}
+      </details>`;
+    }
   }
   el.innerHTML = html;
 }
