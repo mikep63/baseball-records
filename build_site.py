@@ -191,6 +191,12 @@ def build_site():
     shutil.copy(os.path.join(BASE, "static", "app.js"), DOCS)
     shutil.copy(os.path.join(BASE, "static", "api-local.js"), DOCS)
 
+    # Pages runs the branch through Jekyll unless this file is present, and
+    # Jekyll drops anything whose name starts with _ or . from the output.
+    # Nothing here is named that way today; this keeps it that way if the
+    # exports ever grow a directory that is.
+    open(os.path.join(DOCS, ".nojekyll"), "w").close()
+
     with open(os.path.join(BASE, "static", "index.html"), encoding="utf-8") as f:
         html = f.read()
     html = html.replace(
