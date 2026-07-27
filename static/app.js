@@ -154,8 +154,11 @@ async function showPlayer(pid) {
       <div class="badges">${badges.join('')}</div>
     </div>`;
 
+  let battingHtml = '';
+  let pitchingHtml = '';
+
   if (d.batting.length) {
-    html += '<h3>Batting</h3>';
+    battingHtml += '<h3>Batting</h3>';
     const rows = d.batting.map((s) => ({ cells: [
       s.yearID, teamCell(s.teamID, s.yearID), s.lgID || '',
       fmtInt(s.G), fmtInt(s.AB), fmtInt(s.R), fmtInt(s.H), fmtInt(s.D2),
@@ -169,13 +172,13 @@ async function showPlayer(pid) {
       fmtInt(t.D3), fmtInt(t.HR), fmtInt(t.RBI), fmtInt(t.SB), fmtInt(t.BB),
       fmtInt(t.SO), fmtRate3(t.AVG), fmtRate3(t.OBP), fmtRate3(t.SLG), fmtRate3(t.OPS),
     ]});
-    html += table(
+    battingHtml += table(
       ['Year', 'Team', 'Lg', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'BB', 'SO', 'AVG', 'OBP', 'SLG', 'OPS'],
       rows, { txtCols: [0, 1, 2] });
   }
 
   if (d.pitching.length) {
-    html += '<h3>Pitching</h3>';
+    pitchingHtml += '<h3>Pitching</h3>';
     const rows = d.pitching.map((s) => ({ cells: [
       s.yearID, teamCell(s.teamID, s.yearID), s.lgID || '',
       fmtInt(s.W), fmtInt(s.L), fmt2(s.ERA), fmtInt(s.G), fmtInt(s.GS),
@@ -189,10 +192,14 @@ async function showPlayer(pid) {
       fmtInt(t.CG), fmtInt(t.SHO), fmtInt(t.SV), fmtIP(t.IP), fmtInt(t.H),
       fmtInt(t.BB), fmtInt(t.SO), fmt2(t.WHIP),
     ]});
-    html += table(
+    pitchingHtml += table(
       ['Year', 'Team', 'Lg', 'W', 'L', 'ERA', 'G', 'GS', 'CG', 'SHO', 'SV', 'IP', 'H', 'BB', 'SO', 'WHIP'],
       rows, { txtCols: [0, 1, 2] });
   }
+
+  // Pitchers lead with pitching; position players lead with batting.
+  html += isPrimaryPitcher(d) ? pitchingHtml + battingHtml
+    : battingHtml + pitchingHtml;
 
   if (d.fielding.length) {
     html += '<h3>Fielding (career, by position)</h3>';
@@ -246,6 +253,18 @@ async function showPlayer(pid) {
     }
   }
   el.innerHTML = html;
+}
+
+/* True when pitching was the player's main role, so his pitching line
+   should lead. Compares games pitched with games he appeared as a batter:
+   a full-time pitcher's two counts are nearly equal, while a position
+   player who took the mound a few times has a tiny share. */
+function isPrimaryPitcher(d) {
+  const pitG = (d.pitchingTotals && d.pitchingTotals.G) || 0;
+  if (!pitG) return false;
+  const batG = (d.battingTotals && d.battingTotals.G) || 0;
+  if (!batG) return true;
+  return pitG / batG >= 0.5;
 }
 
 function teamCell(teamID, yearID) {
