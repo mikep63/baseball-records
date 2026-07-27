@@ -67,7 +67,6 @@ h3 { font-size: 1.05rem; margin: 1rem 0 .35rem; color: var(--green); }
 .note { color: var(--muted); font-size: .82rem; margin: .3rem 0 .6rem; }
 .warn { color: var(--accent); font-weight: bold; font-size: .95rem; }
 
-.honor-line { font-size: .92rem; margin: .1rem 0 .7rem; }
 details.more-awards { margin-bottom: 1rem; }
 details.more-awards summary {
   cursor: pointer; color: var(--muted); font-size: .85rem;

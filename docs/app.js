@@ -4,21 +4,35 @@
 const $ = (sel) => document.querySelector(sel);
 let META = null;
 
-/* Awards shown in the main table. Everything else — press selections
-   (Baseball Magazine, Sporting News) and weekly/monthly honors — is
-   collapsed into a summary below it. */
-const MAJOR_AWARDS = new Set([
+/* Awards shown in the main table, in the order they are listed here.
+   Everything else — press selections (Baseball Magazine, Sporting News),
+   All-MLB teams, and weekly/monthly honors — collapses into a summary
+   below it. */
+const MAJOR_AWARD_ORDER = [
   'Most Valuable Player', 'Cy Young Award', 'Rookie of the Year',
   'Triple Crown', 'Pitching Triple Crown',
-  'Gold Glove', 'Platinum Glove', 'Silver Slugger',
   'World Series MVP', 'ALCS MVP', 'NLCS MVP', 'All-Star Game MVP',
+  'Gold Glove', 'Platinum Glove', 'Silver Slugger',
   'Reliever of the Year Award', 'Reliever of the Year',
   'Comeback Player of the Year', 'Outstanding DH Award',
-  'All-MLB Team - First Team', 'All-MLB Team - Second Team',
   'Roberto Clemente Award', 'Hank Aaron Award',
   'Lou Gehrig Memorial Award', 'Babe Ruth Award',
   'Branch Rickey Award', 'Hutch Award',
-]);
+];
+const MAJOR_AWARDS = new Set(MAJOR_AWARD_ORDER);
+
+/* award -> Set of years won, preserving no order */
+function groupAwardYears(awards) {
+  const g = new Map();
+  awards.forEach((a) => {
+    let years = g.get(a.awardID);
+    if (!years) { years = new Set(); g.set(a.awardID, years); }
+    years.add(a.yearID);
+  });
+  return g;
+}
+
+const yearList = (years) => Array.from(years).sort((a, b) => a - b).join(', ');
 
 /* ---------------------------------------------------------- formatting */
 function fmtRate3(v) { // .342
@@ -216,40 +230,31 @@ async function showPlayer(pid) {
 
   if (d.allstar.length || d.awards.length) {
     html += '<h3>Awards &amp; Honors</h3>';
+    // one row per honor: name, how many times, and the years
+    const rows = [];
     if (d.allstar.length) {
-      html += `<p class="honor-line"><strong>MLB All-Star</strong>
-        (${d.allstar.length}×) — ${d.allstar.join(', ')}</p>`;
+      rows.push({ cells: [
+        'MLB All-Star', `${d.allstar.length}×`, d.allstar.join(', ')] });
     }
-    if (major.length) {
-      // one row per award+year (the source lists some awards once per league)
-      const seen = new Set();
-      const rows = [];
-      major.forEach((a) => {
-        const key = a.awardID + '|' + a.yearID;
-        if (seen.has(key)) return;
-        seen.add(key);
-        rows.push({ cells: [a.yearID, esc(a.awardID), esc(a.lgID || '')] });
-      });
-      html += table(['Year', 'Award', 'Lg'], rows, { txtCols: [1, 2] });
-    } else if (!d.allstar.length) {
+    Array.from(groupAwardYears(major).entries())
+      .sort((x, y) => MAJOR_AWARD_ORDER.indexOf(x[0]) - MAJOR_AWARD_ORDER.indexOf(y[0]))
+      .forEach(([award, years]) => rows.push({ cells: [
+        esc(award), `${years.size}×`, yearList(years)] }));
+    if (rows.length) {
+      html += table(['Honor', 'Times', 'Years'], rows, { txtCols: [0, 2] });
+    } else {
       html += '<p class="note">No major awards.</p>';
     }
     if (minor.length) {
-      // collapse press / weekly / monthly awards to one row each
-      const g = new Map();
-      minor.forEach((a) => {
-        let years = g.get(a.awardID);
-        if (!years) { years = new Set(); g.set(a.awardID, years); }
-        years.add(a.yearID);
-      });
-      const rows = Array.from(g.entries())
+      // press, All-MLB team, and weekly/monthly honors
+      const g = groupAwardYears(minor);
+      const otherRows = Array.from(g.entries())
         .sort((x, y) => y[1].size - x[1].size || x[0].localeCompare(y[0]))
         .map(([award, years]) => ({ cells: [
-          esc(award), years.size,
-          Array.from(years).sort((a, b) => a - b).join(', ')] }));
+          esc(award), years.size, yearList(years)] }));
       html += `<details class="more-awards">
         <summary>Other selections &amp; monthly awards (${g.size} types)</summary>
-        ${table(['Award', 'Seasons', 'Years'], rows, { txtCols: [0, 2] })}
+        ${table(['Award', 'Seasons', 'Years'], otherRows, { txtCols: [0, 2] })}
       </details>`;
     }
   }
