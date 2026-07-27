@@ -259,19 +259,82 @@ function initTeams() {
   showTeams(+sel.value);
 }
 
+const DIV_ORDER = { E: 0, C: 1, W: 2 };
+const DIV_NAMES = { E: 'East', C: 'Central', W: 'West' };
+
+/* Postseason rounds: [order played, display name]. Order runs from the
+   first round to the final, so the table reads like a bracket. */
+const ROUND_INFO = {
+  ALWC: [1, 'AL Wild Card'], ALWC1: [1, 'AL Wild Card'],
+  ALWC2: [1, 'AL Wild Card'], ALWC3: [1, 'AL Wild Card'],
+  ALWC4: [1, 'AL Wild Card'],
+  NLWC: [1, 'NL Wild Card'], NLWC1: [1, 'NL Wild Card'],
+  NLWC2: [1, 'NL Wild Card'], NLWC3: [1, 'NL Wild Card'],
+  NLWC4: [1, 'NL Wild Card'],
+  ALDS1: [2, 'AL Division Series'], ALDS2: [2, 'AL Division Series'],
+  NLDS1: [2, 'NL Division Series'], NLDS2: [2, 'NL Division Series'],
+  AEDIV: [2, 'AL East Division Series'], AWDIV: [2, 'AL West Division Series'],
+  NEDIV: [2, 'NL East Division Series'], NWDIV: [2, 'NL West Division Series'],
+  NLP1: [2, 'Negro NL Playoff'], NLP2: [2, 'Negro NL Playoff'],
+  ALCS: [3, 'AL Championship Series'], NLCS: [3, 'NL Championship Series'],
+  CS: [3, 'Championship Series'],
+  NLC: [3, 'Negro NL Championship'], ALC: [3, 'Negro AL Championship'],
+  NNC: [3, 'Negro National Championship'],
+  NSC: [3, 'Negro Southern Championship'],
+  WS: [4, 'World Series'], NWS: [4, 'Negro World Series'],
+};
+
+async function showPostseason(year) {
+  const el = $('#postseason');
+  const d = await api('postseason?year=' + year);
+  if (!d.series.length) {
+    el.innerHTML = `<h3>Postseason</h3><p class="note">No postseason series recorded for ${year}.</p>`;
+    return;
+  }
+  const series = d.series.slice().sort((a, b) => {
+    const ia = ROUND_INFO[a.round] || [9, a.round];
+    const ib = ROUND_INFO[b.round] || [9, b.round];
+    return ia[0] - ib[0] || ia[1].localeCompare(ib[1]) ||
+      a.round.localeCompare(b.round);
+  });
+  const teamCellNamed = (id, name) =>
+    `<a class="team-link" href="#team/${year}/${esc(id)}">${esc(name || id)}</a>`;
+  const rows = series.map((s) => {
+    const info = ROUND_INFO[s.round] || [9, s.round];
+    const isFinal = info[0] === 4;
+    let score = `${s.wins}–${s.losses}`;
+    if (s.ties) score += `, ${s.ties} tie${s.ties > 1 ? 's' : ''}`;
+    return {
+      __totals: isFinal,
+      cells: [
+        esc(info[1]),
+        teamCellNamed(s.teamIDwinner, s.winnerName),
+        teamCellNamed(s.teamIDloser, s.loserName),
+        score,
+      ],
+    };
+  });
+  el.innerHTML = `<h3>Postseason</h3>` +
+    table(['Round', 'Winner', 'Defeated', 'Games'], rows, { txtCols: [0, 1, 2] });
+}
+
+function backToSeason(year) {
+  $('#team-roster').innerHTML = '';
+  showTeams(year);
+}
+
 async function showTeams(year) {
   const el = $('#team-list');
   el.innerHTML = '<p class="loading">Loading…</p>';
+  $('#postseason').innerHTML = '';
   const d = await api('teams?year=' + year);
   if (!d.teams.length) { el.innerHTML = '<p class="note">No teams for ' + year + '.</p>'; return; }
-  const DIV_ORDER = { E: 0, C: 1, W: 2 };
-  const DIV_NAMES = { E: 'East', C: 'Central', W: 'West' };
   const groups = {};
   d.teams.forEach((t) => {
     const key = (t.lgID || '?') + '|' + (t.divID || '');
     (groups[key] = groups[key] || []).push(t);
   });
-  let html = `<h2>${year} Teams</h2>`;
+  let html = `<h2>${year} Season</h2>`;
   const keys = Object.keys(groups).sort((a, b) => {
     const [la, da] = a.split('|'), [lb, db] = b.split('|');
     return la.localeCompare(lb) ||
@@ -292,17 +355,24 @@ async function showTeams(year) {
     html += '</div>';
   });
   el.innerHTML = html;
+  showPostseason(year);
 }
 
 async function showRoster(year, teamID) {
   $('#team-year').value = year;
   $('#team-list').innerHTML = '';
+  $('#postseason').innerHTML = '';
   const el = $('#team-roster');
   el.innerHTML = '<p class="loading">Loading roster…</p>';
   const d = await api(`roster?year=${year}&team=${encodeURIComponent(teamID)}`);
   const t = d.team;
   let html = `<h2>${t ? esc(t.name) : esc(teamID)} — ${year}</h2>`;
-  if (t) html += `<p class="note">${esc(t.lgID || '')}${t.divID ? ' ' + esc(t.divID) : ''} · ${t.W}–${t.L}, finished #${t.Rank} · <a class="team-link" href="#teams" onclick="showTeams(${year})">← all ${year} teams</a></p>`;
+  if (t) {
+    const div = t.divID ? ' ' + (DIV_NAMES[t.divID] || t.divID) : '';
+    html += `<p class="note">${esc((t.lgID || '') + div)} · ${t.W}–${t.L},
+      finished #${t.Rank} ·
+      <a class="team-link" href="#teams" onclick="backToSeason(${year})">← ${year} season</a></p>`;
+  }
   if (d.batters.length) {
     html += '<h3>Batters</h3>';
     html += table(['Player', 'POS', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'BB', 'AVG'],

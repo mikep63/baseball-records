@@ -5,7 +5,7 @@
 
 window.LocalAPI = (function () {
   const FILES = ['people', 'batting', 'pitching', 'fielding', 'teams',
-    'awards', 'allstar', 'hof'];
+    'awards', 'allstar', 'hof', 'seriespost'];
   // numeric columns per file (everything else stays a string)
   const NUMERIC = {
     people: ['birthYear', 'height', 'weight', 'careerG'],
@@ -18,6 +18,7 @@ window.LocalAPI = (function () {
     awards: ['yearID'],
     allstar: ['yearID'],
     hof: ['yearid'],
+    seriespost: ['yearID', 'wins', 'losses', 'ties'],
   };
 
   const BATTING_STATS = {
@@ -279,6 +280,23 @@ window.LocalAPI = (function () {
     return { teams };
   }
 
+  function apiPostseason(q) {
+    const year = +q.year || 0;
+    const names = new Map();
+    for (const t of D.teams) {
+      if (t.yearID === year) names.set(t.teamID, t.name);
+    }
+    const series = D.seriespost.filter((s) => s.yearID === year).map((s) => ({
+      round: s.round,
+      teamIDwinner: s.teamIDwinner, lgIDwinner: s.lgIDwinner,
+      teamIDloser: s.teamIDloser, lgIDloser: s.lgIDloser,
+      wins: s.wins, losses: s.losses, ties: s.ties,
+      winnerName: names.get(s.teamIDwinner) || null,
+      loserName: names.get(s.teamIDloser) || null,
+    }));
+    return { series, year };
+  }
+
   function apiRoster(q) {
     const year = +q.year || 0, team = q.team || '';
     // POS with most games per player for this year+team
@@ -429,6 +447,7 @@ window.LocalAPI = (function () {
     if (route === 'search') return apiSearch(q);
     if (route.startsWith('player/')) return apiPlayer(decodeURIComponent(route.slice(7)));
     if (route === 'teams') return apiTeams(q);
+    if (route === 'postseason') return apiPostseason(q);
     if (route === 'roster') return apiRoster(q);
     if (route === 'leaders') return apiLeaders(q);
     if (route === 'leaders_range') return apiLeadersRange(q);

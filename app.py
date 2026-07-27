@@ -227,6 +227,19 @@ def api_teams(q, conn):
     return {"teams": teams}
 
 
+def api_postseason(q, conn):
+    year = int(q.get("year", ["0"])[0])
+    series = rows_to_dicts(conn.execute('''
+      SELECT s.round, s.teamIDwinner, s.lgIDwinner, s.teamIDloser,
+             s.lgIDloser, s.wins, s.losses, s.ties,
+             (SELECT t.name FROM Teams t
+               WHERE t.yearID = s.yearID AND t.teamID = s.teamIDwinner) AS winnerName,
+             (SELECT t.name FROM Teams t
+               WHERE t.yearID = s.yearID AND t.teamID = s.teamIDloser) AS loserName
+      FROM SeriesPost s WHERE s.yearID = ?''', (year,)))
+    return {"series": series, "year": year}
+
+
 def api_roster(q, conn):
     year = int(q.get("year", ["0"])[0])
     team = q.get("team", [""])[0]
@@ -354,6 +367,7 @@ ROUTES = {
     "meta": api_meta,
     "search": api_search,
     "teams": api_teams,
+    "postseason": api_postseason,
     "roster": api_roster,
     "leaders": api_leaders,
     "leaders_range": api_leaders_range,

@@ -98,8 +98,14 @@ def export_data():
               [[r["playerID"], r["yearid"], r["votedBy"], r["category"]]
                for r in read_csv("HallOfFame.csv") if r["inducted"] == "Y"])
 
+    sp_cols = ["yearID", "round", "teamIDwinner", "lgIDwinner", "teamIDloser",
+               "lgIDloser", "wins", "losses", "ties"]
+    write_csv("seriespost.csv", sp_cols,
+              [[r[c] for c in sp_cols] for r in read_csv("SeriesPost.csv")])
+
 DATA_FILES = ["people.csv", "batting.csv", "pitching.csv", "fielding.csv",
-              "teams.csv", "awards.csv", "allstar.csv", "hof.csv"]
+              "teams.csv", "awards.csv", "allstar.csv", "hof.csv",
+              "seriespost.csv"]
 
 # ------------------------------------------------------------- icon (pure py)
 
