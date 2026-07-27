@@ -586,9 +586,10 @@ async function showFranchise(fid) {
 }
 
 /* ---------------------------------------------------------- leaders tabs */
-function fillYears(sel, selected) {
+function fillYears(sel, selected, from) {
+  const lo = from == null ? META.minYear : from;
   const opts = [];
-  for (let y = META.maxYear; y >= META.minYear; y--) {
+  for (let y = META.maxYear; y >= lo; y--) {
     opts.push(`<option${y === selected ? ' selected' : ''}>${y}</option>`);
   }
   sel.innerHTML = opts.join('');
@@ -601,9 +602,12 @@ function fillStats(sel, cat, selected) {
 }
 
 function initLeaders() {
-  fillYears($('#lead-year'), META.maxYear);
-  fillYears($('#lead-start'), 1990);
-  fillYears($('#lead-end'), 1999);
+  // 1871-75 is National Association only, which MLB does not recognise, so
+  // it has no leaderboard — keep those years out of the pickers entirely.
+  const lo = META.leaderMinYear;
+  fillYears($('#lead-year'), META.maxYear, lo);
+  fillYears($('#lead-start'), 1990, lo);
+  fillYears($('#lead-end'), 1999, lo);
   fillStats($('#lead-stat'), 'batting', 'HR');
   $('#lead-cat').addEventListener('change', () =>
     fillStats($('#lead-stat'), $('#lead-cat').value,
@@ -652,7 +656,7 @@ async function runLeaders() {
     heading = `${label} Leaders, ${start}–${end}`;
     qualNote = 'Rate stats require minimum playing time over the span (400 plate appearances or 130 innings pitched per year, capped at 3,000 PA / 1,000 IP).';
   } else {
-    path = `leaders_range?start=${META.minYear}&end=${META.maxYear}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    path = `leaders_range?start=${META.leaderMinYear}&end=${META.maxYear}&stat=${stat}&cat=${cat}&limit=${limit}`;
     heading = `Career ${label} Leaders`;
     qualNote = 'Rate stats require a full career of playing time (3,000 plate appearances or 1,000 innings pitched).';
   }
@@ -662,6 +666,12 @@ async function runLeaders() {
   const d = await api(path);
 
   let html = `<h2>${esc(heading)}</h2>`;
+  if (!d.leaders.length) {
+    // rate stats in a thin season can leave nobody over the qualifier
+    el.innerHTML = html + `<p class="note">No qualifying players${isRate
+      ? ' — nobody reached the minimum playing time that season.' : '.'}</p>`;
+    return;
+  }
   if (mode === 'season') {
     html += table(['#', 'Player', 'Team', label],
       d.leaders.map((r, i) => ({ cells: [

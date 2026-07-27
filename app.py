@@ -41,13 +41,16 @@ RATE_BATTING = {"AVG", "OBP", "SLG", "OPS"}
 RATE_PITCHING = {"ERA", "WHIP"}
 ASCENDING = {"ERA", "WHIP"}  # lower is better
 
-# Leaderboards rank major-league play only. Lahman also carries independent
-# and touring ball (IND, WES, EAS, NAC, INT) — a handful of recorded games
-# against whoever turned up, which is not a season anyone led. This is the
-# recognised set: the early majors, plus the seven Negro major leagues MLB
-# recognised in 2020. The National Association is kept because it is the only
-# organised ball played from 1871 to 1875, which the app covers.
-MAJOR_LEAGUES = ("NA", "NL", "AA", "UA", "PL", "AL", "FL",
+# Leaderboards rank major-league play only, and "major league" means the list
+# MLB itself recognises: the six early majors, plus the seven Negro major
+# leagues added in 2020. Everything else Lahman carries is independent or
+# touring ball (IND, WES, EAS, NAC, INT) — a handful of recorded games against
+# whoever turned up, which is not a season anyone led.
+#
+# The National Association (1871-75) is deliberately absent: MLB does not
+# recognise it. Its seasons still appear everywhere else in the app, they just
+# have no leaderboard, which LEADER_MIN_YEAR below keeps out of the pickers.
+MAJOR_LEAGUES = ("NL", "AA", "UA", "PL", "AL", "FL",
                  "NNL", "ECL", "ANL", "EWL", "NSL", "NN2", "NAL")
 
 # Shortest schedule treated as a real season when setting a rate qualifier.
@@ -109,8 +112,14 @@ def rows_to_dicts(rows):
 # ---------------------------------------------------------------- api handlers
 def api_meta(q, conn):
     yr = conn.execute('SELECT MIN(yearID) lo, MAX(yearID) hi FROM Teams').fetchone()
+    # Seasons run from 1871, but leaderboards only from the first recognised
+    # major league, so the year pickers do not offer years that can return
+    # nothing. Derived, not hardcoded, so it tracks MAJOR_LEAGUES.
+    lead_lo = conn.execute(
+        'SELECT MIN(yearID) lo FROM Teams WHERE lgID IN (%s)'
+        % ", ".join("'%s'" % lg for lg in MAJOR_LEAGUES)).fetchone()["lo"]
     return {
-        "minYear": yr["lo"], "maxYear": yr["hi"],
+        "minYear": yr["lo"], "maxYear": yr["hi"], "leaderMinYear": lead_lo,
         "battingStats": BATTING_STATS, "pitchingStats": PITCHING_STATS,
         "rateStats": sorted(RATE_BATTING | RATE_PITCHING),
     }

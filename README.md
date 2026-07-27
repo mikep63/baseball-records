@@ -91,9 +91,29 @@ use Safari's *Add to Home Screen* to run it like an app.
 - Batting: G, AB, R, H, 2B, 3B, HR, RBI, SB, BB, SO, TB, AVG, OBP, SLG, OPS
 - Pitching: W, L, G, GS, CG, SHO, SV, IP, SO, BB, ERA, WHIP
 
-Rate-stat leaderboards apply playing-time qualifiers: single seasons use
-≈3.1 PA (or 1 IP) per team game, mirroring the official rule; year ranges
-require 400 PA (or 130 IP) per year in the span, capped at 3,000 PA / 1,000 IP.
+### How leaderboards are scoped
+
+Leaderboards rank **major-league play only**, using the list MLB itself
+recognises: NL, AA, UA, PL, AL, FL, plus the seven Negro major leagues
+recognised in 2020 (NNL, ECL, ANL, EWL, NSL, NN2, NAL). Lahman also carries
+independent and touring ball — a handful of recorded games against whoever
+turned up — which is not a season anyone led. The National Association
+(1871–75) is excluded for the same reason MLB excludes it, so those seasons
+are browsable but have no leaderboard and are left out of the year pickers.
+
+Rate stats then apply the official playing-time qualifier: **3.1 PA (or 1 IP)
+per game the player's own league played** — not per game the longest league
+in that year played, which would hold a short-schedule league to someone
+else's bar. That distinction matters twice over: the Negro Leagues played
+~80-game seasons against the AL's 157, and in strike-shortened 1994 it decides
+the AL ERA title. The bar is floored at a 40-game schedule, since even a
+recognised league can post a stub season (the ECL folded seven games into
+1928). A player traded across leagues mid-season is held to the longest
+schedule he appeared in.
+
+Multi-season and career leaderboards use a heuristic of our own rather than
+any official rule: 400 PA (or 130 IP) per year in the span, capped at
+3,000 PA / 1,000 IP.
 
 ## Layout
 
