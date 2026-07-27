@@ -90,6 +90,21 @@ tbody tr:nth-child(even) { background: var(--row-alt); }
 tbody tr:hover { background: #e9f0e4; }
 tr.totals td { border-top: 2px solid var(--green); font-weight: bold; background: #eef2e6; }
 
+/* Division/league heading rows inside a single standings table, so every
+   division shares one set of column widths. */
+tr.section td {
+  background: var(--green-light);
+  color: #f0ecdf;
+  font-family: Verdana, sans-serif;
+  font-size: .72rem;
+  font-weight: bold;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: .4rem .55rem;
+}
+tbody tr.section:hover td { background: var(--green-light); }
+table.standings td:first-child { min-width: 11rem; }
+
 a.player-link, a.team-link { color: var(--accent); text-decoration: none; font-weight: bold; }
 a.player-link:hover, a.team-link:hover { text-decoration: underline; }
 
@@ -116,7 +131,6 @@ a.player-link:hover, a.team-link:hover { text-decoration: underline; }
 .result-item:hover { background: var(--row-alt); }
 .result-item .meta { color: var(--muted); font-size: .82rem; }
 
-.team-group { margin-bottom: .5rem; }
 .rank-num { color: var(--muted); }
 
 footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 1rem; border-top: 1px solid var(--line); }

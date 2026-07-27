@@ -50,12 +50,16 @@ function table(headers, rows, opts = {}) {
   const ths = headers.map((h, i) =>
     `<th${opts.txtCols && opts.txtCols.includes(i) ? ' class="txt"' : ''}>${h}</th>`).join('');
   const trs = rows.map((r) => {
+    if (r.__section) {
+      return `<tr class="section"><td class="txt" colspan="${headers.length}">${r.__section}</td></tr>`;
+    }
     const cls = r.__totals ? ' class="totals"' : '';
     const tds = r.cells.map((c, i) =>
       `<td${opts.txtCols && opts.txtCols.includes(i) ? ' class="txt"' : ''}>${c}</td>`).join('');
     return `<tr${cls}>${tds}</tr>`;
   }).join('');
-  return `<div class="table-wrap"><table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+  const cls = opts.cls ? ' class="' + opts.cls + '"' : '';
+  return `<div class="table-wrap"><table${cls}><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
 }
 
 async function api(path) {
@@ -340,20 +344,22 @@ async function showTeams(year) {
     return la.localeCompare(lb) ||
       (DIV_ORDER[da] ?? 9) - (DIV_ORDER[db] ?? 9) || da.localeCompare(db);
   });
+  // one table for the whole season so columns line up across every division
+  const rows = [];
   keys.forEach((g) => {
     const [lg, div] = g.split('|');
-    const label = lg + (div ? ' ' + (DIV_NAMES[div] || div) : '');
-    html += `<div class="team-group"><h3>${esc(label)}</h3>`;
-    html += table(['Team', 'W', 'L', 'Pct', 'R', 'RA', ''],
-      groups[g].map((t) => ({ cells: [
-        `<a class="team-link" href="#team/${year}/${esc(t.teamID)}">${esc(t.name)}</a>`,
-        fmtInt(t.W), fmtInt(t.L),
-        (t.W + t.L) ? fmtRate3(t.W / (t.W + t.L)) : '—',
-        fmtInt(t.R), fmtInt(t.RA),
-        t.wonWS ? '<span class="badge ws">WS Champs</span>' : (t.wonLg ? '<span class="badge">Pennant</span>' : ''),
-      ]})), { txtCols: [0, 6] });
-    html += '</div>';
+    rows.push({ __section: esc(lg + (div ? ' ' + (DIV_NAMES[div] || div) : '')) });
+    groups[g].forEach((t) => rows.push({ cells: [
+      `<a class="team-link" href="#team/${year}/${esc(t.teamID)}">${esc(t.name)}</a>`,
+      fmtInt(t.W), fmtInt(t.L),
+      (t.W + t.L) ? fmtRate3(t.W / (t.W + t.L)) : '—',
+      fmtInt(t.R), fmtInt(t.RA),
+      t.wonWS ? '<span class="badge ws">WS Champs</span>'
+        : (t.wonLg ? '<span class="badge">Pennant</span>' : ''),
+    ]}));
   });
+  html += table(['Team', 'W', 'L', 'Pct', 'R', 'RA', ''], rows,
+    { txtCols: [0, 6], cls: 'standings' });
   el.innerHTML = html;
   showPostseason(year);
 }
