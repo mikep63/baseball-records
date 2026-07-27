@@ -119,7 +119,7 @@ async function api(path) {
 }
 
 /* ---------------------------------------------------------- routing */
-const TABS = ['players', 'teams', 'leaders'];
+const TABS = ['players', 'teams', 'franchises', 'leaders'];
 
 function route() {
   const hash = location.hash.slice(1) || 'players';
@@ -127,6 +127,7 @@ function route() {
   let tab = parts[0];
   if (tab === 'player') tab = 'players';
   if (tab === 'team') tab = 'teams';
+  if (tab === 'franchise') tab = 'franchises';
   if (tab === 'season' || tab === 'range') tab = 'leaders';  // pre-merge links
   if (!TABS.includes(tab)) tab = 'players';
   TABS.forEach((t) => {
@@ -137,6 +138,8 @@ function route() {
 
   if (parts[0] === 'player' && parts[1]) showPlayer(parts[1]);
   if (parts[0] === 'team' && parts[2]) showRoster(+parts[1], parts[2]);
+  if (parts[0] === 'franchise' && parts[1]) showFranchise(parts[1]);
+  if (parts[0] === 'franchises') showFranchiseList();
   window.scrollTo(0, 0);
 }
 
@@ -463,6 +466,125 @@ async function showRoster(year, teamID) {
   el.innerHTML = html;
 }
 
+/* ---------------------------------------------------------- franchises tab */
+let FRANCHISES = null;
+
+function initFranchises() {
+  $('#franch-scope').addEventListener('change', renderFranchiseList);
+  let t = null;
+  $('#franch-search').addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(renderFranchiseList, 200);
+  });
+}
+
+async function showFranchiseList() {
+  $('#franch-detail').innerHTML = '';
+  if (!FRANCHISES) {
+    $('#franch-list').innerHTML = '<p class="loading">Loading franchises…</p>';
+    FRANCHISES = (await api('franchises')).franchises;
+  }
+  renderFranchiseList();
+}
+
+/* The listing carries relocations but not renames: moving city changes what
+   a franchise is, while a new nickname does not. Every name it ever had is
+   one click away on the detail page. */
+function renderFranchiseList() {
+  const scope = $('#franch-scope').value;
+  const term = $('#franch-search').value.trim().toLowerCase();
+  let list = FRANCHISES.filter((f) => scope === 'all' || f.active === scope);
+  if (term) {
+    list = list.filter((f) =>
+      f.name.toLowerCase().includes(term) ||
+      f.former.some((c) => c.toLowerCase().includes(term)));
+  }
+  const el = $('#franch-list');
+  if (!list.length) {
+    el.innerHTML = '<h2>Franchises</h2><p class="note">No franchises match.</p>';
+    return;
+  }
+  const rows = list.map((f) => {
+    const span = f.firstYear === f.lastYear ? `${f.firstYear}`
+      : `${f.firstYear}–${f.lastYear}`;
+    const pct = (f.W + f.L) ? fmtRate3(f.W / (f.W + f.L)) : '—';
+    const badges = [];
+    if (f.titles) badges.push(`<span class="badge ws">${f.titles}× WS</span>`);
+    else if (f.pennants) badges.push(`<span class="badge">${f.pennants}× Pennant</span>`);
+    return { cells: [
+      `<a class="team-link" href="#franchise/${esc(f.franchID)}">${esc(f.name)}</a>` +
+        (f.former.length
+          ? `<span class="former">formerly ${esc(f.former.join(', '))}</span>`
+          : ''),
+      span, fmtInt(f.seasons), fmtInt(f.W), fmtInt(f.L), pct, badges.join(''),
+    ]};
+  });
+  const moved = list.filter((f) => f.former.length).length;
+  el.innerHTML = '<h2>Franchises</h2>' +
+    table(['Franchise', 'Span', 'Seasons', 'W', 'L', 'Pct', ''], rows,
+      { txtCols: [0, 1, 6], cls: 'standings' }) +
+    `<p class="note">${list.length} franchise${list.length > 1 ? 's' : ''}` +
+    (moved ? ` · ${moved} played in more than one city` : '') + '.</p>';
+}
+
+async function showFranchise(fid) {
+  $('#franch-list').innerHTML = '';
+  const el = $('#franch-detail');
+  el.innerHTML = '<p class="loading">Loading franchise…</p>';
+  const d = await api('franchise/' + encodeURIComponent(fid));
+  if (d.error) { el.innerHTML = `<p class="note">${esc(d.error)}</p>`; return; }
+  const f = d.franchise;
+  const span = f.firstYear === f.lastYear ? `${f.firstYear}`
+    : `${f.firstYear}–${f.lastYear}`;
+  const pct = (f.W + f.L) ? fmtRate3(f.W / (f.W + f.L)) : '—';
+
+  const badges = [];
+  if (f.active === 'Y') badges.push('<span class="badge active">active</span>');
+  if (f.titles) badges.push(`<span class="badge ws">${f.titles}× World Series</span>`);
+  if (f.pennants) badges.push(`<span class="badge">${f.pennants}× Pennant</span>`);
+
+  let html = `
+    <div class="bio-card">
+      <h2>${esc(f.name)}</h2>
+      <p class="bio-line">${span} · ${f.seasons} seasons ·
+        ${fmtInt(f.W)}–${fmtInt(f.L)} (${pct}) ·
+        ${f.nameCount} name${f.nameCount > 1 ? 's' : ''}</p>
+      <div class="badges">${badges.join('')}</div>
+      <p class="note"><a class="team-link" href="#franchises">← all franchises</a></p>
+    </div>`;
+
+  if (d.locations.length) {
+    html += '<h3>Where it played</h3>';
+    html += table(['City', 'From', 'To', 'Seasons'],
+      d.locations.map((l) => ({ cells: [
+        esc(l.location), l.firstYear, l.lastYear,
+        fmtInt(l.lastYear - l.firstYear + 1)] })),
+      { txtCols: [0, 1, 2] });
+  }
+
+  html += '<h3>What it was called</h3>';
+  html += table(['Name', 'From', 'To', 'Lg'],
+    d.eras.map((e) => ({ cells: [
+      esc(e.name), e.firstYear, e.lastYear, esc(e.lgID || '')] })),
+    { txtCols: [0, 1, 2, 3] });
+
+  if (d.seasons.length) {
+    html += '<h3>Season by season</h3>';
+    html += table(['Year', 'Team', 'Lg', 'W', 'L', 'Pct', 'Finish', ''],
+      d.seasons.slice().reverse().map((s) => ({ cells: [
+        `<a class="team-link" href="#team/${s.yearID}/${esc(s.teamID)}">${s.yearID}</a>`,
+        esc(s.name), esc((s.lgID || '') + (s.divID ? ' ' + s.divID : '')),
+        fmtInt(s.W), fmtInt(s.L),
+        (s.W + s.L) ? fmtRate3(s.W / (s.W + s.L)) : '—',
+        s.Rank ? '#' + s.Rank : '—',
+        s.wonWS ? '<span class="badge ws">WS Champs</span>'
+          : (s.wonLg ? '<span class="badge">Pennant</span>' : ''),
+      ]})),
+      { txtCols: [0, 1, 2, 6, 7] });
+  }
+  el.innerHTML = html;
+}
+
 /* ---------------------------------------------------------- leaders tabs */
 function fillYears(sel, selected) {
   const opts = [];
@@ -573,6 +695,7 @@ async function boot() {
   META = await api('meta');
   initPlayers();
   initTeams();
+  initFranchises();
   initLeaders();
   window.addEventListener('hashchange', route);
   route();

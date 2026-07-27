@@ -5,7 +5,7 @@
 
 window.LocalAPI = (function () {
   const FILES = ['people', 'batting', 'pitching', 'fielding', 'teams',
-    'awards', 'allstar', 'hof', 'seriespost'];
+    'awards', 'allstar', 'hof', 'seriespost', 'franchises', 'franchise_eras'];
   // numeric columns per file (everything else stays a string)
   const NUMERIC = {
     people: ['birthYear', 'height', 'weight', 'careerG'],
@@ -19,6 +19,9 @@ window.LocalAPI = (function () {
     allstar: ['yearID'],
     hof: ['yearid'],
     seriespost: ['yearID', 'wins', 'losses', 'ties'],
+    franchises: ['firstYear', 'lastYear', 'seasons', 'W', 'L', 'pennants',
+      'titles', 'nameCount'],
+    franchise_eras: ['firstYear', 'lastYear'],
   };
 
   const BATTING_STATS = {
@@ -93,6 +96,8 @@ window.LocalAPI = (function () {
     IDX.batByPlayer = groupBy(D.batting, 'playerID');
     IDX.pitByPlayer = groupBy(D.pitching, 'playerID');
     IDX.fldByPlayer = groupBy(D.fielding, 'playerID');
+    IDX.teamsByFranch = groupBy(D.teams, 'franchID');
+    IDX.erasByFranch = groupBy(D.franchise_eras || [], 'franchID');
     readyResolve();
   }
 
@@ -417,6 +422,43 @@ window.LocalAPI = (function () {
     }
   }
 
+  /* Franchise history is precomputed by build_site.py (franchises.py owns
+     the name/location era logic); here it only needs reshaping. */
+  function franchiseSummary(f) {
+    return Object.assign({}, f, {
+      former: f.former ? f.former.split('|') : [],
+    });
+  }
+
+  function apiFranchises() {
+    return { franchises: D.franchises.map(franchiseSummary) };
+  }
+
+  function apiFranchise(fid) {
+    const f = D.franchises.find((r) => r.franchID === fid);
+    if (!f) return { error: 'franchise not found' };
+    const eras = (IDX.erasByFranch.get(fid) || [])
+      .slice().sort((a, b) => a.firstYear - b.firstYear);
+    const seasons = (IDX.teamsByFranch.get(fid) || []).slice()
+      .sort((a, b) => a.yearID - b.yearID)
+      .map((t) => ({
+        yearID: t.yearID, teamID: t.teamID, lgID: t.lgID, divID: t.divID,
+        name: t.name, Rank: t.Rank, G: t.G, W: t.W, L: t.L, R: t.R, RA: t.RA,
+        wonWS: t.WSWin === 'Y' ? 1 : 0, wonLg: t.LgWin === 'Y' ? 1 : 0,
+      }));
+    return {
+      franchise: franchiseSummary(f),
+      eras: eras.filter((e) => e.kind === 'name').map((e) => ({
+        name: e.label, firstYear: e.firstYear, lastYear: e.lastYear,
+        teamID: e.teamID, lgID: e.lgID,
+      })),
+      locations: eras.filter((e) => e.kind === 'location').map((e) => ({
+        location: e.label, firstYear: e.firstYear, lastYear: e.lastYear,
+      })),
+      seasons,
+    };
+  }
+
   function apiLeaders(q) {
     const year = +q.year || 0;
     const stat = q.stat || 'HR', cat = q.cat || 'batting';
@@ -457,6 +499,8 @@ window.LocalAPI = (function () {
     if (route === 'roster') return apiRoster(q);
     if (route === 'leaders') return apiLeaders(q);
     if (route === 'leaders_range') return apiLeadersRange(q);
+    if (route === 'franchises') return apiFranchises();
+    if (route.startsWith('franchise/')) return apiFranchise(decodeURIComponent(route.slice(10)));
     throw new Error('unknown route: ' + route);
   }
 

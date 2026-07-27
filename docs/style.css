@@ -136,6 +136,12 @@ a.player-link:hover, a.team-link:hover { text-decoration: underline; }
 
 .rank-num { color: var(--muted); }
 
+/* the cities a franchise left behind, under its current name */
+.former {
+  display: block; color: var(--muted); font-size: .74rem;
+  font-weight: normal; margin-top: .1rem;
+}
+
 footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 1rem; border-top: 1px solid var(--line); }
 footer a { color: var(--muted); }
 

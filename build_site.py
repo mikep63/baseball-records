@@ -14,6 +14,8 @@ import shutil
 import struct
 import zlib
 
+import franchises
+
 BASE = os.path.dirname(os.path.abspath(__file__))
 CSV_DIR = os.path.join(BASE, "data", "csv")
 DOCS = os.path.join(BASE, "docs")
@@ -36,6 +38,39 @@ def write_csv(name, header, rows):
         w.writerows(rows)
     print("  %-14s %8d rows  %6.1f KB" % (name, sum(1 for _ in open(path)) - 1,
                                           os.path.getsize(path) / 1024))
+
+
+def export_franchises():
+    """Franchise history, reconstructed from the per-season Teams rows.
+
+    Two files: one listing row per franchise, and the name/location eras
+    behind it (kind tells them apart) for the franchise detail page.
+    """
+    built = franchises.build(list(read_csv("Teams.csv")),
+                             list(read_csv("TeamsFranchises.csv")),
+                             list(read_csv("Parks.csv")))
+    write_csv("franchises.csv",
+              ["franchID", "name", "active", "firstYear", "lastYear",
+               "seasons", "W", "L", "pennants", "titles", "teamID", "lgID",
+               "nameCount", "former"],
+              [[s["franchID"], s["name"], s["active"], s["firstYear"],
+                s["lastYear"], s["seasons"], s["W"], s["L"], s["pennants"],
+                s["titles"], s["teamID"], s["lgID"], s["nameCount"],
+                # pipe-joined so the list survives as one CSV field
+                "|".join(s["former"])]
+               for s in (franchises.summary(f) for f in built)])
+
+    era_rows = []
+    for f in built:
+        for e in f["eras"]:
+            era_rows.append([f["franchID"], "name", e["name"], e["firstYear"],
+                             e["lastYear"], e["teamID"], e["lgID"]])
+        for l in f["locations"]:
+            era_rows.append([f["franchID"], "location", l["location"],
+                             l["firstYear"], l["lastYear"], "", ""])
+    write_csv("franchise_eras.csv",
+              ["franchID", "kind", "label", "firstYear", "lastYear",
+               "teamID", "lgID"], era_rows)
 
 
 def export_data():
@@ -76,10 +111,12 @@ def export_data():
     write_csv("fielding.csv", fld_cols,
               [[r[c] for c in fld_cols] for r in read_csv("Fielding.csv")])
 
-    team_cols = ["yearID", "lgID", "divID", "teamID", "name", "Rank", "G",
-                 "W", "L", "R", "RA", "WSWin", "LgWin"]
+    team_cols = ["yearID", "lgID", "divID", "teamID", "franchID", "name",
+                 "Rank", "G", "W", "L", "R", "RA", "WSWin", "LgWin"]
     write_csv("teams.csv", team_cols,
               [[r[c] for c in team_cols] for r in read_csv("Teams.csv")])
+
+    export_franchises()
 
     write_csv("awards.csv", ["playerID", "awardID", "yearID", "lgID"],
               [[r["playerID"], r["awardID"], r["yearID"], r["lgID"]]
@@ -100,7 +137,7 @@ def export_data():
 
 DATA_FILES = ["people.csv", "batting.csv", "pitching.csv", "fielding.csv",
               "teams.csv", "awards.csv", "allstar.csv", "hof.csv",
-              "seriespost.csv"]
+              "seriespost.csv", "franchises.csv", "franchise_eras.csv"]
 
 # ------------------------------------------------------------- icon (pure py)
 

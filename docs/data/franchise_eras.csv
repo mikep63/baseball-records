@@ -1,0 +1,528 @@
+franchID,kind,label,firstYear,lastYear,teamID,lgID
+ACG,name,Akron Grays / Cleveland Giants,1933,1933,ACG,NN2
+ACG,location,Akron,1933,1933,,
+AB,name,Algona Brownies,1903,1903,AB,WES
+AB,location,Algona,1903,1903,,
+AC1,name,All Cubans,1905,1905,AC1,EAS
+AC2,name,All Cubans,1911,1911,AC2,WES
+ALT,name,Altoona Mountain City,1884,1884,ALT,UA
+ALT,location,Altoona,1884,1884,,
+ARI,name,Arizona Diamondbacks,1998,2025,ARI,NL
+ARI,location,Arizona,1998,2025,,
+OAK,name,Philadelphia Athletics,1901,1954,PHA,AL
+OAK,name,Kansas City Athletics,1955,1967,KC1,AL
+OAK,name,Oakland Athletics,1968,2024,OAK,AL
+OAK,name,Athletics,2025,2025,ATH,AL
+OAK,location,Philadelphia,1901,1954,,
+OAK,location,Kansas City,1955,1967,,
+OAK,location,Oakland,1968,2025,,
+ATL,name,Boston Red Caps,1876,1882,BSN,NL
+ATL,name,Boston Beaneaters,1883,1906,BSN,NL
+ATL,name,Boston Doves,1907,1910,BSN,NL
+ATL,name,Boston Rustlers,1911,1911,BSN,NL
+ATL,name,Boston Braves,1912,1935,BSN,NL
+ATL,name,Boston Bees,1936,1940,BSN,NL
+ATL,name,Boston Braves,1941,1952,BSN,NL
+ATL,name,Milwaukee Braves,1953,1965,ML1,NL
+ATL,name,Atlanta Braves,1966,2025,ATL,NL
+ATL,location,Boston,1876,1952,,
+ATL,location,Milwaukee,1953,1965,,
+ATL,location,Atlanta,1966,2025,,
+BG2,name,Atlantic City Bacharach Giants,1923,1929,ACB,ANL
+BG2,location,Atlantic City,1923,1929,,
+BBS,name,Baltimore Black Sox,1922,1932,BBS,EWL
+BBS,name,Baltimore Sox,1933,1933,SOX,NN2
+BBS,name,Baltimore Black Sox,1934,1934,BBS,NN2
+BBS,location,Baltimore,1922,1934,,
+BLC,name,Baltimore Canaries,1872,1874,BL1,NA
+BLC,location,Baltimore,1872,1874,,
+BEG,name,Nashville Elite Giants,1930,1930,NEG,NNL
+BEG,name,Cleveland Cubs,1931,1931,CCU,NNL
+BEG,name,Nashville Elite Giants,1932,1934,NEG,NN2
+BEG,name,Columbus Elite Giants,1935,1935,CEG,NN2
+BEG,name,Washington Elite Giants,1936,1937,WEG,NN2
+BEG,name,Baltimore Elite Giants,1938,1948,BEG,NN2
+BEG,location,Nashville,1930,1930,,
+BEG,location,Cleveland,1931,1931,,
+BEG,location,Nashville,1932,1934,,
+BEG,location,Columbus,1935,1935,,
+BEG,location,Washington,1936,1937,,
+BEG,location,Baltimore,1938,1948,,
+MAR,name,Baltimore Marylands,1873,1873,BL4,NA
+MAR,location,Baltimore,1873,1873,,
+BLU,name,Baltimore Monumentals,1884,1884,BLU,UA
+BLU,location,Baltimore,1884,1884,,
+BLO,name,Baltimore Orioles,1882,1899,BLN,NL
+BLO,location,Baltimore,1882,1899,,
+BAL,name,Milwaukee Brewers,1901,1901,MLA,AL
+BAL,name,St. Louis Browns,1902,1953,SLA,AL
+BAL,name,Baltimore Orioles,1954,2025,BAL,AL
+BAL,location,Milwaukee,1901,1901,,
+BAL,location,St. Louis,1902,1953,,
+BAL,location,Baltimore,1954,2025,,
+BLT,name,Baltimore Terrapins,1914,1915,BLF,FL
+BLT,location,Baltimore,1914,1915,,
+BBB,name,Birmingham Black Barons,1923,1948,BBB,NAL
+BBB,location,Birmingham,1923,1948,,
+BOS,name,Boston Americans,1901,1907,BOS,AL
+BOS,name,Boston Red Sox,1908,2025,BOS,AL
+BOS,location,Boston,1901,2025,,
+BNA,name,Boston Red Stockings,1871,1875,BS1,NA
+BNA,location,Boston,1871,1875,,
+BRD,name,Boston Reds,1884,1884,BSU,UA
+BRD,location,Boston,1884,1884,,
+BRS,name,Boston Reds,1890,1891,BS2,AA
+BRS,location,Boston,1890,1891,,
+BRA,name,Brooklyn Atlantics,1872,1875,BR2,NA
+BRA,location,Brooklyn,1872,1875,,
+ECK,name,Brooklyn Eckfords,1872,1872,BR1,NA
+ECK,location,Brooklyn,1872,1872,,
+BRG,name,Brooklyn Gladiators,1890,1890,BR4,AA
+BRG,location,Brooklyn,1890,1890,,
+BR2,name,Brooklyn Royal Giants,1905,1927,BRG,ECL
+BR2,location,Brooklyn,1905,1927,,
+BTT,name,Brooklyn Tip-Tops,1914,1915,BRF,FL
+BTT,location,Brooklyn,1914,1915,,
+BWW,name,Brooklyn Ward's Wonders,1890,1890,BRP,PL
+BWW,location,Brooklyn,1890,1890,,
+BUF,name,Buffalo Bisons,1879,1885,BFN,NL
+BUF,location,Buffalo,1879,1885,,
+BFB,name,Buffalo Bisons,1890,1890,BFP,PL
+BFB,location,Buffalo,1890,1890,,
+BFL,name,Buffalo Buffeds,1914,1914,BUF,FL
+BFL,name,Buffalo Blues,1915,1915,BUF,FL
+BFL,location,Buffalo,1914,1915,,
+CAG,name,Chicago American Giants,1911,1930,CAG,NNL
+CAG,name,Chicago Columbia Giants,1931,1931,CC2,NNL
+CAG,name,Chicago American Giants,1932,1948,CAG,NAL
+CAG,location,Chicago,1911,1948,,
+CCG,name,Page Fence Giants,1897,1897,PFG,IND
+CCG,name,Chicago Columbia Giants,1899,1902,CCG,WES
+CCG,location,Chicago,1899,1902,,
+CHC,name,Chicago White Stockings,1876,1889,CHN,NL
+CHC,name,Chicago Colts,1890,1897,CHN,NL
+CHC,name,Chicago Orphans,1898,1902,CHN,NL
+CHC,name,Chicago Cubs,1903,2025,CHN,NL
+CHC,location,Chicago,1876,2025,,
+COG,name,Chicago Giants,1910,1921,COG,NNL
+COG,location,Chicago,1910,1921,,
+LEL,name,Chicago Leland Giants,1905,1910,LEL,WES
+LEL,location,Chicago,1905,1910,,
+CHP,name,Chicago Pirates,1890,1890,CHP,PL
+CHP,location,Chicago,1890,1890,,
+CIU,name,Chicago Unions,1897,1900,CU,IND
+CIU,location,Chicago,1897,1900,,
+CHH,name,Chicago Chi-Feds,1914,1914,CHF,FL
+CHH,name,Chicago Whales,1915,1915,CHF,FL
+CHH,location,Chicago,1914,1915,,
+CHW,name,Chicago White Sox,1901,2025,CHA,AL
+CHW,location,Chicago,1901,2025,,
+CNA,name,Chicago White Stockings,1871,1875,CH2,NA
+CNA,location,Chicago,1871,1875,,
+CPI,name,Chicago/Pittsburgh (Union League),1884,1884,CHU,UA
+CPI,location,Chicago-Pittsburgh,1884,1884,,
+CKK,name,Cincinnati Kelly's Killers,1891,1891,CN3,AA
+CKK,location,Cincinnati,1891,1891,,
+COR,name,Cincinnati Outlaw Reds,1884,1884,CNU,UA
+COR,location,Cincinnati,1884,1884,,
+CNR,name,Cincinnati Reds,1876,1880,CN1,NL
+CNR,location,Cincinnati,1876,1880,,
+CIN,name,Cincinnati Red Stockings,1882,1889,CN2,AA
+CIN,name,Cincinnati Reds,1890,1953,CIN,NL
+CIN,name,Cincinnati Redlegs,1954,1959,CIN,NL
+CIN,name,Cincinnati Reds,1960,2025,CIN,NL
+CIN,location,Cincinnati,1882,2025,,
+CT,name,Cincinnati Tigers,1937,1937,CT,NAL
+CT,location,Cincinnati,1937,1937,,
+CBL,name,Cleveland Blues,1879,1884,CL2,NL
+CBL,location,Cleveland,1879,1884,,
+CBN,name,Cleveland Browns,1924,1924,CBN,NNL
+CBN,location,Cleveland,1924,1924,,
+CBE,name,Cincinnati-Cleveland Buckeyes,1942,1942,CCB,NAL
+CBE,name,Cleveland Buckeyes,1943,1948,CBE,NAL
+CBE,location,Cincinnati-Cleveland,1942,1942,,
+CBE,location,Cleveland,1943,1948,,
+CEL,name,Cleveland Elites,1926,1926,CEL,NNL
+CEL,location,Cleveland,1926,1926,,
+CFC,name,Cleveland Forest Citys,1871,1872,CL1,NA
+CFC,location,Cleveland,1871,1872,,
+CLE,name,Cleveland Blues,1901,1901,CLE,AL
+CLE,name,Cleveland Bronchos,1902,1902,CLE,AL
+CLE,name,Cleveland Naps,1903,1914,CLE,AL
+CLE,name,Cleveland Indians,1915,2021,CLE,AL
+CLE,name,Cleveland Guardians,2022,2025,CLE,AL
+CLE,location,Cleveland,1901,2025,,
+CHT,name,Cleveland Hornets,1927,1927,CHT,NNL
+CHT,location,Cleveland,1927,1927,,
+CLI,name,Cleveland Infants,1890,1890,CLP,PL
+CLI,location,Cleveland,1890,1890,,
+CRS,name,Cleveland Red Sox,1934,1934,CRS,NN2
+CRS,location,Cleveland,1934,1934,,
+CLV,name,Cleveland Blues,1887,1888,CL3,AA
+CLV,name,Cleveland Spiders,1889,1899,CL4,NL
+CLV,location,Cleveland,1887,1899,,
+CL2,name,Cleveland Stars,1932,1932,CLS,EWL
+CL2,location,Cleveland,1932,1932,,
+CTS,name,Cleveland Tate Stars,1922,1922,CTS,NNL
+CTS,location,Cleveland,1922,1922,,
+CTG,name,Cleveland Tigers,1928,1928,CTG,NNL
+CTG,location,Cleveland,1928,1928,,
+COL,name,Colorado Rockies,1993,2025,COL,NL
+COL,location,Colorado,1993,2025,,
+CBB,name,Columbus Blue Birds,1933,1933,CBB,NN2
+CBB,location,Columbus,1933,1933,,
+CBK,name,Columbus Buckeyes,1883,1884,CL5,AA
+CBK,location,Columbus,1883,1884,,
+COB,name,Columbus Buckeyes,1921,1921,COB,NNL
+COB,location,Columbus,1921,1921,,
+CLS,name,Columbus Solons,1889,1891,CL6,AA
+CLS,location,Columbus,1889,1891,,
+COT,name,Columbus Turf Club,1932,1932,COT,NSL
+COT,location,Columbus,1932,1932,,
+CBG,name,Cuban Giants,1891,1907,CBG,NAC
+CSE,name,Cuban Stars East,1916,1929,CSE,ANL
+CSW,name,Cuban Stars of Havana,1906,1915,CSH,WES
+CSW,name,Cuban Stars West,1916,1920,CSW,NNL
+CSW,name,Cincinnati Cuban Stars,1921,1921,CS,NNL
+CSW,name,Cuban Stars West,1922,1930,CSW,NNL
+CSW,location,Cincinnati,1921,1930,,
+CXG,name,Cuban X Giants,1897,1906,CXG,EAS
+DYM,name,Dayton Marcos,1920,1926,DM,NNL
+DYM,location,Dayton,1920,1926,,
+DS,name,Detroit Stars,1919,1931,DS,NNL
+DS,location,Detroit,1919,1931,,
+DTS,name,Detroit Stars,1937,1937,DTS,NAL
+DTS,location,Detroit,1937,1937,,
+DET,name,Detroit Tigers,1901,2025,DET,AL
+DET,location,Detroit,1901,2025,,
+DTN,name,Detroit Wolverines,1881,1888,DTN,NL
+DTN,location,Detroit,1881,1888,,
+DW,name,Detroit Wolves,1932,1932,DW,EWL
+DW,location,Detroit,1932,1932,,
+RES,name,Elizabeth Resolutes,1873,1873,ELI,NA
+RES,location,Elizabeth,1873,1873,,
+KEK,name,Fort Wayne Kekiongas,1871,1871,FW1,NA
+KEK,location,Fort Wayne,1871,1871,,
+FLP,name,French Lick Plutos,1913,1913,FLP,WES
+FLP,location,French Lick,1913,1913,,
+HBG,name,Harrisburg Giants,1924,1927,HBG,ECL
+HBG,location,Harrisburg,1924,1927,,
+SNH,name,Indianapolis ABCs,1938,1938,AB3,NAL
+SNH,name,St. Louis Stars,1939,1939,SL3,NAL
+SNH,name,St. Louis-New Orleans Stars,1940,1941,SNS,NAL
+SNH,name,Harrisburg-St. Louis Stars,1943,1943,HSS,NN2
+SNH,location,Indianapolis,1938,1938,,
+SNH,location,St. Louis,1939,1943,,
+HNA,name,Hartford Dark Blues,1874,1875,HR1,NA
+HNA,location,Hartford,1874,1875,,
+HAR,name,Hartford Dark Blues,1876,1877,HAR,NL
+HAR,location,Hartford,1876,1877,,
+HIL,name,Hilldale Club,1918,1932,HIL,EWL
+HIL,location,Hilldale,1918,1932,,
+HG,name,Homestead Grays,1928,1948,HG,NN2
+HG,location,Homestead,1928,1948,,
+HOU,name,Houston Colt .45's,1962,1964,HOU,NL
+HOU,name,Houston Astros,1965,2025,HOU,AL
+HOU,location,Houston,1962,2025,,
+ABC,name,Indianapolis ABCs,1914,1926,ABC,NNL
+ABC,location,Indianapolis,1914,1926,,
+BCA,name,Atlanta Black Crackers,1932,1938,BCA,NAL
+BCA,name,Indianapolis ABCs/Atlanta Black Crackers,1939,1939,IAB,NAL
+BCA,location,Atlanta,1932,1938,,
+BCA,location,Indianapolis,1939,1939,,
+AB2,name,Indianapolis ABCs,1931,1932,AB2,NSL
+AB2,name,Indianapolis ABCs/Detroit Stars,1933,1933,ID,NN2
+AB2,location,Indianapolis,1931,1933,,
+IA,name,Indianapolis Athletics,1937,1937,IA,NAL
+IA,location,Indianapolis,1937,1937,,
+IBL,name,Indianapolis Blues,1878,1878,IN1,NL
+IBL,location,Indianapolis,1878,1878,,
+IC,name,Cincinnati Clowns,1943,1943,CC,NAL
+IC,name,Cincinnati-Indianapolis Clowns,1944,1947,CIC,NAL
+IC,name,Indianapolis Clowns,1948,1948,IC,NAL
+IC,location,Cincinnati,1943,1943,,
+IC,location,Cincinnati-Indianapolis,1944,1947,,
+IC,location,Indianapolis,1948,1948,,
+IHO,name,Indianapolis Hoosiers,1884,1884,IN2,AA
+IHO,location,Indianapolis,1884,1884,,
+IND,name,Indianapolis Hoosiers,1887,1889,IN3,NL
+IND,location,Indianapolis,1887,1889,,
+JRC,name,Jacksonville Red Caps,1938,1938,JRC,NAL
+JRC,name,Cleveland Bears,1939,1940,CBR,NAL
+JRC,name,Jacksonville Red Caps,1941,1942,JRC,NAL
+JRC,location,Jacksonville,1938,1938,,
+JRC,location,Cleveland,1939,1940,,
+JRC,location,Jacksonville,1941,1942,,
+KCU,name,Kansas City Cowboys,1884,1884,KCU,UA
+KCU,location,Kansas City,1884,1884,,
+KCN,name,Kansas City Cowboys,1886,1886,KCN,NL
+KCN,location,Kansas City,1886,1886,,
+KCC,name,Kansas City Cowboys,1888,1889,KC2,AA
+KCC,location,Kansas City,1888,1889,,
+KCG,name,Kansas City Giants,1909,1910,KCG,WES
+KCG,location,Kansas City,1909,1910,,
+KCM,name,Kansas City Monarchs,1920,1948,KCM,NAL
+KCM,location,Kansas City,1920,1948,,
+KCP,name,Kansas City Packers,1914,1915,KCF,FL
+KCP,location,Kansas City,1914,1915,,
+KRG,name,Kansas City Royal Giants,1910,1912,KRG,WES
+KRG,location,Kansas City,1910,1912,,
+KCR,name,Kansas City Royals,1969,2025,KCA,AL
+KCR,location,Kansas City,1969,2025,,
+WES,name,Keokuk Westerns,1875,1875,KEO,NA
+WES,location,Keokuk,1875,1875,,
+LRG,name,Little Rock Grays,1932,1932,LRG,NSL
+LRG,location,Little Rock,1932,1932,,
+ANA,name,Los Angeles Angels,1961,1964,LAA,AL
+ANA,name,California Angels,1965,1996,CAL,AL
+ANA,name,Anaheim Angels,1997,2004,ANA,AL
+ANA,name,Los Angeles Angels of Anaheim,2005,2025,LAA,AL
+ANA,location,Los Angeles,1961,1964,,
+ANA,location,California,1965,1996,,
+ANA,location,Anaheim,1997,2004,,
+ANA,location,Los Angeles,2005,2025,,
+LAD,name,Brooklyn Atlantics,1884,1884,BR3,AA
+LAD,name,Brooklyn Grays,1885,1887,BR3,AA
+LAD,name,Brooklyn Bridegrooms,1888,1890,BRO,NL
+LAD,name,Brooklyn Grooms,1891,1895,BRO,NL
+LAD,name,Brooklyn Bridegrooms,1896,1898,BRO,NL
+LAD,name,Brooklyn Superbas,1899,1910,BRO,NL
+LAD,name,Brooklyn Dodgers,1911,1912,BRO,NL
+LAD,name,Brooklyn Superbas,1913,1913,BRO,NL
+LAD,name,Brooklyn Robins,1914,1931,BRO,NL
+LAD,name,Brooklyn Dodgers,1932,1957,BRO,NL
+LAD,name,Los Angeles Dodgers,1958,2025,LAN,NL
+LAD,location,Brooklyn,1884,1957,,
+LAD,location,Los Angeles,1958,2025,,
+LVB,name,Louisville White Sox,1931,1931,LOW,NNL
+LVB,name,Louisville Black Caps,1932,1932,LVB,NSL
+LVB,location,Louisville,1931,1932,,
+LOU,name,Louisville Eclipse,1882,1884,LS2,AA
+LOU,name,Louisville Colonels,1885,1899,LS3,NL
+LOU,location,Louisville,1882,1899,,
+LGR,name,Louisville Grays,1876,1877,LS1,NL
+LGR,location,Louisville,1876,1877,,
+MRS,name,Memphis Red Sox,1923,1948,MRS,NAL
+MRS,location,Memphis,1923,1948,,
+FLA,name,Florida Marlins,1993,2011,FLO,NL
+FLA,name,Miami Marlins,2012,2025,MIA,NL
+FLA,location,Florida,1993,2011,,
+FLA,location,Miami,2012,2025,,
+MAN,name,Middletown Mansfields,1872,1872,MID,NA
+MAN,location,Middletown,1872,1872,,
+MB,name,Milwaukee Bears,1923,1923,MB,NNL
+MB,location,Milwaukee,1923,1923,,
+MLU,name,Milwaukee Brewers,1884,1884,MLU,UA
+MLU,location,Milwaukee,1884,1884,,
+MLA,name,Milwaukee Brewers,1891,1891,ML3,AA
+MLA,location,Milwaukee,1891,1891,,
+MIL,name,Seattle Pilots,1969,1969,SE1,AL
+MIL,name,Milwaukee Brewers,1970,2025,MIL,NL
+MIL,location,Seattle,1969,1969,,
+MIL,location,Milwaukee,1970,2025,,
+MLG,name,Milwaukee Grays,1878,1878,ML2,NL
+MLG,location,Milwaukee,1878,1878,,
+MIN,name,Washington Senators,1901,1960,WS1,AL
+MIN,name,Minnesota Twins,1961,2025,MIN,AL
+MIN,location,Washington,1901,1960,,
+MIN,location,Minnesota,1961,2025,,
+MRM,name,Monroe Monarchs,1932,1932,MRM,NSL
+MRM,location,Monroe,1932,1932,,
+MGS,name,Montgomery Grey Sox,1932,1932,MGS,NSL
+MGS,location,Montgomery,1932,1932,,
+NHV,name,New Haven Elm Citys,1875,1875,NH1,NA
+NHV,location,New Haven,1875,1875,,
+BG1,name,Atlantic City Bacharach Giants,1918,1921,AC,EAS
+BG1,name,New York Bacharach Giants,1922,1922,NYB,IND
+BG1,location,Atlantic City,1918,1921,,
+BG1,location,New York,1922,1922,,
+NBY,name,Harlem Stars,1931,1931,HAR,IND
+NBY,name,New York Black Yankees,1932,1948,NBY,NN2
+NBY,location,Harlem,1931,1931,,
+NBY,location,New York,1932,1948,,
+NYC,name,New York Cubans,1935,1948,NYC,NN2
+NYC,location,New York,1935,1948,,
+NYI,name,New York Giants,1890,1890,NYP,PL
+NYI,location,New York,1890,1890,,
+GOR,name,New York Gorhams,1891,1891,GOR,IND
+GOR,location,New York,1891,1891,,
+NLG,name,New York Lincoln Giants,1911,1930,NLG,IND
+NLG,location,New York,1911,1930,,
+NLS,name,New York Lincoln Stars,1914,1916,NLS,EAS
+NLS,location,New York,1914,1916,,
+NYP,name,New York Metropolitans,1883,1887,NY4,AA
+NYP,location,New York,1883,1887,,
+NYM,name,New York Mets,1962,2025,NYN,NL
+NYM,location,New York,1962,2025,,
+NNA,name,New York Mutuals,1871,1875,NY2,NA
+NNA,location,New York,1871,1875,,
+NYU,name,New York Mutuals,1876,1876,NY3,NL
+NYU,location,New York,1876,1876,,
+NYY,name,Baltimore Orioles,1901,1902,BLA,AL
+NYY,name,New York Highlanders,1903,1912,NYA,AL
+NYY,name,New York Yankees,1913,2025,NYA,AL
+NYY,location,Baltimore,1901,1902,,
+NYY,location,New York,1903,2025,,
+NWB,name,Newark Browns,1932,1932,NWB,EWL
+NWB,location,Newark,1932,1932,,
+ND,name,Newark Dodgers,1934,1935,ND,NN2
+ND,location,Newark,1934,1935,,
+NE,name,Brooklyn Eagles,1935,1935,BE,NN2
+NE,name,Newark Eagles,1936,1948,NE,NN2
+NE,location,Brooklyn,1935,1935,,
+NE,location,Newark,1936,1948,,
+NEW,name,Indianapolis Hoosiers,1914,1914,IND,FL
+NEW,name,Newark Pepper,1915,1915,NEW,FL
+NEW,location,Indianapolis,1914,1914,,
+NEW,location,Newark,1915,1915,,
+NS,name,Newark Stars,1926,1926,NS,ECL
+NS,location,Newark,1926,1926,,
+OKM,name,Oklahoma Monarchs,1910,1910,OKM,WES
+OKM,location,Oklahoma,1910,1910,,
+PNA,name,Philadelphia Athletics,1871,1875,PH1,NA
+PNA,location,Philadelphia,1871,1875,,
+ATH,name,Philadelphia Athletics,1876,1876,PHN,NL
+ATH,location,Philadelphia,1876,1876,,
+PHA,name,Philadelphia Athletics,1882,1890,PH4,AA
+PHA,location,Philadelphia,1882,1890,,
+PHQ,name,Philadelphia Athletics,1890,1891,PH4,AA
+PHQ,location,Philadelphia,1890,1891,,
+PBG,name,Philadelphia Bacharach Giants,1934,1934,PBG,NN2
+PBG,location,Philadelphia,1934,1934,,
+CEN,name,Philadelphia Centennials,1875,1875,PH3,NA
+CEN,location,Philadelphia,1875,1875,,
+PG,name,Philadelphia Giants,1903,1911,PG,EAS
+PG,location,Philadelphia,1903,1911,,
+PHK,name,Philadelphia Keystones,1884,1884,PHU,UA
+PHK,location,Philadelphia,1884,1884,,
+PHI,name,Philadelphia Quakers,1883,1889,PHI,NL
+PHI,name,Philadelphia Phillies,1890,1942,PHI,NL
+PHI,name,Philadelphia Blue Jays,1943,1944,PHI,NL
+PHI,name,Philadelphia Phillies,1945,2025,PHI,NL
+PHI,location,Philadelphia,1883,2025,,
+QG,name,Philadelphia Quaker Giants,1906,1906,QG,EAS
+QG,location,Philadelphia,1906,1906,,
+PS,name,Philadelphia Stars,1933,1948,PS,NN2
+PS,location,Philadelphia,1933,1948,,
+PTG,name,Philadelphia Tigers,1928,1928,PTG,ECL
+PTG,location,Philadelphia,1928,1928,,
+PWS,name,Philadelphia Whites,1873,1875,PH2,NA
+PWS,location,Philadelphia,1873,1875,,
+PBB,name,Pittsburgh Burghers,1890,1890,PTP,PL
+PBB,location,Pittsburgh,1890,1890,,
+PBK,name,Pittsburgh Keystones,1922,1922,PK,NNL
+PBK,location,Pittsburgh,1922,1922,,
+PIT,name,Pittsburg Alleghenys,1882,1890,PIT,NL
+PIT,name,Pittsburgh Pirates,1891,2025,PIT,NL
+PIT,location,Pittsburgh,1882,2025,,
+PBS,name,Pittsburgh Rebels,1914,1915,PTF,FL
+PBS,location,Pittsburgh,1914,1915,,
+CUP,name,Pollock's Cuban Stars,1932,1932,CUP,EWL
+PRO,name,Providence Grays,1878,1885,PRO,NL
+PRO,location,Providence,1878,1885,,
+RIC,name,Richmond Virginians,1884,1884,RIC,AA
+RIC,location,Richmond,1884,1884,,
+ROC,name,Rochester Broncos,1890,1890,RC2,AA
+ROC,location,Rochester,1890,1890,,
+ROK,name,Rockford Forest Citys,1871,1871,RC1,NA
+ROK,location,Rockford,1871,1871,,
+SDP,name,San Diego Padres,1969,2025,SDN,NL
+SDP,location,San Diego,1969,2025,,
+SFG,name,New York Gothams,1883,1884,NY1,NL
+SFG,name,New York Giants,1885,1957,NY1,NL
+SFG,name,San Francisco Giants,1958,2025,SFN,NL
+SFG,location,New York,1883,1957,,
+SFG,location,San Francisco,1958,2025,,
+MOH,name,Schenectady Mohawk Giants,1913,1913,MOH,EAS
+MOH,location,Schenectady,1913,1913,,
+SEA,name,Seattle Mariners,1977,2025,SEA,AL
+SEA,location,Seattle,1977,2025,,
+SNA,name,St. Louis Brown Stockings,1875,1875,SL2,NA
+SNA,location,St. Louis,1875,1875,,
+SBS,name,St. Louis Brown Stockings,1876,1877,SL3,NL
+SBS,location,St. Louis,1876,1877,,
+STL,name,St. Louis Brown Stockings,1882,1882,SL4,AA
+STL,name,St. Louis Browns,1883,1898,SLN,NL
+STL,name,St. Louis Perfectos,1899,1899,SLN,NL
+STL,name,St. Louis Cardinals,1900,2025,SLN,NL
+STL,location,St. Louis,1882,2025,,
+SLM,name,St. Louis Maroons,1884,1886,SL5,NL
+SLM,location,St. Louis,1884,1886,,
+SLR,name,St. Louis Red Stockings,1875,1875,SL1,NA
+SLR,location,St. Louis,1875,1875,,
+SLS,name,St. Louis Giants,1911,1921,SLG,NNL
+SLS,name,St. Louis Stars,1922,1931,SLS,NNL
+SLS,location,St. Louis,1911,1931,,
+SL2,name,St. Louis Stars,1937,1937,SL2,NAL
+SL2,location,St. Louis,1937,1937,,
+SLI,name,St. Louis Terriers,1914,1915,SLF,FL
+SLI,location,St. Louis,1914,1915,,
+SPG,name,St. Paul Gophers,1909,1909,SPG,WES
+SPG,location,St. Paul,1909,1909,,
+STP,name,St. Paul White Caps,1884,1884,SPU,UA
+STP,location,St. Paul,1884,1884,,
+SC1,name,Stars of Cuba,1910,1910,SC1,WES
+SYR,name,Syracuse Stars,1879,1879,SR1,NL
+SYR,location,Syracuse,1879,1879,,
+SYS,name,Syracuse Stars,1890,1890,SR2,AA
+SYS,location,Syracuse,1890,1890,,
+TBD,name,Tampa Bay Devil Rays,1998,2007,TBA,AL
+TBD,name,Tampa Bay Rays,2008,2025,TBA,AL
+TBD,location,Tampa Bay,1998,2025,,
+TEX,name,Washington Senators,1961,1971,WS2,AL
+TEX,name,Texas Rangers,1972,2025,TEX,AL
+TEX,location,Washington,1961,1971,,
+TEX,location,Texas,1972,2025,,
+TOL,name,Toledo Blue Stockings,1884,1884,TL1,AA
+TOL,location,Toledo,1884,1884,,
+TLM,name,Toledo Maumees,1890,1890,TL2,AA
+TLM,location,Toledo,1890,1890,,
+TT,name,Toledo Tigers,1923,1923,TT,NNL
+TT,location,Toledo,1923,1923,,
+PC,name,Pittsburgh Crawfords,1932,1938,PC,NN2
+PC,name,Toledo Crawfords,1939,1939,TC2,NN2
+PC,name,Toledo-Indianapolis Crawfords,1940,1940,TIC,NAL
+PC,location,Pittsburgh,1932,1938,,
+PC,location,Toledo,1939,1939,,
+PC,location,Toledo-Indianapolis,1940,1940,,
+TOR,name,Toronto Blue Jays,1977,2025,TOR,AL
+TOR,location,Toronto,1977,2025,,
+TRO,name,Troy Haymakers,1871,1872,TRO,NA
+TRO,location,Troy,1871,1872,,
+TRT,name,Troy Trojans,1879,1882,TRN,NL
+TRT,location,Troy,1879,1882,,
+SEN,name,Washington Black Senators,1938,1938,SEN,NN2
+SEN,location,Washington,1938,1938,,
+WBL,name,Washington Blue Legs,1873,1873,WS5,NA
+WBL,location,Washington,1873,1873,,
+NAT,name,Washington Nationals,1872,1872,WS4,NA
+NAT,location,Washington,1872,1872,,
+WNT,name,Washington Nationals,1875,1875,WS6,NA
+WNT,location,Washington,1875,1875,,
+WST,name,Washington Nationals,1884,1884,WS7,AA
+WST,location,Washington,1884,1884,,
+WNA,name,Washington Nationals,1884,1884,WSU,UA
+WNA,location,Washington,1884,1884,,
+WNL,name,Washington Nationals,1886,1889,WS8,NL
+WNL,location,Washington,1886,1889,,
+WSN,name,Montreal Expos,1969,2004,MON,NL
+WSN,name,Washington Nationals,2005,2025,WAS,NL
+WSN,location,Montreal,1969,2004,,
+WSN,location,Washington,2005,2025,,
+OLY,name,Washington Olympics,1871,1872,WS3,NA
+OLY,location,Washington,1871,1872,,
+WAP,name,Washington Pilots,1932,1932,WAP,EWL
+WAP,location,Washington,1932,1932,,
+WAS,name,Washington Statesmen,1891,1891,WS9,AA
+WAS,name,Washington Senators,1892,1899,WAS,NL
+WAS,location,Washington,1891,1899,,
+WBS,name,West Baden Sprudels,1910,1913,WBS,WES
+WBS,location,West Baden,1910,1913,,
+WP,name,Washington Potomacs,1924,1924,WP,ECL
+WP,name,Wilmington Potomacs,1925,1925,WMP,ECL
+WP,location,Washington,1924,1924,,
+WP,location,Wilmington,1925,1925,,
+WIL,name,Wilmington Quicksteps,1884,1884,WIL,UA
+WIL,location,Wilmington,1884,1884,,
+WOR,name,Worcester Ruby Legs,1880,1882,WOR,NL
+WOR,location,Worcester,1880,1882,,

@@ -17,6 +17,7 @@
   <nav id="tabs">
     <a href="#players" data-tab="players">Players</a>
     <a href="#teams" data-tab="teams">Seasons</a>
+    <a href="#franchises" data-tab="franchises">Franchises</a>
     <a href="#leaders" data-tab="leaders">Leaders</a>
   </nav>
 </header>
@@ -39,6 +40,21 @@
     <div id="team-list"></div>
     <div id="postseason"></div>
     <div id="team-roster"></div>
+  </section>
+
+  <!-- ============ Franchises ============ -->
+  <section id="tab-franchises" class="tab">
+    <div class="controls">
+      <label>Show <select id="franch-scope">
+        <option value="Y">Active franchises</option>
+        <option value="N">Defunct franchises</option>
+        <option value="NA">National Association</option>
+        <option value="all">All franchises</option>
+      </select></label>
+      <input id="franch-search" type="search" placeholder="Filter by name or city…" autocomplete="off">
+    </div>
+    <div id="franch-list"></div>
+    <div id="franch-detail"></div>
   </section>
 
   <!-- ============ Leaders ============ -->

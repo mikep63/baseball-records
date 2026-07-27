@@ -10,6 +10,8 @@ import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
+import franchises
+
 BASE = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE, "lahman.sqlite")
 STATIC = os.path.join(BASE, "static")
@@ -276,6 +278,41 @@ def api_roster(q, conn):
             "batters": batters, "pitchers": pitchers}
 
 
+# Franchise history costs a full pass over Teams to build, and the database
+# is read-only while the server runs, so build it once.
+_FRANCHISES = None
+
+
+def _franchises(conn):
+    global _FRANCHISES
+    if _FRANCHISES is None:
+        _FRANCHISES = franchises.build(
+            rows_to_dicts(conn.execute(
+                'SELECT franchID, yearID, teamID, lgID, name, W, L, WSWin, '
+                'LgWin FROM Teams')),
+            rows_to_dicts(conn.execute(
+                'SELECT franchID, franchName, active FROM TeamsFranchises')),
+            rows_to_dicts(conn.execute('SELECT city FROM Parks')))
+    return _FRANCHISES
+
+
+def api_franchises(q, conn):
+    return {"franchises": [franchises.summary(f) for f in _franchises(conn)]}
+
+
+def api_franchise(fid, conn):
+    f = next((x for x in _franchises(conn) if x["franchID"] == fid), None)
+    if not f:
+        return {"error": "franchise not found"}
+    seasons = rows_to_dicts(conn.execute('''
+      SELECT yearID, teamID, lgID, divID, name, Rank, G, W, L, R, RA,
+             CASE WHEN WSWin='Y' THEN 1 ELSE 0 END AS wonWS,
+             CASE WHEN LgWin='Y' THEN 1 ELSE 0 END AS wonLg
+      FROM Teams WHERE franchID = ? ORDER BY yearID''', (fid,)))
+    return {"franchise": franchises.summary(f), "eras": f["eras"],
+            "locations": f["locations"], "seasons": seasons}
+
+
 def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
     """Leader query. per_season=True ranks individual seasons; else aggregates the span."""
     if cat == "pitching":
@@ -372,6 +409,7 @@ ROUTES = {
     "roster": api_roster,
     "leaders": api_leaders,
     "leaders_range": api_leaders_range,
+    "franchises": api_franchises,
 }
 
 
@@ -391,6 +429,8 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 if len(parts) >= 3 and parts[1] == "player":
                     payload = api_player(parts[2], conn)
+                elif len(parts) >= 3 and parts[1] == "franchise":
+                    payload = api_franchise(parts[2], conn)
                 elif len(parts) >= 2 and parts[1] in ROUTES:
                     payload = ROUTES[parts[1]](q, conn)
                 else:

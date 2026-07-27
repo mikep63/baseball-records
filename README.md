@@ -77,6 +77,10 @@ use Safari's *Add to Home Screen* to run it like an app.
   awards, All-Star selections, and Hall of Fame status.
 - **Teams** — pick a year (1871–2025), see every team's record grouped by
   league/division; click a team for its full roster with high-level stats.
+- **Franchises** — all 203 franchises by their current name, with the cities
+  they played in before (Dodgers *formerly Brooklyn*, Nationals *formerly
+  Montreal*). Open one for its location timeline, every name it has ever
+  had, and a season-by-season record.
 - **Season Leaders** — pick a year, category (batting/pitching), and stat;
   top 10/25/50.
 - **Range Leaders** — pick a start year, end year, and stat (e.g. home runs
@@ -98,19 +102,41 @@ require 400 PA (or 130 IP) per year in the span, capped at 3,000 PA / 1,000 IP.
 | `data/csv/` | Lahman source CSVs (checked in) |
 | `update_data.py` | fetches the latest Lahman release and rebuilds the DB |
 | `build_db.py` | loads CSVs into `lahman.sqlite` with indexes |
+| `franchises.py` | reconstructs franchise renames/relocations from `Teams` |
 | `build_site.py` | builds the serverless GitHub Pages / PWA site into `docs/` |
 | `docs/` | static build: frontend + compact data + service worker (generated) |
 | `app.py` | JSON API + static file server (stdlib `http.server`) |
 | `static/` | single-page frontend (vanilla HTML/CSS/JS) |
 
 API endpoints: `/api/meta`, `/api/search?q=`, `/api/player/<id>`,
-`/api/teams?year=`, `/api/roster?year=&team=`,
+`/api/teams?year=`, `/api/roster?year=&team=`, `/api/franchises`,
+`/api/franchise/<franchID>`,
 `/api/leaders?year=&stat=&cat=`, `/api/leaders_range?start=&end=&stat=&cat=`.
+
+### Franchise history
+
+Lahman stores no franchise history: `TeamsFranchises` holds one flat name per
+franchise, and every rename and move is buried in the per-season `Teams.name`
+string. `franchises.py` reconstructs both, which takes three fixes:
+
+- **Names come from the latest season, not `franchName`**, which goes stale
+  (it still says *Cleveland Indians*), hides relocation (`WSN` reads
+  *Washington Nationals*, erasing the Expos), and is not unique — five
+  different franchises are named *Washington Nationals*.
+- **Eras are contiguous runs, not `GROUP BY name`.** Early nicknames were
+  informal and alternate year to year (Brooklyn ran Superbas → Dodgers →
+  Superbas → Robins → Dodgers), so min/max per name yields overlapping spans.
+- **Location comes from the name prefix, not the ballpark.** Park cities look
+  tempting but flip on temporary venues, inventing moves the franchise never
+  made. The prefix is matched against park cities plus states and regions, so
+  *Minnesota* and *Tampa Bay* resolve; an unparseable name inherits the
+  previous location rather than faking a move.
 
 ## Data & license
 
 Player and team data from the [Lahman Baseball Database](http://seanlahman.com)
 / Baseball Databank, used under
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
-The database also contains postseason stats, salaries, managers, parks,
-colleges, and more (see `data/csv/`) — plenty of room to grow.
+The database also contains postseason pitching and fielding, salaries,
+managers, award vote shares, colleges, and more (see `data/csv/`) — plenty of
+room to grow.
