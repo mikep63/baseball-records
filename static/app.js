@@ -43,6 +43,7 @@ function table(headers, rows, opts = {}) {
 }
 
 async function api(path) {
+  if (window.LocalAPI) return window.LocalAPI.handle(path); // serverless build
   const res = await fetch('/api/' + path);
   if (!res.ok) throw new Error('API error ' + res.status);
   return res.json();

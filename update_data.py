@@ -158,6 +158,11 @@ def main():
     print()
     import build_db
     build_db.main()
+    if os.path.isdir(os.path.join(BASE, "docs")):
+        print()
+        import build_site
+        build_site.main()
+        print("Commit and push docs/ to update the GitHub Pages site.")
     print("\nAll set — a running app.py picks up the new data automatically.")
 
 

@@ -12,6 +12,29 @@ python3 app.py         # serves http://127.0.0.1:8000
 Open http://127.0.0.1:8000 in your browser. On first run (or whenever the
 CSVs change) the app builds `lahman.sqlite` automatically (~30 sec).
 
+## GitHub Pages / no-server mode
+
+The `docs/` folder is a completely self-contained static build of the same
+app — all querying runs in the browser (no Python needed). To host it free
+on GitHub Pages:
+
+1. Push this repo to GitHub.
+2. Repo **Settings → Pages → Deploy from a branch** → branch `main`,
+   folder `/docs`.
+3. Your app is live at `https://<user>.github.io/baseball-records/` on any
+   device, anywhere.
+
+It's also an offline-capable PWA: open it once on your iPhone/iPad, use
+Safari's *Add to Home Screen*, and it works with no connection at all
+(a service worker caches the app and data on-device, ~5 MB download).
+
+Rebuild it after any data or frontend change with `python3 build_site.py`
+(`update_data.py` does this automatically). To preview locally:
+
+```bash
+python3 -m http.server -d docs 8001
+```
+
 ## Yearly data updates
 
 When a new season's Lahman release is out:
@@ -75,6 +98,8 @@ require 400 PA (or 130 IP) per year in the span, capped at 3,000 PA / 1,000 IP.
 | `data/csv/` | Lahman source CSVs (checked in) |
 | `update_data.py` | fetches the latest Lahman release and rebuilds the DB |
 | `build_db.py` | loads CSVs into `lahman.sqlite` with indexes |
+| `build_site.py` | builds the serverless GitHub Pages / PWA site into `docs/` |
+| `docs/` | static build: frontend + compact data + service worker (generated) |
 | `app.py` | JSON API + static file server (stdlib `http.server`) |
 | `static/` | single-page frontend (vanilla HTML/CSS/JS) |
 
