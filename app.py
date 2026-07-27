@@ -400,12 +400,25 @@ class Handler(SimpleHTTPRequestHandler):
             super().do_GET()
 
 
+def ensure_db():
+    """Build/rebuild lahman.sqlite whenever the CSVs are newer than it."""
+    csv_dir = os.path.join(BASE, "data", "csv")
+    if not os.path.isdir(csv_dir):
+        sys.exit("data/csv not found — run: python3 update_data.py")
+    csv_mtime = max(
+        os.path.getmtime(os.path.join(csv_dir, f))
+        for f in os.listdir(csv_dir) if f.endswith(".csv"))
+    if not os.path.exists(DB_PATH) or os.path.getmtime(DB_PATH) < csv_mtime:
+        print("Database missing or older than CSVs — rebuilding...")
+        import build_db
+        build_db.main()
+
+
 def main():
     args = [a for a in sys.argv[1:] if a != "--lan"]
     lan = "--lan" in sys.argv[1:]
     port = int(args[0]) if args else 8000
-    if not os.path.exists(DB_PATH):
-        sys.exit("lahman.sqlite not found — run: python3 build_db.py")
+    ensure_db()
     host = "0.0.0.0" if lan else "127.0.0.1"
     server = ThreadingHTTPServer((host, port), Handler)
     print("Baseball Records running at http://127.0.0.1:%d" % port)

@@ -6,11 +6,36 @@ Runs on the Python standard library only — no pip installs needed.
 ## Quick start
 
 ```bash
-python3 build_db.py    # one time: builds lahman.sqlite from data/csv (~30 sec)
 python3 app.py         # serves http://127.0.0.1:8000
 ```
 
-Open http://127.0.0.1:8000 in your browser.
+Open http://127.0.0.1:8000 in your browser. On first run (or whenever the
+CSVs change) the app builds `lahman.sqlite` automatically (~30 sec).
+
+## Yearly data updates
+
+When a new season's Lahman release is out:
+
+```bash
+python3 update_data.py
+```
+
+That downloads the latest CSVs, sanity-checks them (refuses truncated data or
+a year downgrade), swaps them into `data/csv/`, and rebuilds the database.
+A running `app.py` picks up the new database automatically — connections are
+per-request, so no restart is needed.
+
+Options:
+
+```bash
+python3 update_data.py --zip lahman.zip   # use a manually downloaded zip
+python3 update_data.py --url <url>        # pull from a different source
+python3 update_data.py --keep-db          # swap CSVs only; app rebuilds on next start
+```
+
+The script finds the CSV folder inside the zip wherever it lives, so it keeps
+working when the source renames its folder each year
+(`lahman_1871-2025_csv` → `lahman_1871-2026_csv`, …).
 
 ### Use it from your iPhone / iPad
 
@@ -48,6 +73,7 @@ require 400 PA (or 130 IP) per year in the span, capped at 3,000 PA / 1,000 IP.
 | Path | Purpose |
 |---|---|
 | `data/csv/` | Lahman source CSVs (checked in) |
+| `update_data.py` | fetches the latest Lahman release and rebuilds the DB |
 | `build_db.py` | loads CSVs into `lahman.sqlite` with indexes |
 | `app.py` | JSON API + static file server (stdlib `http.server`) |
 | `static/` | single-page frontend (vanilla HTML/CSS/JS) |
