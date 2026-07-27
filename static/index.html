@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Baseball Records">
+<meta name="theme-color" content="#0b3d2e">
+<title>Baseball Records — Lahman Database 1871–2025</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>⚾ Baseball Records</h1>
+  <p class="sub">Lahman Database · 1871–2025</p>
+  <nav id="tabs">
+    <a href="#players" data-tab="players">Players</a>
+    <a href="#teams" data-tab="teams">Teams</a>
+    <a href="#season" data-tab="season">Season Leaders</a>
+    <a href="#range" data-tab="range">Range Leaders</a>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ Players ============ -->
+  <section id="tab-players" class="tab">
+    <div class="controls">
+      <input id="player-search" type="search" placeholder="Search any player… (e.g. Ruth, Willie Mays)" autocomplete="off">
+    </div>
+    <div id="player-results"></div>
+    <div id="player-detail"></div>
+  </section>
+
+  <!-- ============ Teams ============ -->
+  <section id="tab-teams" class="tab">
+    <div class="controls">
+      <label>Year <select id="team-year"></select></label>
+    </div>
+    <div id="team-list"></div>
+    <div id="team-roster"></div>
+  </section>
+
+  <!-- ============ Season Leaders ============ -->
+  <section id="tab-season" class="tab">
+    <div class="controls">
+      <label>Year <select id="season-year"></select></label>
+      <label>Category <select id="season-cat">
+        <option value="batting">Batting</option>
+        <option value="pitching">Pitching</option>
+      </select></label>
+      <label>Stat <select id="season-stat"></select></label>
+      <label>Show <select id="season-limit">
+        <option>10</option><option>25</option><option>50</option>
+      </select></label>
+      <button id="season-go">Go</button>
+    </div>
+    <div id="season-results"></div>
+  </section>
+
+  <!-- ============ Range Leaders ============ -->
+  <section id="tab-range" class="tab">
+    <div class="controls">
+      <label>From <select id="range-start"></select></label>
+      <label>To <select id="range-end"></select></label>
+      <label>Category <select id="range-cat">
+        <option value="batting">Batting</option>
+        <option value="pitching">Pitching</option>
+      </select></label>
+      <label>Stat <select id="range-stat"></select></label>
+      <label>Show <select id="range-limit">
+        <option>10</option><option>25</option><option>50</option>
+      </select></label>
+      <button id="range-go">Go</button>
+    </div>
+    <p class="note" id="range-note"></p>
+    <div id="range-results"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Data: <a href="http://seanlahman.com" target="_blank" rel="noopener">Lahman Baseball Database</a> (CC BY-SA 3.0)</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
