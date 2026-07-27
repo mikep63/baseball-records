@@ -212,14 +212,23 @@ async function showTeams(year) {
   el.innerHTML = '<p class="loading">Loading…</p>';
   const d = await api('teams?year=' + year);
   if (!d.teams.length) { el.innerHTML = '<p class="note">No teams for ' + year + '.</p>'; return; }
+  const DIV_ORDER = { E: 0, C: 1, W: 2 };
+  const DIV_NAMES = { E: 'East', C: 'Central', W: 'West' };
   const groups = {};
   d.teams.forEach((t) => {
-    const key = (t.lgID || '?') + (t.divID ? ' ' + t.divID : '');
+    const key = (t.lgID || '?') + '|' + (t.divID || '');
     (groups[key] = groups[key] || []).push(t);
   });
   let html = `<h2>${year} Teams</h2>`;
-  Object.keys(groups).sort().forEach((g) => {
-    html += `<div class="team-group"><h3>${esc(g)}</h3>`;
+  const keys = Object.keys(groups).sort((a, b) => {
+    const [la, da] = a.split('|'), [lb, db] = b.split('|');
+    return la.localeCompare(lb) ||
+      (DIV_ORDER[da] ?? 9) - (DIV_ORDER[db] ?? 9) || da.localeCompare(db);
+  });
+  keys.forEach((g) => {
+    const [lg, div] = g.split('|');
+    const label = lg + (div ? ' ' + (DIV_NAMES[div] || div) : '');
+    html += `<div class="team-group"><h3>${esc(label)}</h3>`;
     html += table(['Team', 'W', 'L', 'Pct', 'R', 'RA', ''],
       groups[g].map((t) => ({ cells: [
         `<a class="team-link" href="#team/${year}/${esc(t.teamID)}">${esc(t.name)}</a>`,
