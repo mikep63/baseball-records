@@ -153,11 +153,39 @@ string. `franchises.py` reconstructs both, which takes three fixes:
   *Minnesota* and *Tampa Bay* resolve; an unparseable name inherits the
   previous location rather than faking a move.
 
+## Future work
+
+Low priority, and measured rather than guessed — the savings are small enough
+that none of this is urgent.
+
+**Trim unused indexes** (~1.4 MB, faster rebuilds). `build_db.py` indexes
+`Salaries`, `PitchingPost` and `FieldingPost`, which nothing queries. Costs
+nothing to drop; `lahman.sqlite` is gitignored, so this buys build time and
+local disk, not repo size.
+
+**Precompute the fielding export** (~5.5 MB off the user download). At 5.85 MB,
+`fielding.csv` is a third of what the PWA downloads, but it only feeds the
+career fielding-by-position table and the roster POS lookup — both of which
+want `POS, G, PO, A, E, DP` already aggregated by position. Rolling that up in
+`build_site.py`, the way `franchises.csv` is, would cut it to a few hundred KB.
+This is the one with real user-facing benefit.
+
+**Don't bother dropping unused tables from `data/csv`.** It saves 6.2 MB of
+repo and nothing for users, since `build_site.py` already exports only what it
+needs. It would also mean maintaining an allowlist in `update_data.py` that
+fails silently when it drifts, and would foreclose the features below.
+
+### Room to grow
+
+Tables the app doesn't read yet: `Managers` and `AwardsManagers` (an entire
+category of person, absent), `AwardsSharePlayers` (vote shares — "finished 2nd
+in MVP voting" is data already on disk), `PitchingPost` and `FieldingPost`
+(`BattingPost` is used, its siblings are not), `CollegePlaying` + `Schools`,
+`HomeGames`, and `FieldingOF`/`FieldingOFsplit` (the LF/CF/RF breakdown behind
+the generic OF position).
+
 ## Data & license
 
 Player and team data from the [Lahman Baseball Database](http://seanlahman.com)
 / Baseball Databank, used under
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
-The database also contains postseason pitching and fielding, salaries,
-managers, award vote shares, colleges, and more (see `data/csv/`) — plenty of
-room to grow.
