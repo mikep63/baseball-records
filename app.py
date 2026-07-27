@@ -197,8 +197,9 @@ def api_player(pid, conn):
     awards = rows_to_dicts(conn.execute('''
       SELECT awardID, yearID, lgID, notes FROM AwardsPlayers
       WHERE playerID = ? ORDER BY yearID''', (pid,)))
+    # one row per game: 1959-1962 had two All-Star games a year
     allstar = [r["yearID"] for r in conn.execute(
-        'SELECT DISTINCT yearID FROM AllstarFull WHERE playerID = ? ORDER BY yearID', (pid,))]
+        'SELECT yearID FROM AllstarFull WHERE playerID = ? ORDER BY yearID', (pid,))]
     hof = conn.execute('''
       SELECT yearid, votedBy, category FROM HallOfFame
       WHERE playerID = ? AND inducted = 'Y' ''', (pid,)).fetchone()

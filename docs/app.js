@@ -21,18 +21,53 @@ const MAJOR_AWARD_ORDER = [
 ];
 const MAJOR_AWARDS = new Set(MAJOR_AWARD_ORDER);
 
-/* award -> Set of years won, preserving no order */
+/* award -> Map(year -> times won that year).
+
+   A year's count is the most wins recorded in any single league, because
+   some sources list one honor twice — once for the league team and once
+   for an all-MLB team. Repeats within a league are real: weekly and
+   monthly awards, or a Silver Slugger won at two positions. */
 function groupAwardYears(awards) {
-  const g = new Map();
+  const byAward = new Map();
   awards.forEach((a) => {
-    let years = g.get(a.awardID);
-    if (!years) { years = new Set(); g.set(a.awardID, years); }
-    years.add(a.yearID);
+    let years = byAward.get(a.awardID);
+    if (!years) { years = new Map(); byAward.set(a.awardID, years); }
+    let leagues = years.get(a.yearID);
+    if (!leagues) { leagues = new Map(); years.set(a.yearID, leagues); }
+    const lg = a.lgID || '';
+    leagues.set(lg, (leagues.get(lg) || 0) + 1);
   });
-  return g;
+  const out = new Map();
+  byAward.forEach((years, award) => {
+    const counts = new Map();
+    years.forEach((leagues, year) => {
+      let most = 0;
+      leagues.forEach((n) => { if (n > most) most = n; });
+      counts.set(year, most);
+    });
+    out.set(award, counts);
+  });
+  return out;
 }
 
-const yearList = (years) => Array.from(years).sort((a, b) => a - b).join(', ');
+function countByYear(years) {
+  const counts = new Map();
+  years.forEach((y) => counts.set(y, (counts.get(y) || 0) + 1));
+  return counts;
+}
+
+function sumCounts(counts) {
+  let total = 0;
+  counts.forEach((n) => { total += n; });
+  return total;
+}
+
+/* "1957, 1958, 1959 (2)" — the suffix marks years with more than one. */
+function yearList(counts) {
+  return Array.from(counts.keys()).sort((a, b) => a - b)
+    .map((y) => (counts.get(y) > 1 ? `${y} (${counts.get(y)})` : `${y}`))
+    .join(', ');
+}
 
 /* ---------------------------------------------------------- formatting */
 function fmtRate3(v) { // .342
@@ -233,13 +268,15 @@ async function showPlayer(pid) {
     // one row per honor: name, how many times, and the years
     const rows = [];
     if (d.allstar.length) {
+      // two All-Star games were played each year from 1959 to 1962
+      const counts = countByYear(d.allstar);
       rows.push({ cells: [
-        'MLB All-Star', `${d.allstar.length}×`, d.allstar.join(', ')] });
+        'MLB All-Star', `${d.allstar.length}×`, yearList(counts)] });
     }
     Array.from(groupAwardYears(major).entries())
       .sort((x, y) => MAJOR_AWARD_ORDER.indexOf(x[0]) - MAJOR_AWARD_ORDER.indexOf(y[0]))
-      .forEach(([award, years]) => rows.push({ cells: [
-        esc(award), `${years.size}×`, yearList(years)] }));
+      .forEach(([award, counts]) => rows.push({ cells: [
+        esc(award), `${sumCounts(counts)}×`, yearList(counts)] }));
     if (rows.length) {
       html += table(['Honor', 'Times', 'Years'], rows, { txtCols: [0, 2] });
     } else {
@@ -249,12 +286,13 @@ async function showPlayer(pid) {
       // press, All-MLB team, and weekly/monthly honors
       const g = groupAwardYears(minor);
       const otherRows = Array.from(g.entries())
-        .sort((x, y) => y[1].size - x[1].size || x[0].localeCompare(y[0]))
-        .map(([award, years]) => ({ cells: [
-          esc(award), years.size, yearList(years)] }));
+        .map(([award, counts]) => [award, counts, sumCounts(counts)])
+        .sort((x, y) => y[2] - x[2] || x[0].localeCompare(y[0]))
+        .map(([award, counts, total]) => ({ cells: [
+          esc(award), `${total}×`, yearList(counts)] }));
       html += `<details class="more-awards">
         <summary>Other selections &amp; monthly awards (${g.size} types)</summary>
-        ${table(['Award', 'Seasons', 'Years'], otherRows, { txtCols: [0, 2] })}
+        ${table(['Award', 'Times', 'Years'], otherRows, { txtCols: [0, 2] })}
       </details>`;
     }
   }

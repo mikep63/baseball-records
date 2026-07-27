@@ -85,14 +85,9 @@ def export_data():
               [[r["playerID"], r["awardID"], r["yearID"], r["lgID"]]
                for r in read_csv("AwardsPlayers.csv")])
 
-    seen = set()
-    allstar = []
-    for r in read_csv("AllstarFull.csv"):
-        key = (r["playerID"], r["yearID"])
-        if key not in seen:
-            seen.add(key)
-            allstar.append([r["playerID"], r["yearID"]])
-    write_csv("allstar.csv", ["playerID", "yearID"], allstar)
+    # one row per game, not per season: 1959-1962 had two All-Star games
+    write_csv("allstar.csv", ["playerID", "yearID"],
+              [[r["playerID"], r["yearID"]] for r in read_csv("AllstarFull.csv")])
 
     write_csv("hof.csv", ["playerID", "yearid", "votedBy", "category"],
               [[r["playerID"], r["yearid"], r["votedBy"], r["category"]]
