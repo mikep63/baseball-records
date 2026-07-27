@@ -41,6 +41,9 @@ RATE_BATTING = {"AVG", "OBP", "SLG", "OPS"}
 RATE_PITCHING = {"ERA", "WHIP"}
 ASCENDING = {"ERA", "WHIP"}  # lower is better
 
+# Shortest schedule treated as a real season when setting a rate qualifier.
+MIN_SCHEDULE = 40
+
 def batting_expr(stat, p="b"):
     """SQL expression for a batting stat over (already aggregated) columns."""
     c = lambda col: 'CAST(%s."%s" AS REAL)' % (p, col)
@@ -334,36 +337,59 @@ def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
     else:
         group = '%s.playerID' % prefix
     sum_cols = ", ".join('SUM({p}."{c}") AS "{c}"'.format(p=prefix, c=c) for c in sums)
+
+    # Games the player's own league played, for the rate-stat qualifier
+    # below. A player traded across leagues mid-season has no single league,
+    # so he is held to the longest schedule he appeared in — exact for the
+    # overwhelming majority, conservative for the rare crossover.
+    lg_games = ""
+    if is_rate and per_season:
+        lg_games = ''',
+             MAX(COALESCE(
+               (SELECT MAX(t.G) FROM Teams t
+                 WHERE t.yearID = {p}.yearID AND t.lgID = {p}.lgID),
+               (SELECT MAX(t.G) FROM Teams t
+                 WHERE t.yearID = {p}.yearID))) AS lgGames'''.format(p=prefix)
+
     inner = '''
       SELECT {p}.playerID AS playerID, {year_col} AS yearID,
              COUNT(DISTINCT {p}.yearID) AS nyears,
              MIN({p}.yearID) AS firstYear, MAX({p}.yearID) AS lastYear,
              COUNT(DISTINCT {p}.teamID) AS nteams,
-             MIN({p}.teamID) AS teamID, {sums}
+             MIN({p}.teamID) AS teamID, {sums}{lg}
       FROM {table} {p}
       WHERE {p}.yearID BETWEEN ? AND ?
       GROUP BY {group}'''.format(
         p=prefix, year_col=('%s.yearID' % prefix) if per_season else 'NULL',
-        sums=sum_cols, table=table, group=group)
+        sums=sum_cols, lg=lg_games, table=table, group=group)
 
-    # qualifiers for rate stats (min playing time)
+    # Qualifiers for rate stats (min playing time). Single seasons follow the
+    # official rule — 3.1 PA (or 1 IP) per game the player's league played.
+    # Measuring against the whole year instead holds a short-schedule league
+    # to a longer one's bar: in 1924 the Negro Leagues played ~80 games to the
+    # AL's 157, so nobody in them could ever qualify, and in strike-shortened
+    # 1994 it cost Steve Ontiveros the AL ERA title he actually won.
+    #
+    # MIN_SCHEDULE floors that bar. Some Lahman "leagues" are barnstorming
+    # fragments of a handful of recorded games, where 3.1 per game is a bar
+    # of three plate appearances and a 1-for-1 day wins the batting title.
+    # The recognised Negro major leagues all played 40+, so the floor leaves
+    # them on the real rule and only bites the fragments.
     qual = ""
+    bar = 'MAX(x.lgGames, %d)' % MIN_SCHEDULE
     if is_rate:
         if cat == "batting":
             pa = ('(COALESCE(x."AB",0)+COALESCE(x."BB",0)+COALESCE(x."HBP",0)'
                   '+COALESCE(x."SH",0)+COALESCE(x."SF",0))')
             if per_season:
-                # ~3.1 PA per scheduled game, like the official qualifier
-                qual = ('AND %s >= 3.1 * (SELECT MAX(t.G) FROM Teams t '
-                        'WHERE t.yearID = x.yearID)' % pa)
+                qual = 'AND %s >= 3.1 * %s' % (pa, bar)
             else:
+                # not the official rule: a span-length heuristic of our own
                 min_pa = min(3000, 400 * (y1 - y0 + 1))
                 qual = 'AND %s >= %d' % (pa, min_pa)
         else:
             if per_season:
-                # 1 IP per scheduled game
-                qual = ('AND COALESCE(x."IPouts",0)/3.0 >= '
-                        '(SELECT MAX(t.G) FROM Teams t WHERE t.yearID = x.yearID)')
+                qual = 'AND COALESCE(x."IPouts",0)/3.0 >= %s' % bar
             else:
                 min_ip = min(1000, 130 * (y1 - y0 + 1))
                 qual = 'AND COALESCE(x."IPouts",0)/3.0 >= %d' % min_ip

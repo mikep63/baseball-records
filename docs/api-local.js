@@ -84,13 +84,16 @@ window.LocalAPI = (function () {
 
   function finalize() {
     IDX.person = new Map(D.people.map((p) => [p.playerID, p]));
-    IDX.maxTeamG = new Map();          // yearID -> max team G (for qualifiers)
+    IDX.maxTeamG = new Map();          // yearID -> max team G
+    IDX.lgTeamG = new Map();           // "yearID|lgID" -> max team G
     let minYear = Infinity, maxYear = 0;
     for (const t of D.teams) {
       if (t.yearID < minYear) minYear = t.yearID;
       if (t.yearID > maxYear) maxYear = t.yearID;
       const cur = IDX.maxTeamG.get(t.yearID) || 0;
       if ((t.G || 0) > cur) IDX.maxTeamG.set(t.yearID, t.G);
+      const k = t.yearID + '|' + (t.lgID || '');
+      if ((t.G || 0) > (IDX.lgTeamG.get(k) || 0)) IDX.lgTeamG.set(k, t.G);
     }
     IDX.minYear = minYear; IDX.maxYear = maxYear;
     IDX.batByPlayer = groupBy(D.batting, 'playerID');
@@ -152,6 +155,26 @@ window.LocalAPI = (function () {
 
   const paOf = (s) => nz(s.AB) + nz(s.BB) + nz(s.HBP) + nz(s.SH) + nz(s.SF);
   const round1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
+
+  /* Games the player's own league played — the base of the official rate
+     qualifier. A player traded across leagues mid-season is held to the
+     longest schedule he appeared in.
+
+     Floored at MIN_SCHEDULE: some Lahman "leagues" are barnstorming
+     fragments of a few recorded games, where 3.1 per game is a bar of three
+     plate appearances and a 1-for-1 day wins the batting title. The
+     recognised Negro major leagues all played 40+, so the floor leaves them
+     on the real rule and only bites the fragments. */
+  const MIN_SCHEDULE = 40;
+
+  function leagueGames(a) {
+    let g = 0;
+    a.lgs.forEach((lg) => {
+      const v = IDX.lgTeamG.get(a.yearID + '|' + (lg || '')) || 0;
+      if (v > g) g = v;
+    });
+    return Math.max(g || IDX.maxTeamG.get(a.yearID) || 162, MIN_SCHEDULE);
+  }
 
   /* ---------------------------------------------------- endpoints */
   function apiMeta() {
@@ -372,11 +395,12 @@ window.LocalAPI = (function () {
       let a = agg.get(key);
       if (!a) {
         a = { playerID: r.playerID, yearID: perSeason ? r.yearID : null,
-          teams: new Set(), years: new Set(), teamID: r.teamID };
+          teams: new Set(), years: new Set(), lgs: new Set(), teamID: r.teamID };
         agg.set(key, a);
       }
       a.teams.add(r.teamID);
       a.years.add(r.yearID);
+      a.lgs.add(r.lgID);
       if (r.teamID < a.teamID) a.teamID = r.teamID;
       sumInto(a, r, sumCols);
     }
@@ -390,12 +414,10 @@ window.LocalAPI = (function () {
       if (value == null) continue;
       if (isRate) {
         if (!pitching) {
-          const need = perSeason
-            ? 3.1 * (IDX.maxTeamG.get(a.yearID) || 162) : minPA;
+          const need = perSeason ? 3.1 * leagueGames(a) : minPA;
           if (paOf(a) < need) continue;
         } else {
-          const need = perSeason
-            ? (IDX.maxTeamG.get(a.yearID) || 162) : minIP;
+          const need = perSeason ? leagueGames(a) : minIP;
           if (nz(a.IPouts) / 3.0 < need) continue;
         }
       }
