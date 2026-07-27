@@ -70,7 +70,7 @@ async function api(path) {
 }
 
 /* ---------------------------------------------------------- routing */
-const TABS = ['players', 'teams', 'season', 'range'];
+const TABS = ['players', 'teams', 'leaders'];
 
 function route() {
   const hash = location.hash.slice(1) || 'players';
@@ -78,6 +78,7 @@ function route() {
   let tab = parts[0];
   if (tab === 'player') tab = 'players';
   if (tab === 'team') tab = 'teams';
+  if (tab === 'season' || tab === 'range') tab = 'leaders';  // pre-merge links
   if (!TABS.includes(tab)) tab = 'players';
   TABS.forEach((t) => {
     $('#tab-' + t).classList.toggle('active', t === tab);
@@ -434,71 +435,86 @@ function fillStats(sel, cat, selected) {
     `<option value="${k}"${k === selected ? ' selected' : ''}>${label} (${k})</option>`).join('');
 }
 
-function initSeason() {
-  fillYears($('#season-year'), META.maxYear);
-  fillStats($('#season-stat'), 'batting', 'HR');
-  $('#season-cat').addEventListener('change', () =>
-    fillStats($('#season-stat'), $('#season-cat').value, $('#season-cat').value === 'pitching' ? 'W' : 'HR'));
-  $('#season-go').addEventListener('click', runSeason);
-  runSeason();
+function initLeaders() {
+  fillYears($('#lead-year'), META.maxYear);
+  fillYears($('#lead-start'), 1990);
+  fillYears($('#lead-end'), 1999);
+  fillStats($('#lead-stat'), 'batting', 'HR');
+  $('#lead-cat').addEventListener('change', () =>
+    fillStats($('#lead-stat'), $('#lead-cat').value,
+      $('#lead-cat').value === 'pitching' ? 'W' : 'HR'));
+  $('#lead-mode').addEventListener('change', () => {
+    syncLeaderControls();
+    runLeaders();
+  });
+  $('#lead-go').addEventListener('click', runLeaders);
+  syncLeaderControls();
+  runLeaders();
 }
 
-async function runSeason() {
-  const year = $('#season-year').value, cat = $('#season-cat').value,
-    stat = $('#season-stat').value, limit = $('#season-limit').value;
-  const el = $('#season-results');
-  el.innerHTML = '<p class="loading">Loading…</p>';
-  const d = await api(`leaders?year=${year}&stat=${stat}&cat=${cat}&limit=${limit}`);
+/* Show only the year pickers the current span needs. */
+function syncLeaderControls() {
+  const mode = $('#lead-mode').value;
+  $('#lead-year-wrap').style.display = mode === 'season' ? '' : 'none';
+  $('#lead-start-wrap').style.display = mode === 'multi' ? '' : 'none';
+  $('#lead-end-wrap').style.display = mode === 'multi' ? '' : 'none';
+}
+
+async function runLeaders() {
+  const mode = $('#lead-mode').value;
+  const cat = $('#lead-cat').value;
+  const stat = $('#lead-stat').value;
+  const limit = $('#lead-limit').value;
+  const el = $('#lead-results');
+  const note = $('#lead-note');
   const label = (cat === 'pitching' ? META.pitchingStats : META.battingStats)[stat];
-  let html = `<h2>${year} ${esc(label)} Leaders</h2>`;
-  if (META.rateStats.includes(stat)) {
-    html += '<p class="note">Rate stats require qualifying playing time (≈3.1 PA or 1 IP per team game).</p>';
-  }
-  html += table(['#', 'Player', 'Team', label],
-    d.leaders.map((r, i) => ({ cells: [
-      `<span class="rank-num">${i + 1}</span>`,
-      playerLink(r.playerID, r.name),
-      r.nteams > 1 ? `${r.nteams} teams` : teamCell(r.teamID, year),
-      `<strong>${fmtStat(stat, r.value)}</strong>`] })),
-    { txtCols: [1, 2] });
-  el.innerHTML = html;
-}
+  const isRate = META.rateStats.includes(stat);
 
-function initRange() {
-  fillYears($('#range-start'), 1990);
-  fillYears($('#range-end'), 1999);
-  fillStats($('#range-stat'), 'batting', 'HR');
-  $('#range-cat').addEventListener('change', () =>
-    fillStats($('#range-stat'), $('#range-cat').value, $('#range-cat').value === 'pitching' ? 'W' : 'HR'));
-  $('#range-go').addEventListener('click', runRange);
-}
-
-async function runRange() {
-  const start = $('#range-start').value, end = $('#range-end').value,
-    cat = $('#range-cat').value, stat = $('#range-stat').value,
-    limit = $('#range-limit').value;
-  const el = $('#range-results');
-  const note = $('#range-note');
-  if (+end < +start) {
-    note.innerHTML = `<span class="warn">⚠ The ending year (${esc(end)}) is before the starting year (${esc(start)}) — please swap them.</span>`;
-    el.innerHTML = '';
-    return;
+  let path, heading, qualNote;
+  if (mode === 'season') {
+    const year = $('#lead-year').value;
+    path = `leaders?year=${year}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    heading = `${year} ${label} Leaders`;
+    qualNote = 'Rate stats require qualifying playing time (≈3.1 plate appearances or 1 inning pitched per team game).';
+  } else if (mode === 'multi') {
+    const start = $('#lead-start').value, end = $('#lead-end').value;
+    if (+end < +start) {
+      note.innerHTML = `<span class="warn">⚠ The ending year (${esc(end)}) is before the starting year (${esc(start)}) — please swap them.</span>`;
+      el.innerHTML = '';
+      return;
+    }
+    path = `leaders_range?start=${start}&end=${end}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    heading = `${label} Leaders, ${start}–${end}`;
+    qualNote = 'Rate stats require minimum playing time over the span (400 plate appearances or 130 innings pitched per year, capped at 3,000 PA / 1,000 IP).';
+  } else {
+    path = `leaders_range?start=${META.minYear}&end=${META.maxYear}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    heading = `Career ${label} Leaders`;
+    qualNote = 'Rate stats require a full career of playing time (3,000 plate appearances or 1,000 innings pitched).';
   }
-  note.textContent = '';
+
+  note.innerHTML = isRate ? qualNote : '';
   el.innerHTML = '<p class="loading">Crunching…</p>';
-  const d = await api(`leaders_range?start=${start}&end=${end}&stat=${stat}&cat=${cat}&limit=${limit}`);
-  const label = (cat === 'pitching' ? META.pitchingStats : META.battingStats)[stat];
-  let html = `<h2>${label} Leaders, ${d.start}–${d.end}</h2>`;
-  if (META.rateStats.includes(stat)) {
-    html += '<p class="note">Rate stats require minimum playing time over the span (400 PA or 130 IP per year, capped at 3000 PA / 1000 IP).</p>';
+  const d = await api(path);
+
+  let html = `<h2>${esc(heading)}</h2>`;
+  if (mode === 'season') {
+    html += table(['#', 'Player', 'Team', label],
+      d.leaders.map((r, i) => ({ cells: [
+        `<span class="rank-num">${i + 1}</span>`,
+        playerLink(r.playerID, r.name),
+        r.nteams > 1 ? `${r.nteams} teams` : teamCell(r.teamID, r.yearID),
+        `<strong>${fmtStat(stat, r.value)}</strong>`] })),
+      { txtCols: [1, 2] });
+  } else {
+    html += table(['#', 'Player', 'Seasons', 'Span', label],
+      d.leaders.map((r, i) => ({ cells: [
+        `<span class="rank-num">${i + 1}</span>`,
+        playerLink(r.playerID, r.name),
+        fmtInt(r.nyears),
+        r.firstYear === r.lastYear ? `${r.firstYear}` : `${r.firstYear}–${r.lastYear}`,
+        `<strong>${fmtStat(stat, r.value)}</strong>`] })),
+      { txtCols: [1, 3] });
   }
-  html += table(['#', 'Player', 'Seasons', label],
-    d.leaders.map((r, i) => ({ cells: [
-      `<span class="rank-num">${i + 1}</span>`,
-      playerLink(r.playerID, r.name),
-      fmtInt(r.nyears),
-      `<strong>${fmtStat(stat, r.value)}</strong>`] })),
-    { txtCols: [1] });
   el.innerHTML = html;
 }
 
@@ -507,8 +523,7 @@ async function boot() {
   META = await api('meta');
   initPlayers();
   initTeams();
-  initSeason();
-  initRange();
+  initLeaders();
   window.addEventListener('hashchange', route);
   route();
 }

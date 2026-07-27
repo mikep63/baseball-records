@@ -402,9 +402,15 @@ window.LocalAPI = (function () {
 
     function a2row(a, value) {
       const pe = IDX.person.get(a.playerID);
+      let first = Infinity, last = 0;
+      a.years.forEach((y) => {
+        if (y < first) first = y;
+        if (y > last) last = y;
+      });
       return {
         playerID: a.playerID, yearID: a.yearID,
-        nyears: a.years.size, nteams: a.teams.size, teamID: a.teamID,
+        nyears: a.years.size, firstYear: first, lastYear: last,
+        nteams: a.teams.size, teamID: a.teamID,
         value,
         name: pe ? pe.nameFirst + ' ' + pe.nameLast : a.playerID,
       };

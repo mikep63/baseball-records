@@ -295,18 +295,18 @@ def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
         group = '%s.playerID, %s.yearID' % (prefix, prefix)
     else:
         group = '%s.playerID' % prefix
-    sum_cols = ", ".join('SUM(%s."%s") AS "%s"' % (prefix, c, c) for c in sums)
+    sum_cols = ", ".join('SUM({p}."{c}") AS "{c}"'.format(p=prefix, c=c) for c in sums)
     inner = '''
-      SELECT %s.playerID AS playerID, %s AS yearID,
-             COUNT(DISTINCT %s.yearID) AS nyears,
-             COUNT(DISTINCT %s.teamID) AS nteams,
-             MIN(%s.teamID) AS teamID, %s
-      FROM %s %s
-      WHERE %s.yearID BETWEEN ? AND ?
-      GROUP BY %s''' % (
-        prefix,
-        ('%s.yearID' % prefix) if per_season else 'NULL',
-        prefix, prefix, prefix, sum_cols, table, prefix, prefix, group)
+      SELECT {p}.playerID AS playerID, {year_col} AS yearID,
+             COUNT(DISTINCT {p}.yearID) AS nyears,
+             MIN({p}.yearID) AS firstYear, MAX({p}.yearID) AS lastYear,
+             COUNT(DISTINCT {p}.teamID) AS nteams,
+             MIN({p}.teamID) AS teamID, {sums}
+      FROM {table} {p}
+      WHERE {p}.yearID BETWEEN ? AND ?
+      GROUP BY {group}'''.format(
+        p=prefix, year_col=('%s.yearID' % prefix) if per_season else 'NULL',
+        sums=sum_cols, table=table, group=group)
 
     # qualifiers for rate stats (min playing time)
     qual = ""

@@ -17,8 +17,7 @@
   <nav id="tabs">
     <a href="#players" data-tab="players">Players</a>
     <a href="#teams" data-tab="teams">Seasons</a>
-    <a href="#season" data-tab="season">Season Leaders</a>
-    <a href="#range" data-tab="range">Range Leaders</a>
+    <a href="#leaders" data-tab="leaders">Leaders</a>
   </nav>
 </header>
 
@@ -42,40 +41,29 @@
     <div id="team-roster"></div>
   </section>
 
-  <!-- ============ Season Leaders ============ -->
-  <section id="tab-season" class="tab">
+  <!-- ============ Leaders ============ -->
+  <section id="tab-leaders" class="tab">
     <div class="controls">
-      <label>Year <select id="season-year"></select></label>
-      <label>Category <select id="season-cat">
+      <label>Span <select id="lead-mode">
+        <option value="season">Single Season</option>
+        <option value="multi">Multi-Season</option>
+        <option value="career">Career</option>
+      </select></label>
+      <label id="lead-year-wrap">Year <select id="lead-year"></select></label>
+      <label id="lead-start-wrap">From <select id="lead-start"></select></label>
+      <label id="lead-end-wrap">To <select id="lead-end"></select></label>
+      <label>Category <select id="lead-cat">
         <option value="batting">Batting</option>
         <option value="pitching">Pitching</option>
       </select></label>
-      <label>Stat <select id="season-stat"></select></label>
-      <label>Show <select id="season-limit">
+      <label>Stat <select id="lead-stat"></select></label>
+      <label>Show <select id="lead-limit">
         <option>10</option><option>25</option><option>50</option>
       </select></label>
-      <button id="season-go">Go</button>
+      <button id="lead-go">Go</button>
     </div>
-    <div id="season-results"></div>
-  </section>
-
-  <!-- ============ Range Leaders ============ -->
-  <section id="tab-range" class="tab">
-    <div class="controls">
-      <label>From <select id="range-start"></select></label>
-      <label>To <select id="range-end"></select></label>
-      <label>Category <select id="range-cat">
-        <option value="batting">Batting</option>
-        <option value="pitching">Pitching</option>
-      </select></label>
-      <label>Stat <select id="range-stat"></select></label>
-      <label>Show <select id="range-limit">
-        <option>10</option><option>25</option><option>50</option>
-      </select></label>
-      <button id="range-go">Go</button>
-    </div>
-    <p class="note" id="range-note"></p>
-    <div id="range-results"></div>
+    <p class="note" id="lead-note"></p>
+    <div id="lead-results"></div>
   </section>
 </main>
 
