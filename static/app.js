@@ -680,18 +680,19 @@ async function showFranchise(fid) {
 
   if (d.seasons.length) {
     html += '<h3>Season by season</h3>';
-    html += table(['Year', 'Team', 'Lg', 'Manager', 'W', 'L', 'Pct', 'Finish', ''],
+    // manager last: it is the widest column and was pushing the record right
+    html += table(['Year', 'Team', 'Lg', 'W', 'L', 'Pct', 'Finish', '', 'Manager'],
       d.seasons.slice().reverse().map((s) => ({ cells: [
         `<a class="team-link" href="#team/${s.yearID}/${esc(s.teamID)}">${s.yearID}</a>`,
         esc(s.name), esc((s.lgID || '') + (s.divID ? ' ' + s.divID : '')),
-        managerCell(s.managers),
         fmtInt(s.W), fmtInt(s.L),
         (s.W + s.L) ? fmtRate3(s.W / (s.W + s.L)) : '—',
         s.Rank ? '#' + s.Rank : '—',
         s.wonWS ? '<span class="badge ws">WS Champs</span>'
           : (s.wonLg ? '<span class="badge">Pennant</span>' : ''),
+        managerCell(s.managers),
       ]})),
-      { txtCols: [0, 1, 2, 3, 7, 8] });
+      { txtCols: [0, 1, 2, 6, 7, 8] });
   }
   el.innerHTML = html;
 }
