@@ -121,22 +121,49 @@ def api_meta(q, conn):
 
 
 def api_search(q, conn):
+    """Name search, ranked by match quality, then fame, then playing time.
+
+    Career games alone ranks badly. It buries pitchers, who play a fraction of
+    the games a position player does — searching "young" put Cy Young fourth,
+    behind three journeyman infielders — and it buries Negro League players,
+    whose seasons were 60 to 90 games rather than 154, which cost Josh Gibson
+    to a pair of Gibsons nobody remembers. Hall of Fame membership corrects
+    both, because it does not care how the games were accumulated.
+
+    Match quality comes first regardless: a term buried mid-word ("ruth" in
+    Caruthers) should not outrank the players actually named for it.
+    """
     term = (q.get("q", [""])[0]).strip()
     if len(term) < 2:
         return {"players": []}
     like = "%" + term.replace(" ", "%") + "%"
+    low = term.lower()
     sql = '''
       SELECT p.playerID, p.nameFirst, p.nameLast, p.birthYear,
              p.debut, p.finalGame,
              (SELECT COALESCE(SUM(G_all),0) FROM Appearances a
-               WHERE a.playerID = p.playerID) AS careerG
+               WHERE a.playerID = p.playerID) AS careerG,
+             CASE WHEN EXISTS(SELECT 1 FROM HallOfFame h
+                    WHERE h.playerID = p.playerID AND h.inducted = 'Y')
+                  THEN 0 ELSE 1 END AS notHof,
+             CASE
+               WHEN LOWER(TRIM(COALESCE(p.nameFirst,'') || ' ' ||
+                               COALESCE(p.nameLast,''))) = ?
+                 OR LOWER(COALESCE(p.nameLast,'')) = ? THEN 0
+               WHEN LOWER(COALESCE(p.nameLast,'')) LIKE ? THEN 1
+               WHEN LOWER(COALESCE(p.nameFirst,'')) LIKE ?
+                 OR LOWER(TRIM(COALESCE(p.nameFirst,'') || ' ' ||
+                               COALESCE(p.nameLast,''))) LIKE ? THEN 2
+               ELSE 3
+             END AS tier
       FROM People p
       WHERE (p.nameFirst || ' ' || p.nameLast) LIKE ? COLLATE NOCASE
          OR p.nameLast LIKE ? COLLATE NOCASE
-      ORDER BY careerG DESC
+      ORDER BY tier, notHof, careerG DESC
       LIMIT 25'''
+    args = (low, low, low + "%", low + "%", low + "%", like, like)
     out = []
-    for r in conn.execute(sql, (like, like)):
+    for r in conn.execute(sql, args):
         out.append({
             "playerID": r["playerID"],
             "name": "%s %s" % (r["nameFirst"] or "", r["nameLast"] or ""),

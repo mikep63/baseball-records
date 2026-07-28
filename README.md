@@ -72,7 +72,8 @@ use Safari's *Add to Home Screen* to run it like an app.
 
 ## Features
 
-- **Players** — search any of 24,000+ players by name; see full career
+- **Players** — search any of 24,000+ players by name, ranked by how well the
+  name matches, then Hall of Fame membership, then playing time; see full career
   year-by-year batting and pitching with career totals, career fielding by
   position, plus awards, All-Star selections, and Hall of Fame status.
   Players who moved around the diamond get a position arc — Ruth reads

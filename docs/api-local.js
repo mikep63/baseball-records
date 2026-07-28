@@ -84,6 +84,7 @@ window.LocalAPI = (function () {
 
   function finalize() {
     IDX.person = new Map(D.people.map((p) => [p.playerID, p]));
+    IDX.hofIds = new Set(D.hof.map((h) => h.playerID));
     IDX.maxTeamG = new Map();          // yearID -> max team G
     IDX.lgTeamG = new Map();           // "yearID|lgID" -> max team G
     let minYear = Infinity, maxYear = 0;
@@ -185,9 +186,27 @@ window.LocalAPI = (function () {
     };
   }
 
+  /* Match quality, then fame, then playing time. Career games alone buries
+     pitchers, who play a fraction of the games a position player does, and
+     Negro League players, whose seasons ran 60 to 90 games rather than 154 —
+     which is how "young" returned three journeyman infielders above Cy Young.
+     Hall of Fame membership corrects both, since it does not care how the
+     games were accumulated. Match quality still wins: a term buried mid-word
+     ("ruth" in Caruthers) should not outrank the players named for it. */
+  function matchTier(low, p) {
+    const first = (p.nameFirst || '').toLowerCase();
+    const last = (p.nameLast || '').toLowerCase();
+    const full = (first + ' ' + last).trim();
+    if (full === low || last === low) return 0;
+    if (last.startsWith(low)) return 1;
+    if (first.startsWith(low) || full.startsWith(low)) return 2;
+    return 3;
+  }
+
   function apiSearch(q) {
     const term = (q.q || '').trim();
     if (term.length < 2) return { players: [] };
+    const low = term.toLowerCase();
     const rx = new RegExp(
       term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '.*'), 'i');
     const hits = [];
@@ -195,7 +214,10 @@ window.LocalAPI = (function () {
       const full = (p.nameFirst + ' ' + p.nameLast);
       if (rx.test(full) || rx.test(p.nameLast)) hits.push(p);
     }
-    hits.sort((a, b) => nz(b.careerG) - nz(a.careerG));
+    hits.sort((a, b) =>
+      matchTier(low, a) - matchTier(low, b) ||
+      (IDX.hofIds.has(a.playerID) ? 0 : 1) - (IDX.hofIds.has(b.playerID) ? 0 : 1) ||
+      nz(b.careerG) - nz(a.careerG));
     return {
       players: hits.slice(0, 25).map((p) => ({
         playerID: p.playerID,
