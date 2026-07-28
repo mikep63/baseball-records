@@ -523,6 +523,19 @@ def api_franchise(fid, conn):
              CASE WHEN WSWin='Y' THEN 1 ELSE 0 END AS wonWS,
              CASE WHEN LgWin='Y' THEN 1 ELSE 0 END AS wonLg
       FROM Teams WHERE franchID = ? ORDER BY yearID''', (fid,)))
+    # who ran the club, in the order they held the job — 516 seasons had two
+    # managers and one had nine, so this is a list rather than a name
+    mgrs = {}
+    for r in conn.execute('''
+      SELECT m.yearID, m.teamID, m.plyrMgr, %s AS name
+      FROM Managers m JOIN People p ON p.playerID = m.playerID
+      JOIN Teams t ON t.yearID = m.yearID AND t.teamID = m.teamID
+      WHERE t.franchID = ? ORDER BY m.yearID, m.inseason''' % full_name("p"),
+                          (fid,)):
+        mgrs.setdefault((r["yearID"], r["teamID"]), []).append(
+            {"name": r["name"], "playerMgr": r["plyrMgr"] == "Y"})
+    for s_ in seasons:
+        s_["managers"] = mgrs.get((s_["yearID"], s_["teamID"]), [])
     return {"franchise": franchises.summary(f), "eras": f["eras"],
             "locations": f["locations"], "seasons": seasons}
 

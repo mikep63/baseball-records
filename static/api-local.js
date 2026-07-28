@@ -5,7 +5,7 @@
 
 window.LocalAPI = (function () {
   const FILES = ['people', 'batting', 'pitching', 'fielding', 'teams',
-    'awards', 'allstar', 'hof', 'seriespost', 'franchises', 'franchise_eras'];
+    'awards', 'allstar', 'hof', 'seriespost', 'franchises', 'franchise_eras', 'managers'];
   // numeric columns per file (everything else stays a string)
   const NUMERIC = {
     people: ['birthYear', 'height', 'weight', 'careerG'],
@@ -22,6 +22,7 @@ window.LocalAPI = (function () {
     franchises: ['firstYear', 'lastYear', 'seasons', 'W', 'L', 'pennants',
       'titles', 'nameCount'],
     franchise_eras: ['firstYear', 'lastYear'],
+    managers: ['yearID', 'inseason', 'G', 'W', 'L'],
   };
 
   const BATTING_STATS = {
@@ -126,6 +127,14 @@ window.LocalAPI = (function () {
     IDX.fldByPlayer = groupBy(D.fielding, 'playerID');
     IDX.teamsByFranch = groupBy(D.teams, 'franchID');
     IDX.erasByFranch = groupBy(D.franchise_eras || [], 'franchID');
+    // who ran each club that year, in the order they held the job
+    IDX.mgrByTeamYear = new Map();
+    for (const m of (D.managers || []).slice()
+        .sort((a, b) => a.inseason - b.inseason)) {
+      const k = m.yearID + '|' + m.teamID;
+      if (!IDX.mgrByTeamYear.has(k)) IDX.mgrByTeamYear.set(k, []);
+      IDX.mgrByTeamYear.get(k).push(m);
+    }
     readyResolve();
   }
 
@@ -643,6 +652,12 @@ window.LocalAPI = (function () {
         yearID: t.yearID, teamID: t.teamID, lgID: t.lgID, divID: t.divID,
         name: t.name, Rank: t.Rank, G: t.G, W: t.W, L: t.L, R: t.R, RA: t.RA,
         wonWS: t.WSWin === 'Y' ? 1 : 0, wonLg: t.LgWin === 'Y' ? 1 : 0,
+        managers: (IDX.mgrByTeamYear.get(t.yearID + '|' + t.teamID) || [])
+          .map((m) => {
+            const pe = IDX.person.get(m.playerID);
+            return { name: pe ? fullName(pe) : m.playerID,
+              playerMgr: m.plyrMgr === 'Y' };
+          }),
       }));
     return {
       franchise: franchiseSummary(f),

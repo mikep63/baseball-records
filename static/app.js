@@ -376,6 +376,17 @@ function teamCell(teamID, yearID) {
   return `<a class="team-link" href="#team/${yearID}/${esc(teamID)}">${esc(teamID)}</a>`;
 }
 
+/* Who ran the club that year. 516 seasons had two managers and one had nine,
+   so the first two are named and the rest counted rather than filling the
+   column. A dagger marks a player-manager. */
+function managerCell(mgrs) {
+  if (!mgrs || !mgrs.length) return '—';
+  const shown = mgrs.slice(0, 2).map((m) =>
+    esc(m.name) + (m.playerMgr ? '<span class="mgr-p" title="player-manager">†</span>' : ''));
+  const rest = mgrs.length - shown.length;
+  return shown.join(', ') + (rest ? `<span class="mgr-more"> +${rest}</span>` : '');
+}
+
 /* The season a line belongs to, opening the Seasons tab on it — standings,
    postseason and that year's league leaders. The team cell beside it goes to
    the roster instead, so a career line reaches both. */
@@ -669,17 +680,18 @@ async function showFranchise(fid) {
 
   if (d.seasons.length) {
     html += '<h3>Season by season</h3>';
-    html += table(['Year', 'Team', 'Lg', 'W', 'L', 'Pct', 'Finish', ''],
+    html += table(['Year', 'Team', 'Lg', 'Manager', 'W', 'L', 'Pct', 'Finish', ''],
       d.seasons.slice().reverse().map((s) => ({ cells: [
         `<a class="team-link" href="#team/${s.yearID}/${esc(s.teamID)}">${s.yearID}</a>`,
         esc(s.name), esc((s.lgID || '') + (s.divID ? ' ' + s.divID : '')),
+        managerCell(s.managers),
         fmtInt(s.W), fmtInt(s.L),
         (s.W + s.L) ? fmtRate3(s.W / (s.W + s.L)) : '—',
         s.Rank ? '#' + s.Rank : '—',
         s.wonWS ? '<span class="badge ws">WS Champs</span>'
           : (s.wonLg ? '<span class="badge">Pennant</span>' : ''),
       ]})),
-      { txtCols: [0, 1, 2, 6, 7] });
+      { txtCols: [0, 1, 2, 3, 7, 8] });
   }
   el.innerHTML = html;
 }

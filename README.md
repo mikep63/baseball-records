@@ -84,7 +84,8 @@ use Safari's *Add to Home Screen* to run it like an app.
 - **Franchises** — all 203 franchises by their current name, with the cities
   they played in before (Dodgers *formerly Brooklyn*, Nationals *formerly
   Montreal*). Open one for its location timeline, every name it has ever
-  had, and a season-by-season record.
+  had, and a season-by-season record with the manager who ran the club that
+  year — all of them, in order, when the job changed hands mid-season.
 - **Leaders** — one tab with five spans, top 10/25/50 for any stat:
   *Season* (the best individual seasons — Bonds' 73 in 2001), *Year by Year*
   (every league's leader in every year, newest first — the whole line of
@@ -232,8 +233,8 @@ fails silently when it drifts, and would foreclose the features below.
 
 ### Room to grow
 
-Tables the app doesn't read yet: `Managers` and `AwardsManagers` (an entire
-category of person, absent), `AwardsSharePlayers` (vote shares — "finished 2nd
+Tables the app doesn't read yet: `AwardsManagers` (manager honours — the
+managers themselves are now on each franchise page), `AwardsSharePlayers` (vote shares — "finished 2nd
 in MVP voting" is data already on disk), `PitchingPost` and `FieldingPost`
 (`BattingPost` is used, its siblings are not), `CollegePlaying` + `Schools`,
 `HomeGames`, and `FieldingOF`/`FieldingOFsplit` (the LF/CF/RF breakdown behind

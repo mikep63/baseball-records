@@ -121,6 +121,12 @@ def export_data():
 
     export_franchises()
 
+    # who ran each club, in the order they held the job that year
+    mgr_cols = ["playerID", "yearID", "teamID", "inseason", "G", "W", "L",
+                "plyrMgr"]
+    write_csv("managers.csv", mgr_cols,
+              [[r[c] for c in mgr_cols] for r in read_csv("Managers.csv")])
+
     write_csv("awards.csv", ["playerID", "awardID", "yearID", "lgID"],
               [[r["playerID"], r["awardID"], r["yearID"], r["lgID"]]
                for r in read_csv("AwardsPlayers.csv")])
@@ -140,7 +146,8 @@ def export_data():
 
 DATA_FILES = ["people.csv", "batting.csv", "pitching.csv", "fielding.csv",
               "teams.csv", "awards.csv", "allstar.csv", "hof.csv",
-              "seriespost.csv", "franchises.csv", "franchise_eras.csv"]
+              "seriespost.csv", "franchises.csv", "franchise_eras.csv",
+              "managers.csv"]
 
 # ------------------------------------------------------------- icon (pure py)
 

@@ -265,3 +265,7 @@ footer p { line-height: 1.6; }
 .segmented button:last-child { border-right: 0; }
 .segmented button:hover { background: var(--row-alt); }
 .segmented button.on { background: var(--green); color: #fff; }
+
+/* franchise season list: manager column */
+.mgr-p { color: var(--accent); font-weight: bold; }
+.mgr-more { color: var(--muted); font-size: .8em; }
