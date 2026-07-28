@@ -126,6 +126,15 @@ async function api(path) {
   return res.json();
 }
 
+/* Identity, shown on the About page. APP_BUILD is stamped by build_site.py
+   for the published site and stays "dev" when app.py serves static/ directly,
+   so a bug report can say which copy it came from — the service worker caches
+   the app on-device, and a tester may be running an older bundle than the one
+   that is live. */
+const APP_NAME = 'Baseball Records';
+const APP_VERSION = '1.0 beta';
+const APP_BUILD = 'b46ec118b7a1';
+
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
 
@@ -857,7 +866,8 @@ async function runLeaders() {
 function showAbout() {
   const el = $('#about-version');
   if (el && !el.textContent) {
-    el.textContent = `Seasons ${META.minYear}–${META.maxYear}.`;
+    el.textContent = `${APP_NAME} ${APP_VERSION} · build ${APP_BUILD} · `
+      + `seasons ${META.minYear}–${META.maxYear}`;
   }
 }
 

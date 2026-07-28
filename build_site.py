@@ -235,15 +235,33 @@ def build_site():
     with open(os.path.join(DOCS, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=2)
 
-    # version = hash of the data + code, so the service worker refreshes caches
+    # version = hash of the data + code, so the service worker refreshes caches.
+    # app.js is read from static/ rather than docs/ because the build id gets
+    # stamped into the copy below: hashing the stamped file would feed its own
+    # output back in and produce a fresh version on every build, even when
+    # nothing changed.
     h = hashlib.sha256()
     for name in DATA_FILES:
         with open(os.path.join(DATA_OUT, name), "rb") as f:
             h.update(f.read())
-    for name in ["index.html", "style.css", "app.js", "api-local.js"]:
-        with open(os.path.join(DOCS, name), "rb") as f:
+    for path in [os.path.join(DOCS, "index.html"),
+                 os.path.join(DOCS, "style.css"),
+                 os.path.join(BASE, "static", "app.js"),
+                 os.path.join(DOCS, "api-local.js")]:
+        with open(path, "rb") as f:
             h.update(f.read())
     version = h.hexdigest()[:12]
+
+    # stamp the build id so a bug report can say which copy it came from
+    app_path = os.path.join(DOCS, "app.js")
+    with open(app_path, encoding="utf-8") as f:
+        app_js = f.read()
+    stamped = app_js.replace("const APP_BUILD = 'dev';",
+                             "const APP_BUILD = '%s';" % version, 1)
+    if stamped == app_js:
+        raise SystemExit("build_site.py: APP_BUILD placeholder not found in app.js")
+    with open(app_path, "w", encoding="utf-8") as f:
+        f.write(stamped)
 
     assets = (["./", "index.html", "style.css", "app.js", "api-local.js",
                "manifest.json", "icon-180.png", "icon-512.png"]

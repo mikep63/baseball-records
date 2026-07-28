@@ -148,7 +148,8 @@ any official rule: 400 PA (or 130 IP) per year in the span, capped at
 | `update_data.py` | fetches the latest Lahman release and rebuilds the DB |
 | `build_db.py` | loads CSVs into `lahman.sqlite` with indexes |
 | `franchises.py` | reconstructs franchise renames/relocations from `Teams` |
-| `build_site.py` | builds the serverless GitHub Pages / PWA site into `docs/` |
+| `build_site.py` | builds the serverless GitHub Pages / PWA site into `docs/`,
+  stamping the build id into `app.js` so About can report it |
 | `docs/` | static build: frontend + compact data + service worker (generated) |
 | `app.py` | JSON API + static file server (stdlib `http.server`) |
 | `static/` | single-page frontend (vanilla HTML/CSS/JS) |
