@@ -84,8 +84,9 @@ use Safari's *Add to Home Screen* to run it like an app.
 - **Franchises** — all 203 franchises by their current name, with the cities
   they played in before (Dodgers *formerly Brooklyn*, Nationals *formerly
   Montreal*). Open one for its location timeline, every name it has ever
-  had, and a season-by-season record with the manager who ran the club that
-  year — all of them, in order, when the job changed hands mid-season.
+  had, and a season-by-season record with how each October ended — *WS Champs*,
+  *Lost NLCS*, *Lost ALWC* — and the manager who ran the club that year, all of
+  them in order when the job changed hands mid-season.
 - **Leaders** — one tab with five spans, top 10/25/50 for any stat:
   *Season* (the best individual seasons — Bonds' 73 in 2001), *Year by Year*
   (every league's leader in every year, newest first — the whole line of

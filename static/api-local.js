@@ -128,6 +128,16 @@ window.LocalAPI = (function () {
     IDX.teamsByFranch = groupBy(D.teams, 'franchID');
     IDX.erasByFranch = groupBy(D.franchise_eras || [], 'franchID');
     // who ran each club that year, in the order they held the job
+    // every series a club played that October, for the franchise page
+    IDX.postByTeamYear = new Map();
+    for (const s of D.seriespost) {
+      for (const [tid, won] of [[s.teamIDwinner, 1], [s.teamIDloser, 0]]) {
+        if (!tid) continue;
+        const k = s.yearID + '|' + tid;
+        if (!IDX.postByTeamYear.has(k)) IDX.postByTeamYear.set(k, []);
+        IDX.postByTeamYear.get(k).push({ round: s.round, won });
+      }
+    }
     IDX.mgrByTeamYear = new Map();
     for (const m of (D.managers || []).slice()
         .sort((a, b) => a.inseason - b.inseason)) {
@@ -652,6 +662,7 @@ window.LocalAPI = (function () {
         yearID: t.yearID, teamID: t.teamID, lgID: t.lgID, divID: t.divID,
         name: t.name, Rank: t.Rank, G: t.G, W: t.W, L: t.L, R: t.R, RA: t.RA,
         wonWS: t.WSWin === 'Y' ? 1 : 0, wonLg: t.LgWin === 'Y' ? 1 : 0,
+        post: IDX.postByTeamYear.get(t.yearID + '|' + t.teamID) || [],
         managers: (IDX.mgrByTeamYear.get(t.yearID + '|' + t.teamID) || [])
           .map((m) => {
             const pe = IDX.person.get(m.playerID);

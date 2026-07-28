@@ -376,6 +376,29 @@ function teamCell(teamID, yearID) {
   return `<a class="team-link" href="#team/${yearID}/${esc(teamID)}">${esc(teamID)}</a>`;
 }
 
+/* How the postseason ended, from the deepest series the club played: lost it,
+   or won it and so took that bracket. ROUND_INFO already orders the rounds for
+   the postseason bracket, so the depth comes from there rather than a second
+   ordering. Trailing digits go — ALDS1 and ALDS2 are both the Division Series.
+
+   52 pennant winners played no series at all, nearly all of them before the
+   World Series existed, so the league flags stay as the fallback. */
+function postBadge(s) {
+  let best = null;
+  for (const x of (s.post || [])) {
+    const order = (ROUND_INFO[x.round] || [9])[0];
+    if (!best || order > best.order) best = { order, round: x.round, won: x.won };
+  }
+  if (best) {
+    const label = esc(best.round.replace(/\d+$/, ''));
+    return best.won ? `<span class="badge ws">${label} Champs</span>`
+      : `<span class="badge post">Lost ${label}</span>`;
+  }
+  if (s.wonWS) return '<span class="badge ws">WS Champs</span>';
+  if (s.wonLg) return '<span class="badge">Pennant</span>';
+  return '';
+}
+
 /* Who ran the club that year. 516 seasons had two managers and one had nine,
    so the first two are named and the rest counted rather than filling the
    column. A dagger marks a player-manager. */
@@ -688,8 +711,7 @@ async function showFranchise(fid) {
         fmtInt(s.W), fmtInt(s.L),
         (s.W + s.L) ? fmtRate3(s.W / (s.W + s.L)) : '—',
         s.Rank ? '#' + s.Rank : '—',
-        s.wonWS ? '<span class="badge ws">WS Champs</span>'
-          : (s.wonLg ? '<span class="badge">Pennant</span>' : ''),
+        postBadge(s),
         managerCell(s.managers),
       ]})),
       { txtCols: [0, 1, 2, 6, 7, 8] });

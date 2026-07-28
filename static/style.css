@@ -269,3 +269,5 @@ footer p { line-height: 1.6; }
 /* franchise season list: manager column */
 .mgr-p { color: var(--accent); font-weight: bold; }
 .mgr-more { color: var(--muted); font-size: .8em; }
+/* reached the postseason but did not win it */
+.badge.post { background: #e8e3d6; color: var(--muted); border: 1px solid var(--line); }

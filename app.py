@@ -534,8 +534,25 @@ def api_franchise(fid, conn):
                           (fid,)):
         mgrs.setdefault((r["yearID"], r["teamID"]), []).append(
             {"name": r["name"], "playerMgr": r["plyrMgr"] == "Y"})
+    # every series the club played that October. The rounds are sent raw and
+    # ranked in the browser, which already orders them for the postseason
+    # bracket — duplicating that ordering here would be a second copy to drift.
+    post = {}
+    for r in conn.execute('''
+      SELECT s.yearID, s.round, s.teamIDwinner AS tid, 1 AS won
+        FROM SeriesPost s JOIN Teams t
+          ON t.yearID = s.yearID AND t.teamID = s.teamIDwinner
+        WHERE t.franchID = ?
+      UNION ALL
+      SELECT s.yearID, s.round, s.teamIDloser, 0
+        FROM SeriesPost s JOIN Teams t
+          ON t.yearID = s.yearID AND t.teamID = s.teamIDloser
+        WHERE t.franchID = ?''', (fid, fid)):
+        post.setdefault((r["yearID"], r["tid"]), []).append(
+            {"round": r["round"], "won": r["won"]})
     for s_ in seasons:
         s_["managers"] = mgrs.get((s_["yearID"], s_["teamID"]), [])
+        s_["post"] = post.get((s_["yearID"], s_["teamID"]), [])
     return {"franchise": franchises.summary(f), "eras": f["eras"],
             "locations": f["locations"], "seasons": seasons}
 
