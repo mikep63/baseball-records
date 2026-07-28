@@ -85,10 +85,16 @@ use Safari's *Add to Home Screen* to run it like an app.
   Montreal*). Open one for its location timeline, every name it has ever
   had, and a season-by-season record.
 - **Leaders** — one tab with four spans, top 10/25/50 for any stat:
-  *Single Season* (1927 home runs), *Best Seasons* (the greatest individual
-  seasons ever, or within a range — Bonds' 73 in 2001, Kilroy's 513 strikeouts
-  in 1886), *Multi-Season* (totals over a span, e.g. home runs 1990–1999), and
-  *Career*.
+  *Single Year* (1927 home runs), *Season* (the best individual seasons —
+  Bonds' 73 in 2001), *Multi-Year* (totals over a span, e.g. home runs
+  1990–1999), and *Career*.
+
+  *Season* picks its span by era rather than year pair — **All time**,
+  **Classic 1901+**, **Modern 1969+**, or Custom — because the answer changes
+  completely with the era, and that is the point. All-time strikeouts gives
+  Matt Kilroy's 513 in 1886, when pitchers threw 500 innings; Modern gives
+  Nolan Ryan's 383. All-time batting average gives an 1871 oddity; Modern
+  gives Tony Gwynn's .394.
 
 ### Stats available
 

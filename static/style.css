@@ -240,3 +240,16 @@ footer p { line-height: 1.6; }
   background: var(--green); color: #fff; border-radius: 4px; padding: .1rem .35rem;
   margin-right: .2rem; }
 .pos-sep { color: var(--muted); font-size: .8rem; padding: 0 .1rem; }
+
+/* era picker: a few named spans, so a segmented control rather than a slider */
+#lead-era-wrap { display: flex; flex-direction: column; gap: .2rem; }
+.seg-label { font-size: .8rem; color: var(--muted); }
+.segmented { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.segmented button {
+  font: inherit; font-size: .82rem; border: 0; background: #fff;
+  color: var(--muted); padding: .32rem .6rem; cursor: pointer;
+  border-right: 1px solid var(--line); white-space: nowrap;
+}
+.segmented button:last-child { border-right: 0; }
+.segmented button:hover { background: var(--row-alt); }
+.segmented button.on { background: var(--green); color: #fff; }

@@ -159,7 +159,7 @@ function openLeaders(year, cat, stat) {
   const c = cat === 'pitching' ? 'pitching' : 'batting';
   const stats = c === 'pitching' ? META.pitchingStats : META.battingStats;
   const s = stat in stats ? stat : (c === 'pitching' ? 'W' : 'HR');
-  $('#lead-mode').value = 'season';
+  $('#lead-mode').value = 'year';
   $('#lead-year').value = year;
   $('#lead-cat').value = c;
   fillStats($('#lead-stat'), c, s);
@@ -650,6 +650,40 @@ async function showFranchise(fid) {
   el.innerHTML = html;
 }
 
+/* Season spans are asked in eras, not year pairs. "All time" is every year
+   in the data; the other two are the conventional openings — 1901 for the
+   American League, 1969 for divisional play. Labels carry the year so they
+   do not depend on whose definition of "modern" the reader holds.
+
+   Custom keeps the From/To pickers reachable: without it "best home run
+   seasons of the 1990s" would no longer be askable. */
+const LEAD_ERAS = [
+  { id: 'all', label: 'All time', from: null },
+  { id: 'classic', label: 'Classic 1901+', from: 1901 },
+  { id: 'modern', label: 'Modern 1969+', from: 1969 },
+  { id: 'custom', label: 'Custom', from: null },
+];
+let leadEra = 'all';
+
+function eraRange() {
+  const e = LEAD_ERAS.find((x) => x.id === leadEra);
+  return { start: e && e.from ? e.from : META.minYear, end: META.maxYear };
+}
+
+function initEras() {
+  $('#lead-era').innerHTML = LEAD_ERAS.map((e) =>
+    `<button type="button" data-era="${e.id}"${e.id === leadEra ? ' class="on"' : ''}>${esc(e.label)}</button>`).join('');
+  $('#lead-era').addEventListener('click', (ev) => {
+    const b = ev.target.closest('button[data-era]');
+    if (!b) return;
+    leadEra = b.dataset.era;
+    Array.from($('#lead-era').children).forEach((c) =>
+      c.classList.toggle('on', c.dataset.era === leadEra));
+    syncLeaderControls();
+    runLeaders();
+  });
+}
+
 /* ---------------------------------------------------------- leaders tabs */
 function fillYears(sel, selected) {
   const opts = [];
@@ -670,6 +704,7 @@ function initLeaders() {
   fillYears($('#lead-start'), 1990);
   fillYears($('#lead-end'), 1999);
   fillStats($('#lead-stat'), 'batting', 'HR');
+  initEras();
   $('#lead-cat').addEventListener('change', () =>
     fillStats($('#lead-stat'), $('#lead-cat').value,
       $('#lead-cat').value === 'pitching' ? 'W' : 'HR'));
@@ -687,13 +722,14 @@ let lastLeaderMode = null;
 
 function syncLeaderControls() {
   const mode = $('#lead-mode').value;
-  const ranged = mode === 'multi' || mode === 'best';
-  $('#lead-year-wrap').style.display = mode === 'season' ? '' : 'none';
-  $('#lead-start-wrap').style.display = ranged ? '' : 'none';
-  $('#lead-end-wrap').style.display = ranged ? '' : 'none';
-  // Best Seasons is asked all-time far more often than of a decade, so it
-  // opens on the full range; narrowing it afterwards still works.
-  if (mode === 'best' && lastLeaderMode !== 'best') {
+  // Season picks an era; Multi-Year still takes an explicit year pair, and
+  // Season falls back to the same pair when its era is Custom.
+  const pair = mode === 'multi' || (mode === 'season' && leadEra === 'custom');
+  $('#lead-year-wrap').style.display = mode === 'year' ? '' : 'none';
+  $('#lead-era-wrap').style.display = mode === 'season' ? '' : 'none';
+  $('#lead-start-wrap').style.display = pair ? '' : 'none';
+  $('#lead-end-wrap').style.display = pair ? '' : 'none';
+  if (mode === 'season' && leadEra === 'custom' && lastLeaderMode !== 'season') {
     $('#lead-start').value = META.minYear;
     $('#lead-end').value = META.maxYear;
   }
@@ -711,22 +747,29 @@ async function runLeaders() {
   const isRate = META.rateStats.includes(stat);
 
   let path, heading, qualNote;
-  if (mode === 'season') {
+  if (mode === 'year') {
     const year = $('#lead-year').value;
     path = `leaders?year=${year}&stat=${stat}&cat=${cat}&limit=${limit}`;
     heading = `${year} ${label} Leaders`;
     qualNote = 'Rate stats require qualifying playing time (≈3.1 plate appearances or 1 inning pitched per team game).';
-  } else if (mode === 'best') {
-    const start = $('#lead-start').value, end = $('#lead-end').value;
-    if (+end < +start) {
-      note.innerHTML = `<span class="warn">⚠ The ending year (${esc(end)}) is before the starting year (${esc(start)}) — please swap them.</span>`;
-      el.innerHTML = '';
-      return;
+  } else if (mode === 'season') {
+    let start, end, suffix;
+    if (leadEra === 'custom') {
+      start = $('#lead-start').value; end = $('#lead-end').value;
+      if (+end < +start) {
+        note.innerHTML = `<span class="warn">⚠ The ending year (${esc(end)}) is before the starting year (${esc(start)}) — please swap them.</span>`;
+        el.innerHTML = '';
+        return;
+      }
+      suffix = `, ${start}–${end}`;
+    } else {
+      const r = eraRange();
+      start = r.start; end = r.end;
+      suffix = leadEra === 'all' ? ''
+        : ` (${LEAD_ERAS.find((x) => x.id === leadEra).label})`;
     }
     path = `best_seasons?start=${start}&end=${end}&stat=${stat}&cat=${cat}&limit=${limit}`;
-    const allTime = +start === META.minYear && +end === META.maxYear;
-    heading = allTime ? `Best Seasons: ${label}`
-      : `Best Seasons: ${label}, ${start}–${end}`;
+    heading = `Best Seasons: ${label}${suffix}`;
     qualNote = 'Rate stats require qualifying playing time in that season (≈3.1 plate appearances or 1 inning pitched per game the player\'s league played).';
   } else if (mode === 'multi') {
     const start = $('#lead-start').value, end = $('#lead-end').value;
@@ -755,7 +798,7 @@ async function runLeaders() {
       ? ' — nobody reached the minimum playing time that season.' : '.'}</p>`;
     return;
   }
-  if (mode === 'best') {
+  if (mode === 'season') {
     // one row per player-season, so the year carries the meaning here
     html += table(['#', 'Player', 'Year', 'Team', label],
       d.leaders.map((r, i) => ({ cells: [
@@ -765,7 +808,7 @@ async function runLeaders() {
         r.nteams > 1 ? `${r.nteams} teams` : teamCell(r.teamID, r.yearID),
         `<strong>${fmtStat(stat, r.value)}</strong>`] })),
       { txtCols: [1, 2, 3] });
-  } else if (mode === 'season') {
+  } else if (mode === 'year') {
     html += table(['#', 'Player', 'Team', label],
       d.leaders.map((r, i) => ({ cells: [
         `<span class="rank-num">${i + 1}</span>`,

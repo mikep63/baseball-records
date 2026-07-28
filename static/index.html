@@ -138,12 +138,14 @@
   <section id="tab-leaders" class="tab">
     <div class="controls">
       <label>Span <select id="lead-mode">
-        <option value="season">Single Season</option>
-        <option value="best">Best Seasons</option>
-        <option value="multi">Multi-Season</option>
+        <option value="year">Single Year</option>
+        <option value="season">Season</option>
+        <option value="multi">Multi-Year</option>
         <option value="career">Career</option>
       </select></label>
       <label id="lead-year-wrap">Year <select id="lead-year"></select></label>
+      <span id="lead-era-wrap"><span class="seg-label">Era</span>
+        <span id="lead-era" class="segmented" role="group" aria-label="Era"></span></span>
       <label id="lead-start-wrap">From <select id="lead-start"></select></label>
       <label id="lead-end-wrap">To <select id="lead-end"></select></label>
       <label>Category <select id="lead-cat">
