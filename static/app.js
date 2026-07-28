@@ -129,15 +129,20 @@ async function api(path) {
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
 
+/* Seasons opens the app: standings and a dashboard of every league's leaders
+   give something to read straight away, where the search box gives an empty
+   field and no hint of what is behind it. */
+const HOME_TAB = 'teams';
+
 function route() {
-  const hash = location.hash.slice(1) || 'players';
+  const hash = location.hash.slice(1) || HOME_TAB;
   const parts = hash.split('/');
   let tab = parts[0];
   if (tab === 'player') tab = 'players';
   if (tab === 'team') tab = 'teams';
   if (tab === 'franchise') tab = 'franchises';
   if (tab === 'season' || tab === 'range') tab = 'leaders';  // pre-merge links
-  if (!TABS.includes(tab)) tab = 'players';
+  if (!TABS.includes(tab)) tab = HOME_TAB;
   TABS.forEach((t) => {
     $('#tab-' + t).classList.toggle('active', t === tab);
   });
