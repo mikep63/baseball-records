@@ -177,12 +177,28 @@ that none of this is urgent.
 nothing to drop; `lahman.sqlite` is gitignored, so this buys build time and
 local disk, not repo size.
 
-**Precompute the fielding export** (~5.5 MB off the user download). At 5.85 MB,
-`fielding.csv` is a third of what the PWA downloads, but it only feeds the
-career fielding-by-position table and the roster POS lookup — both of which
-want `POS, G, PO, A, E, DP` already aggregated by position. Rolling that up in
-`build_site.py`, the way `franchises.csv` is, would cut it to a few hundred KB.
-This is the one with real user-facing benefit.
+**Precompute the fielding export** (1.97 MB raw, 0.70 MB gzipped — a 13%
+smaller first install). `fielding.csv` is 5.85 MB of raw player/season/team/
+position rows feeding just two views, which collapse very differently:
+
+| | Rows | Size | Gzipped |
+|---|---|---|---|
+| today | 174,332 | 5.85 MB | 1.57 MB |
+| career totals by position | 42,200 | 1.17 MB | 0.39 MB |
+| primary position per season | 127,005 | 2.71 MB | 0.48 MB |
+| replacement total | | 3.88 MB | 0.87 MB |
+
+The career half is the win: the player page shows only career fielding by
+position, so 174k rows render a 42k-row aggregate, a 5:1 collapse. The roster
+half is not, because a batter's position needs player × season × team
+granularity and cannot aggregate away — most of that 2.71 MB is `playerID`
+strings.
+
+Nothing displays season-by-season fielding today, so precomputing removes no
+feature, but it would foreclose adding one without a re-export. The cleaner
+version of this change is to precompute the career file and reconsider whether
+the roster needs a position column at all — dropping that saves the whole
+5.85 MB rather than a third of it.
 
 **Don't bother dropping unused tables from `data/csv`.** It saves 6.2 MB of
 repo and nothing for users, since `build_site.py` already exports only what it
