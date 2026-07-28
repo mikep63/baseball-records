@@ -69,6 +69,14 @@ function yearList(counts) {
     .join(', ');
 }
 
+/* Lahman's POS codes. OF is deliberately generic — the LF/CF/RF split lives
+   in FieldingOF, which this app does not read. */
+const POS_NAMES = {
+  P: 'Pitcher', C: 'Catcher', '1B': 'First Base', '2B': 'Second Base',
+  '3B': 'Third Base', SS: 'Shortstop', OF: 'Outfield',
+  PH: 'Pinch Hitter', PR: 'Pinch Runner',
+};
+
 /* ---------------------------------------------------------- formatting */
 function fmtRate3(v) { // .342
   if (v == null) return '—';
@@ -270,6 +278,16 @@ async function showPlayer(pid) {
   // Pitchers lead with pitching; position players lead with batting.
   html += isPrimaryPitcher(d) ? pitchingHtml + battingHtml
     : battingHtml + pitchingHtml;
+
+  // Only worth showing when he actually moved: for the ~63% who played one
+  // position their whole career the run list just restates the table below.
+  if (d.positions && d.positions.length > 1) {
+    html += '<h3>Positions</h3><p class="pos-arc">' + d.positions.map((p) => {
+      const span = p.firstYear === p.lastYear ? `${p.firstYear}`
+        : `${p.firstYear}–${p.lastYear}`;
+      return `<span class="pos-run"><b title="${esc(POS_NAMES[p.POS] || p.POS)}">${esc(p.POS)}</b> ${span}</span>`;
+    }).join('<span class="pos-sep">→</span>') + '</p>';
+  }
 
   if (d.fielding.length) {
     html += '<h3>Fielding (career, by position)</h3>';

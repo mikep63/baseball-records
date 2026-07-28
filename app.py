@@ -203,6 +203,33 @@ def _career_pitching(conn, pid):
     return seasons, totals
 
 
+def _position_runs(conn, pid):
+    """Primary position per season, collapsed into contiguous runs.
+
+    The career-by-position table says where a player spent his time; this says
+    when, which is the part the totals destroy — Yount reads SS 1974-1984 then
+    OF 1985-1993 rather than two undated piles of games.
+
+    Only the position he played most that season counts, so a shortstop's one
+    inning in the outfield does not break the run. Neither does a season missed
+    entirely: Musial went to war in 1945, which is not a position change.
+    """
+    rows = conn.execute('''
+      SELECT yearID, POS FROM (
+        SELECT yearID, POS,
+               ROW_NUMBER() OVER (PARTITION BY yearID ORDER BY G DESC, POS) rn
+        FROM Fielding WHERE playerID = ?)
+      WHERE rn = 1 ORDER BY yearID''', (pid,)).fetchall()
+    out = []
+    for r in rows:
+        if out and out[-1]["POS"] == r["POS"]:
+            out[-1]["lastYear"] = r["yearID"]
+        else:
+            out.append({"POS": r["POS"], "firstYear": r["yearID"],
+                        "lastYear": r["yearID"]})
+    return out
+
+
 def api_player(pid, conn):
     p = conn.execute('SELECT * FROM People WHERE playerID = ?', (pid,)).fetchone()
     if not p:
@@ -230,7 +257,8 @@ def api_player(pid, conn):
         "bio": bio,
         "batting": batting, "battingTotals": batting_tot,
         "pitching": pitching, "pitchingTotals": pitching_tot,
-        "fielding": fielding, "awards": awards, "allstar": allstar,
+        "fielding": fielding, "positions": _position_runs(conn, pid),
+        "awards": awards, "allstar": allstar,
         "hof": dict(hof) if hof else None,
         "postBatting": dict(post_b) if post_b and post_b["G"] else None,
     }

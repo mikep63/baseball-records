@@ -73,8 +73,10 @@ use Safari's *Add to Home Screen* to run it like an app.
 ## Features
 
 - **Players** — search any of 24,000+ players by name; see full career
-  year-by-year batting, pitching, and fielding with career totals, plus
-  awards, All-Star selections, and Hall of Fame status.
+  year-by-year batting and pitching with career totals, career fielding by
+  position, plus awards, All-Star selections, and Hall of Fame status.
+  Players who moved around the diamond get a position arc — Ruth reads
+  *P 1914–1917 → OF 1918–1935*, Rose *2B → OF → 3B → 1B*.
 - **Teams** — pick a year (1871–2025) for a dashboard of every league's
   Triple Crown leaders, then the standings grouped by league/division; click
   a team for its full roster, or a stat for the full leaderboard.

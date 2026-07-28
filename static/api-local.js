@@ -278,6 +278,29 @@ window.LocalAPI = (function () {
       .map((a) => ({ POS: a.POS, years: a.years.size, G: a.G, PO: a.PO, A: a.A, E: a.E, DP: a.DP }))
       .sort((a, b) => b.G - a.G);
 
+    /* Primary position per season, collapsed into contiguous runs. The career
+       table above says where a player spent his time; this says when, which is
+       what the totals destroy. Only his most-played position each season
+       counts, so a shortstop's one inning in the outfield does not break the
+       run, and a missed season does not either — Musial went to war in 1945,
+       which is not a position change. Ties go to the alphabetically first
+       position, matching the server's ORDER BY G DESC, POS. */
+    const posByYear = new Map();
+    for (const f of (IDX.fldByPlayer.get(pid) || [])) {
+      const cur = posByYear.get(f.yearID);
+      const g = nz(f.G);
+      if (!cur || g > cur.g || (g === cur.g && f.POS < cur.POS)) {
+        posByYear.set(f.yearID, { POS: f.POS, g });
+      }
+    }
+    const positions = [];
+    for (const y of Array.from(posByYear.keys()).sort((a, b) => a - b)) {
+      const pos = posByYear.get(y).POS;
+      const last = positions[positions.length - 1];
+      if (last && last.POS === pos) last.lastYear = y;
+      else positions.push({ POS: pos, firstYear: y, lastYear: y });
+    }
+
     const awards = D.awards.filter((a) => a.playerID === pid)
       .sort((a, b) => a.yearID - b.yearID)
       .map((a) => ({ awardID: a.awardID, yearID: a.yearID, lgID: a.lgID, notes: null }));
@@ -287,7 +310,7 @@ window.LocalAPI = (function () {
     return {
       bio: p,
       batting, battingTotals, pitching, pitchingTotals,
-      fielding, awards, allstar,
+      fielding, positions, awards, allstar,
       hof: hofRow ? { yearid: hofRow.yearid, votedBy: hofRow.votedBy, category: hofRow.category } : null,
       postBatting: null,
     };
