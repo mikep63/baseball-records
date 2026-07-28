@@ -650,17 +650,18 @@ async function showFranchise(fid) {
   el.innerHTML = html;
 }
 
-/* Season spans are asked in eras, not year pairs. "All time" is every year
-   in the data; the other two are the conventional openings — 1901 for the
-   American League, 1969 for divisional play. Labels carry the year so they
-   do not depend on whose definition of "modern" the reader holds.
+/* Season spans are asked in eras, not year pairs. "All time" is every year in
+   the data; the other two take their conventional names and openings — the
+   modern era from the American League's founding in 1901, the divisional era
+   from the 1969 expansion and split into divisions. Each label carries its
+   year so the span is explicit rather than assumed.
 
    Custom keeps the From/To pickers reachable: without it "best home run
    seasons of the 1990s" would no longer be askable. */
 const LEAD_ERAS = [
   { id: 'all', label: 'All time', from: null },
-  { id: 'classic', label: 'Classic 1901+', from: 1901 },
-  { id: 'modern', label: 'Modern 1969+', from: 1969 },
+  { id: 'modern', label: 'Modern 1901–', from: 1901 },
+  { id: 'divisional', label: 'Divisional 1969–', from: 1969 },
   { id: 'custom', label: 'Custom', from: null },
 ];
 let leadEra = 'all';

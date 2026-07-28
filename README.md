@@ -90,11 +90,11 @@ use Safari's *Add to Home Screen* to run it like an app.
   1990–1999), and *Career*.
 
   *Season* picks its span by era rather than year pair — **All time**,
-  **Classic 1901+**, **Modern 1969+**, or Custom — because the answer changes
-  completely with the era, and that is the point. All-time strikeouts gives
-  Matt Kilroy's 513 in 1886, when pitchers threw 500 innings; Modern gives
-  Nolan Ryan's 383. All-time batting average gives an 1871 oddity; Modern
-  gives Tony Gwynn's .394.
+  **Modern 1901–**, **Divisional 1969–**, or Custom — because the answer
+  changes completely with the era, and that is the point. All-time strikeouts
+  gives Matt Kilroy's 513 in 1886, when pitchers threw 500 innings; Divisional
+  gives Nolan Ryan's 383. All-time batting average gives an 1871 oddity;
+  Divisional gives Tony Gwynn's .394.
 
 ### Stats available
 
