@@ -122,8 +122,13 @@ rather than the substance.
 Sample size is a separate question, answered by the schedule floor below.
 
 Rate stats then apply the official playing-time qualifier: **3.1 PA (or 1 IP)
-per game the player's own league played** — not per game the longest league
-in that year played, which would hold a short-schedule league to someone
+per game the player's own league scheduled**, counted as games that were
+*decided* rather than games played — `Teams.G` includes ties, which were
+replayed rather than settled before lights and belong to nobody's schedule.
+The 1989 Pirates show `G`=164 against a 162-game season and the 1904 Athletics
+`G`=162 against 154; taking `G` raises the bar by up to eight games, enough to
+have cost Billy Goodman the 1950 batting title and Rod Carew the 1969. It is per league, not per game the longest
+league that year played, which would hold a short-schedule league to someone
 else's bar. That distinction matters twice over: the Negro Leagues played
 ~80-game seasons against the AL's 157, and in strike-shortened 1994 it decides
 the AL ERA title. A player traded across leagues mid-season is held to the

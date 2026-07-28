@@ -59,6 +59,15 @@ ASCENDING = {"ERA", "WHIP"}  # lower is better
 # the ECL folded seven games into 1928.
 MIN_SCHEDULE = 40
 
+# Schedule length, for the qualifier and the dashboard, measured in games that
+# were decided rather than games played. Teams.G counts ties, which were
+# replayed rather than settled before lights and are not part of anyone's
+# schedule: the 1989 Pirates and Cardinals show G=164 against a 162-game
+# season, and the 1904 Athletics G=162 against 154. Taking G would hold those
+# leagues to a bar six to eight games too high, which is enough to move a
+# batting title — Billy Goodman in 1950 and Rod Carew in 1969 both lose theirs.
+DECIDED = "COALESCE(t.W,0) + COALESCE(t.L,0)"
+
 def batting_expr(stat, p="b"):
     """SQL expression for a batting stat over (already aggregated) columns."""
     c = lambda col: 'CAST(%s."%s" AS REAL)' % (p, col)
@@ -383,8 +392,8 @@ def api_season_leaders(q, conn):
     has_lg = lambda p: "{p}.lgID IS NOT NULL AND {p}.lgID <> ''".format(p=p)
 
     games = {r["lgID"]: r["g"] for r in conn.execute(
-        'SELECT lgID, MAX(G) g FROM Teams t WHERE t.yearID = ? AND %s '
-        'GROUP BY lgID' % has_lg("t"), (year,))}
+        'SELECT lgID, MAX(%s) g FROM Teams t WHERE t.yearID = ? AND %s '
+        'GROUP BY lgID' % (DECIDED, has_lg("t")), (year,))}
     if not games:
         return {"year": year, "leagues": []}
 
@@ -512,10 +521,11 @@ def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
     if is_rate and per_season:
         lg_games = ''',
              MAX(COALESCE(
-               (SELECT MAX(t.G) FROM Teams t
+               (SELECT MAX(%s) FROM Teams t
                  WHERE t.yearID = {p}.yearID AND t.lgID = {p}.lgID),
-               (SELECT MAX(t.G) FROM Teams t
-                 WHERE t.yearID = {p}.yearID))) AS lgGames'''.format(p=prefix)
+               (SELECT MAX(%s) FROM Teams t
+                 WHERE t.yearID = {p}.yearID))) AS lgGames'''.format(p=prefix) \
+            % (DECIDED, DECIDED)
 
     inner = '''
       SELECT {p}.playerID AS playerID, {year_col} AS yearID,

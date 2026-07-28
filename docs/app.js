@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = 'e471289e373d';
+const APP_BUILD = 'c43eeaf3f8e0';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];

@@ -85,16 +85,24 @@ window.LocalAPI = (function () {
   function finalize() {
     IDX.person = new Map(D.people.map((p) => [p.playerID, p]));
     IDX.hofIds = new Set(D.hof.map((h) => h.playerID));
-    IDX.maxTeamG = new Map();          // yearID -> max team G
-    IDX.lgTeamG = new Map();           // "yearID|lgID" -> max team G
+    /* Schedule length is counted in games that were decided, not games
+       played. Teams.G includes ties, which were replayed rather than settled
+       before lights and belong to nobody's schedule: the 1989 Pirates show
+       G=164 against a 162-game season, the 1904 Athletics G=162 against 154.
+       Using G holds those leagues to a bar up to eight games too high, which
+       is enough to move a batting title. */
+    IDX.maxTeamG = new Map();          // yearID -> longest schedule
+    IDX.lgTeamG = new Map();           // "yearID|lgID" -> longest schedule
     let minYear = Infinity, maxYear = 0;
     for (const t of D.teams) {
       if (t.yearID < minYear) minYear = t.yearID;
       if (t.yearID > maxYear) maxYear = t.yearID;
-      const cur = IDX.maxTeamG.get(t.yearID) || 0;
-      if ((t.G || 0) > cur) IDX.maxTeamG.set(t.yearID, t.G);
+      const decided = nz(t.W) + nz(t.L);
+      if (decided > (IDX.maxTeamG.get(t.yearID) || 0)) {
+        IDX.maxTeamG.set(t.yearID, decided);
+      }
       const k = t.yearID + '|' + (t.lgID || '');
-      if ((t.G || 0) > (IDX.lgTeamG.get(k) || 0)) IDX.lgTeamG.set(k, t.G);
+      if (decided > (IDX.lgTeamG.get(k) || 0)) IDX.lgTeamG.set(k, decided);
     }
     IDX.minYear = minYear; IDX.maxYear = maxYear;
     IDX.batByPlayer = groupBy(D.batting, 'playerID');
@@ -515,7 +523,8 @@ window.LocalAPI = (function () {
     const games = new Map();
     for (const t of D.teams) {
       if (t.yearID !== year || !t.lgID) continue;
-      if ((t.G || 0) > (games.get(t.lgID) || 0)) games.set(t.lgID, t.G);
+      const decided = nz(t.W) + nz(t.L);   // ties are not schedule, see finalize
+      if (decided > (games.get(t.lgID) || 0)) games.set(t.lgID, decided);
     }
     if (!games.size) return { year, leagues: [] };
 
