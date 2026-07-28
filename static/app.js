@@ -161,6 +161,7 @@ function route() {
   if (parts[0] === 'player' && parts[1]) showPlayer(parts[1]);
   if (parts[0] === 'team' && parts[2]) showRoster(+parts[1], parts[2]);
   if (parts[0] === 'franchise' && parts[1]) showFranchise(parts[1]);
+  if (parts[0] === 'teams' && parts[1]) showSeason(+parts[1]);
   if (parts[0] === 'franchises') showFranchiseList();
   if (parts[0] === 'about') showAbout();
   // #leaders/<year>/<cat>/<stat> — where the season dashboard tiles point
@@ -254,7 +255,7 @@ async function showPlayer(pid) {
   if (d.batting.length) {
     battingHtml += '<h3>Batting</h3>';
     const rows = d.batting.map((s) => ({ cells: [
-      s.yearID, teamCell(s.teamID, s.yearID), s.lgID || '',
+      yearCell(s.yearID), teamCell(s.teamID, s.yearID), s.lgID || '',
       fmtInt(s.G), fmtInt(s.AB), fmtInt(s.R), fmtInt(s.H), fmtInt(s.D2),
       fmtInt(s.D3), fmtInt(s.HR), fmtInt(s.RBI), fmtInt(s.SB), fmtInt(s.BB),
       fmtInt(s.SO), fmtRate3(s.AVG), fmtRate3(s.OBP), fmtRate3(s.SLG), fmtRate3(s.OPS),
@@ -274,7 +275,7 @@ async function showPlayer(pid) {
   if (d.pitching.length) {
     pitchingHtml += '<h3>Pitching</h3>';
     const rows = d.pitching.map((s) => ({ cells: [
-      s.yearID, teamCell(s.teamID, s.yearID), s.lgID || '',
+      yearCell(s.yearID), teamCell(s.teamID, s.yearID), s.lgID || '',
       fmtInt(s.W), fmtInt(s.L), fmt2(s.ERA), fmtInt(s.G), fmtInt(s.GS),
       fmtInt(s.CG), fmtInt(s.SHO), fmtInt(s.SV), fmtIP(s.IP), fmtInt(s.H),
       fmtInt(s.BB), fmtInt(s.SO), fmt2(s.WHIP),
@@ -375,6 +376,13 @@ function teamCell(teamID, yearID) {
   return `<a class="team-link" href="#team/${yearID}/${esc(teamID)}">${esc(teamID)}</a>`;
 }
 
+/* The season a line belongs to, opening the Seasons tab on it — standings,
+   postseason and that year's league leaders. The team cell beside it goes to
+   the roster instead, so a career line reaches both. */
+function yearCell(yearID) {
+  return `<a class="team-link" href="#teams/${yearID}">${yearID}</a>`;
+}
+
 /* ---------------------------------------------------------- teams tab */
 function initTeams() {
   const sel = $('#team-year');
@@ -445,7 +453,9 @@ async function showPostseason(year) {
     table(['Round', 'Winner', 'Defeated', 'Games'], rows, { txtCols: [0, 1, 2] });
 }
 
-function backToSeason(year) {
+function showSeason(year) {
+  if (!META || !(year >= META.minYear && year <= META.maxYear)) return;
+  $('#team-year').value = year;
   $('#team-roster').innerHTML = '';
   showTeams(year);
 }
@@ -530,7 +540,7 @@ async function showRoster(year, teamID) {
     const div = t.divID ? ' ' + (DIV_NAMES[t.divID] || t.divID) : '';
     html += `<p class="note">${esc((t.lgID || '') + div)} · ${t.W}–${t.L},
       finished #${t.Rank} ·
-      <a class="team-link" href="#teams" onclick="backToSeason(${year})">← ${year} season</a></p>`;
+      <a class="team-link" href="#teams/${year}">← ${year} season</a></p>`;
   }
   if (d.batters.length) {
     html += '<h3>Batters</h3>';
