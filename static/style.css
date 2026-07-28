@@ -199,7 +199,11 @@ footer a { color: var(--muted); }
   .controls label { flex: 1 1 40%; }
   .controls select { width: 100%; }
   input[type="search"] { width: 100%; }
-  .controls button { flex: 1 1 100%; }
+  /* the Go button only — a direct child. The era buttons are nested inside
+     the segmented control and must stay side by side, not stack. */
+  .controls > button { flex: 1 1 100%; }
+  .segmented { width: 100%; }
+  .segmented button { flex: 1 1 0; padding: .38rem .3rem; text-align: center; }
 
   table { font-size: .78rem; }
   th, td { padding: .3rem .4rem; }
@@ -241,8 +245,13 @@ footer p { line-height: 1.6; }
   margin-right: .2rem; }
 .pos-sep { color: var(--muted); font-size: .8rem; padding: 0 .1rem; }
 
-/* era picker: a few named spans, so a segmented control rather than a slider */
-#lead-era-wrap { display: flex; flex-direction: column; gap: .2rem; }
+/* era picker: a few named spans, so a segmented control rather than a slider.
+   It takes its own row beneath the drop-downs — the buttons are a different
+   height from a select, so sharing the row leaves the baseline ragged. */
+#lead-era-wrap {
+  display: flex; flex-direction: column; gap: .2rem;
+  flex: 0 0 100%; order: 1;
+}
 .seg-label { font-size: .8rem; color: var(--muted); }
 .segmented { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
 .segmented button {
