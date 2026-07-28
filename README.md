@@ -226,6 +226,23 @@ version of this change is to precompute the career file and reconsider whether
 the roster needs a position column at all — dropping that saves the whole
 5.85 MB rather than a third of it.
 
+**Make managers clickable** — a career managerial record. This wants to be a
+section on the existing player page rather than a page of its own, because
+managers are people: of the 931 who have managed, 766 also played and already
+have a page. Clicking one would go to `#player/<id>`, a route that already
+works, and Ty Cobb or Frank Robinson would show a managerial record under
+their playing one.
+
+The other 165 never played, and they are exactly the people whose page
+currently reads "No playing statistics recorded" — 165 of those 259. This
+turns that dead end into a real page: Manny Acta becomes six seasons at
+Washington and Cleveland with a record, rather than a name and a height.
+
+What it needs: `managers.csv` is already exported; the player endpoints gain a
+managing list; and `managerCell` in the franchise table needs the `playerID`
+added to its payload, which it does not currently carry. `AwardsManagers` (232
+rows) would slot into the same section for Manager of the Year.
+
 **Don't bother dropping unused tables from `data/csv`.** It saves 6.2 MB of
 repo and nothing for users, since `build_site.py` already exports only what it
 needs. It would also mean maintaining an allowlist in `update_data.py` that
