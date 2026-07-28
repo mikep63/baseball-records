@@ -120,7 +120,13 @@ their peers — 876 players. Segregation is why they have no league to be listed
 under, so filtering them out would drop them for the shape of their records
 rather than the substance.
 
-Sample size is a separate question, answered by the schedule floor below.
+Sample size is a separate question, answered by the schedule floor below. So
+is missing data: a stat is only ranked in a league-season where the column was
+actually kept. Stolen bases went unrecorded in 22 league-seasons and batter
+strikeouts in 53, where treating an unrecorded value as zero ties every player
+at nothing — the 1884 Union Association otherwise lists 276 stolen-base
+"leaders". A leading value of zero is dropped for the same reason, except
+where lower is better, since a 0.00 earned run average is a real result.
 
 Rate stats then apply the official playing-time qualifier: **3.1 PA (or 1 IP)
 per game the player's own league scheduled**, counted as games that were

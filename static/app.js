@@ -471,7 +471,9 @@ async function showSeasonDashboard(year) {
   el.innerHTML = d.leagues.map((lg) => {
     const tiles = lg.tiles.map((t) => {
       let who;
-      if (!t.leaders.length) who = '<span class="tile-none">no qualifier</span>';
+      if (!t.leaders.length) {
+        who = `<span class="tile-none">${t.recorded === false ? 'not recorded' : 'no qualifier'}</span>`;
+      }
       else if (t.tied > 2) who = `<span class="tile-tied">${t.tied} tied</span>`;
       else who = t.leaders.map((l) => playerLink(l.playerID, l.name)).join(' / ');
       const team = t.leaders.length === 1

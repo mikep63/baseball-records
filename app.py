@@ -69,6 +69,24 @@ MIN_SCHEDULE = 40
 DECIDED = "COALESCE(t.W,0) + COALESCE(t.L,0)"
 
 
+# The column that must actually have been recorded for a stat to mean anything
+# in a given league-season. Stolen bases went unrecorded in 22 league-seasons
+# and batter strikeouts in 53; COALESCE then reads every player as zero and
+# they all tie, which is how the 1884 Union Association listed 276 stolen-base
+# "leaders". Rate stats point at their numerator, since a missing denominator
+# already yields NULL and drops out on its own.
+BATTING_SOURCE = {
+    "G": "G", "AB": "AB", "R": "R", "H": "H", "2B": "2B", "3B": "3B",
+    "HR": "HR", "RBI": "RBI", "SB": "SB", "BB": "BB", "SO": "SO",
+    "TB": "H", "AVG": "H", "OBP": "H", "SLG": "H", "OPS": "H",
+}
+PITCHING_SOURCE = {
+    "W": "W", "L": "L", "G": "G", "GS": "GS", "CG": "CG", "SHO": "SHO",
+    "SV": "SV", "SO": "SO", "BB": "BB", "IP": "IPouts", "ERA": "ER",
+    "WHIP": "H",
+}
+
+
 def full_name(p):
     """Display name. 413 players, all from the Negro League records, have no
     first name: plain concatenation makes them NULL in SQL and " Acea" in the
@@ -455,8 +473,17 @@ def api_season_leaders(q, conn):
                 best, who = _dashboard_top(rows_p, value_of, qualifies,
                                         ascending=(stat in ASCENDING))
                 label = PITCHING_STATS[stat]
+            # A column the league never kept reads as zero for everyone and
+            # ties the whole roster — 1903 Eastern Independent Clubs had 24
+            # home run "leaders" on nothing. Say it was not recorded instead.
+            src = (BATTING_SOURCE if cat == "batting" else PITCHING_SOURCE)[stat]
+            pool = rows_b if cat == "batting" else rows_p
+            recorded = any(r[src] is not None for r in pool)
+            if not recorded or (best == 0 and stat not in ASCENDING):
+                best, who, recorded = None, [], False
             tiles.append({
                 "cat": cat, "stat": stat, "label": label, "value": best,
+                "recorded": recorded,
                 "leaders": [{"playerID": r["playerID"], "name": r["name"],
                              "teamID": r["teamID"]} for r in who[:3]],
                 "tied": len(who),
@@ -612,6 +639,7 @@ def api_history(q, conn):
             raise ValueError("bad stat")
         table, prefix, sums = "Pitching", "p", PITCHING_SUMS
         expr = pitching_expr(stat, "v")
+        src = PITCHING_SOURCE[stat]
         qual = ('AND COALESCE(v."IPouts",0)/3.0 >= v.bar'
                 if stat in RATE_PITCHING else "")
     else:
@@ -619,10 +647,15 @@ def api_history(q, conn):
             raise ValueError("bad stat")
         table, prefix, sums = "Batting", "b", BATTING_SUMS
         expr = batting_expr(stat, "v")
+        src = BATTING_SOURCE[stat]
         qual = ('AND (COALESCE(v."AB",0)+COALESCE(v."BB",0)+COALESCE(v."HBP",0)'
                 '+COALESCE(v."SH",0)+COALESCE(v."SF",0)) >= 3.1 * v.bar'
                 if stat in RATE_BATTING else "")
     order = "ASC" if stat in ASCENDING else "DESC"
+    # A leader of zero is not a leader: where a column was only partly kept,
+    # everyone COALESCEs to nothing and ties. Only for stats where more is
+    # better — a 0.00 earned run average is a real result.
+    nonzero = "" if stat in ASCENDING else "AND r.value > 0"
     sum_cols = ", ".join('SUM({p}."{c}") AS "{c}"'.format(p=prefix, c=c)
                          for c in sums)
 
@@ -631,6 +664,10 @@ def api_history(q, conn):
         SELECT yearID, lgID, MAX({decided}) AS g
         FROM Teams t WHERE t.yearID BETWEEN ? AND ? AND {haslg}
         GROUP BY yearID, lgID),
+      have AS (
+        SELECT yearID, lgID FROM {table} h
+        WHERE h.yearID BETWEEN ? AND ?
+        GROUP BY yearID, lgID HAVING COUNT(h."{src}") > 0),
       agg AS (
         SELECT {p}.yearID, {p}.lgID, {p}.playerID,
                MIN({p}.teamID) AS teamID, COUNT(DISTINCT {p}.teamID) AS nteams,
@@ -651,14 +688,17 @@ def api_history(q, conn):
         FROM v WHERE {expr} IS NOT NULL {qual})
       SELECT r.yearID, r.lgID, r.value, r.teamID, r.nteams,
              TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name
-      FROM ranked r JOIN People pe ON pe.playerID = r.playerID
-      WHERE r.rnk = 1
+      FROM ranked r
+      JOIN People pe ON pe.playerID = r.playerID
+      JOIN have ON have.yearID = r.yearID AND have.lgID = r.lgID
+      WHERE r.rnk = 1 {nonzero}
       ORDER BY r.yearID DESC, r.lgID, name""".format(
         decided=DECIDED, haslg=has_lg("t"), p=prefix, sums=sum_cols,
-        table=table, floor=MIN_SCHEDULE, expr=expr, order=order, qual=qual)
+        table=table, floor=MIN_SCHEDULE, expr=expr, order=order, qual=qual,
+        src=src, nonzero=nonzero)
 
     out = []
-    for r in conn.execute(sql, (y0, y1, y0, y1)):
+    for r in conn.execute(sql, (y0, y1, y0, y1, y0, y1)):
         key = (r["yearID"], r["lgID"])
         if out and (out[-1]["yearID"], out[-1]["lgID"]) == key:
             out[-1]["leaders"].append({"name": r["name"], "teamID": r["teamID"]})

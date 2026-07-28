@@ -35,6 +35,22 @@ window.LocalAPI = (function () {
     SHO: 'Shutouts', SV: 'Saves', IP: 'Innings Pitched', SO: 'Strikeouts',
     BB: 'Walks', ERA: 'ERA', WHIP: 'WHIP',
   };
+  /* The column that must actually have been recorded for a stat to mean
+     anything in a given league-season. Stolen bases went unrecorded in 22
+     league-seasons and batter strikeouts in 53; without this every player
+     reads as zero and ties, which is how the 1884 Union Association listed
+     276 stolen-base "leaders". Rate stats point at their numerator, since a
+     missing denominator already yields null and drops out on its own. */
+  const BATTING_SOURCE = {
+    G: 'G', AB: 'AB', R: 'R', H: 'H', '2B': '2B', '3B': '3B', HR: 'HR',
+    RBI: 'RBI', SB: 'SB', BB: 'BB', SO: 'SO',
+    TB: 'H', AVG: 'H', OBP: 'H', SLG: 'H', OPS: 'H',
+  };
+  const PITCHING_SOURCE = {
+    W: 'W', L: 'L', G: 'G', GS: 'GS', CG: 'CG', SHO: 'SHO', SV: 'SV',
+    SO: 'SO', BB: 'BB', IP: 'IPouts', ERA: 'ER', WHIP: 'H',
+  };
+
   const RATE_BATTING = ['AVG', 'OBP', 'SLG', 'OPS'];
   const RATE_PITCHING = ['ERA', 'WHIP'];
   const ASCENDING = ['ERA', 'WHIP'];
@@ -543,7 +559,9 @@ window.LocalAPI = (function () {
           m.set(k, a);
         }
         if (r.teamID < a.teamID) a.teamID = r.teamID;
-        for (const c of cols) a[c] = nz(a[c]) + nz(r[c]);
+        for (const c of cols) {
+          if (r[c] != null) a[c] = nz(a[c]) + r[c];   // null stays null
+        }
         a.PA = nz(a.PA) + paOf(r);
       }
       return m;
@@ -584,8 +602,18 @@ window.LocalAPI = (function () {
               (r) => nz(r.IPouts) / 3.0 >= bar, true)
             : dashboardTop(rows.p, (r) => nz(r[stat]), () => true, false);
         }
-        return { cat, stat, label, value: res.best,
-          leaders: res.winners.slice(0, 3).map(named), tied: res.winners.length };
+        // a column the league never kept reads as zero for everyone and ties
+        // the whole roster — 1903 Eastern Independent Clubs had 24 home run
+        // "leaders" on nothing. Say it was not recorded instead.
+        const src = (cat === 'batting' ? BATTING_SOURCE : PITCHING_SOURCE)[stat];
+        const pool = cat === 'batting' ? rows.b : rows.p;
+        let recorded = pool.some((r) => r[src] != null);
+        let value = res.best, winners = res.winners;
+        if (!recorded || (value === 0 && !ASCENDING.includes(stat))) {
+          value = null; winners = []; recorded = false;
+        }
+        return { cat, stat, label, value, recorded,
+          leaders: winners.slice(0, 3).map(named), tied: winners.length };
       });
       return { lgID: lg, games: games.get(lg), tiles };
     });
@@ -645,10 +673,15 @@ window.LocalAPI = (function () {
     const isRate = (pitching ? RATE_PITCHING : RATE_BATTING).includes(stat);
     const asc = ASCENDING.includes(stat);
 
+    const srcCol = (pitching ? PITCHING_SOURCE : BATTING_SOURCE)[stat];
+    const recorded = new Set();   // "year|lg" that kept this column at all
+
     const agg = new Map();
     for (const r of src) {
       if (r.yearID < y0 || r.yearID > y1 || !r.lgID) continue;
-      const k = r.yearID + '|' + r.lgID + '|' + r.playerID;
+      const lgKey = r.yearID + '|' + r.lgID;
+      if (r[srcCol] != null) recorded.add(lgKey);
+      const k = lgKey + '|' + r.playerID;
       let a = agg.get(k);
       if (!a) {
         a = { yearID: r.yearID, lgID: r.lgID, playerID: r.playerID, teamID: r.teamID };
@@ -660,6 +693,7 @@ window.LocalAPI = (function () {
 
     const best = new Map();
     for (const a of agg.values()) {
+      if (!recorded.has(a.yearID + '|' + a.lgID)) continue;
       const bar = Math.max(IDX.lgTeamG.get(a.yearID + '|' + a.lgID) || 0, MIN_SCHEDULE);
       if (isRate) {
         if (!pitching && paOf(a) < 3.1 * bar) continue;
@@ -680,7 +714,11 @@ window.LocalAPI = (function () {
       return { name: pe ? fullName(pe) : a.playerID,
         teamID: a.teamID };
     };
-    const out = Array.from(best.values()).map((e) => ({
+    // a leader of zero is not a leader; only where more is better, since a
+    // 0.00 earned run average is a real result
+    const out = Array.from(best.values())
+      .filter((e) => asc || e.value > 0)
+      .map((e) => ({
       yearID: e.yearID, lgID: e.lgID, value: e.value, tied: e.rows.length,
       leaders: e.rows.map(named).sort((x, y) => (x.name < y.name ? -1 : 1)),
     }));
