@@ -68,6 +68,19 @@ MIN_SCHEDULE = 40
 # batting title — Billy Goodman in 1950 and Rod Carew in 1969 both lose theirs.
 DECIDED = "COALESCE(t.W,0) + COALESCE(t.L,0)"
 
+
+def full_name(p):
+    """Display name. 413 players, all from the Negro League records, have no
+    first name: plain concatenation makes them NULL in SQL and " Acea" in the
+    browser, where both should read "Acea"."""
+    return ("TRIM(COALESCE({p}.nameFirst,'') || ' ' || "
+            "COALESCE({p}.nameLast,''))").format(p=p)
+
+
+def has_lg(p):
+    """Rows with a league. A blank one would group into a nameless "" league."""
+    return "{p}.lgID IS NOT NULL AND {p}.lgID <> ''".format(p=p)
+
 def batting_expr(stat, p="b"):
     """SQL expression for a batting stat over (already aggregated) columns."""
     c = lambda col: 'CAST(%s."%s" AS REAL)' % (p, col)
@@ -175,7 +188,7 @@ def api_search(q, conn):
     for r in conn.execute(sql, args):
         out.append({
             "playerID": r["playerID"],
-            "name": "%s %s" % (r["nameFirst"] or "", r["nameLast"] or ""),
+            "name": ("%s %s" % (r["nameFirst"] or "", r["nameLast"] or "")).strip(),
             "birthYear": r["birthYear"],
             "debut": (r["debut"] or "")[:4],
             "finalGame": (r["finalGame"] or "")[:4],
@@ -329,7 +342,7 @@ def api_roster(q, conn):
     year = int(q.get("year", ["0"])[0])
     team = q.get("team", [""])[0]
     batters = rows_to_dicts(conn.execute('''
-      SELECT b.playerID, pe.nameFirst || ' ' || pe.nameLast AS name,
+      SELECT b.playerID, TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name,
              (SELECT f.POS FROM Fielding f
                WHERE f.playerID = b.playerID AND f.yearID = b.yearID
                  AND f.teamID = b.teamID
@@ -344,7 +357,7 @@ def api_roster(q, conn):
       GROUP BY b.playerID
       ORDER BY SUM(b.AB) DESC, SUM(b.G) DESC''', (year, team)))
     pitchers = rows_to_dicts(conn.execute('''
-      SELECT p.playerID, pe.nameFirst || ' ' || pe.nameLast AS name,
+      SELECT p.playerID, TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name,
              SUM(p.W) W, SUM(p.L) L, SUM(p.G) G, SUM(p.GS) GS,
              SUM(p.SV) SV, ROUND(SUM(p.IPouts)/3.0, 1) AS IP,
              SUM(p.SO) SO, SUM(p.BB) BB,
@@ -387,10 +400,6 @@ def _dashboard_top(rows, value_of, qualifies, ascending=False):
 def api_season_leaders(q, conn):
     """Every league's leaders for one season, for the Seasons tab panel."""
     year = int(q.get("year", ["0"])[0])
-    # every league counts (see MIN_SCHEDULE above); this only skips rows whose
-    # league is blank, which would otherwise group into a nameless "" league
-    has_lg = lambda p: "{p}.lgID IS NOT NULL AND {p}.lgID <> ''".format(p=p)
-
     games = {r["lgID"]: r["g"] for r in conn.execute(
         'SELECT lgID, MAX(%s) g FROM Teams t WHERE t.yearID = ? AND %s '
         'GROUP BY lgID' % (DECIDED, has_lg("t")), (year,))}
@@ -398,7 +407,7 @@ def api_season_leaders(q, conn):
         return {"year": year, "leagues": []}
 
     bat = rows_to_dicts(conn.execute('''
-      SELECT b.lgID, b.playerID, pe.nameFirst || ' ' || pe.nameLast AS name,
+      SELECT b.lgID, b.playerID, TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name,
              MIN(b.teamID) AS teamID, SUM(b.H) H, SUM(b.AB) AB,
              SUM(b.HR) HR, SUM(b.RBI) RBI,
              SUM(COALESCE(b.AB,0)+COALESCE(b.BB,0)+COALESCE(b.HBP,0)
@@ -407,7 +416,7 @@ def api_season_leaders(q, conn):
       WHERE b.yearID = ? AND %s
       GROUP BY b.lgID, b.playerID''' % has_lg("b"), (year,)))
     pit = rows_to_dicts(conn.execute('''
-      SELECT p.lgID, p.playerID, pe.nameFirst || ' ' || pe.nameLast AS name,
+      SELECT p.lgID, p.playerID, TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name,
              MIN(p.teamID) AS teamID, SUM(p.W) W, SUM(p.SO) SO,
              SUM(p.IPouts) AS IPouts, SUM(p.ER) ER
       FROM Pitching p JOIN People pe ON pe.playerID = p.playerID
@@ -572,7 +581,7 @@ def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
 
     expr = expr_fn(stat, "x")
     sql = '''
-      SELECT x.*, %s AS value, pe.nameFirst || ' ' || pe.nameLast AS name
+      SELECT x.*, %s AS value, TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name
       FROM (%s) x
       JOIN People pe ON pe.playerID = x.playerID
       WHERE %s IS NOT NULL %s
@@ -580,6 +589,85 @@ def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
       LIMIT ?''' % (expr, inner, expr, qual, order)
     rows = rows_to_dicts(conn.execute(sql, (y0, y1, limit)))
     return rows
+
+
+def api_history(q, conn):
+    """Each league's leader in one stat, every year, newest first.
+
+    The other spans answer "who was best" once. This answers it repeatedly, so
+    a single page carries the whole line of succession — every strikeout title
+    from 2025 back to 1871, in every league that played, one row each.
+
+    RANK() rather than ROW_NUMBER(), so a shared title stays shared.
+    """
+    y0 = int(q.get("start", ["0"])[0])
+    y1 = int(q.get("end", ["0"])[0])
+    if y1 < y0:
+        y0, y1 = y1, y0
+    stat = q.get("stat", ["HR"])[0]
+    cat = q.get("cat", ["batting"])[0]
+
+    if cat == "pitching":
+        if stat not in PITCHING_STATS:
+            raise ValueError("bad stat")
+        table, prefix, sums = "Pitching", "p", PITCHING_SUMS
+        expr = pitching_expr(stat, "v")
+        qual = ('AND COALESCE(v."IPouts",0)/3.0 >= v.bar'
+                if stat in RATE_PITCHING else "")
+    else:
+        if stat not in BATTING_STATS:
+            raise ValueError("bad stat")
+        table, prefix, sums = "Batting", "b", BATTING_SUMS
+        expr = batting_expr(stat, "v")
+        qual = ('AND (COALESCE(v."AB",0)+COALESCE(v."BB",0)+COALESCE(v."HBP",0)'
+                '+COALESCE(v."SH",0)+COALESCE(v."SF",0)) >= 3.1 * v.bar'
+                if stat in RATE_BATTING else "")
+    order = "ASC" if stat in ASCENDING else "DESC"
+    sum_cols = ", ".join('SUM({p}."{c}") AS "{c}"'.format(p=prefix, c=c)
+                         for c in sums)
+
+    sql = """
+      WITH sched AS (
+        SELECT yearID, lgID, MAX({decided}) AS g
+        FROM Teams t WHERE t.yearID BETWEEN ? AND ? AND {haslg}
+        GROUP BY yearID, lgID),
+      agg AS (
+        SELECT {p}.yearID, {p}.lgID, {p}.playerID,
+               MIN({p}.teamID) AS teamID, COUNT(DISTINCT {p}.teamID) AS nteams,
+               {sums}
+        FROM {table} {p}
+        WHERE {p}.yearID BETWEEN ? AND ?
+          AND {p}.lgID IS NOT NULL AND {p}.lgID <> ''
+        GROUP BY {p}.yearID, {p}.lgID, {p}.playerID),
+      v AS (
+        SELECT agg.*, MAX(sched.g, {floor}) AS bar
+        FROM agg JOIN sched
+          ON sched.yearID = agg.yearID AND sched.lgID = agg.lgID),
+      ranked AS (
+        SELECT v.yearID, v.lgID, v.playerID, v.teamID, v.nteams,
+               ROUND({expr}, 9) AS value,
+               RANK() OVER (PARTITION BY v.yearID, v.lgID
+                            ORDER BY ROUND({expr}, 9) {order}) AS rnk
+        FROM v WHERE {expr} IS NOT NULL {qual})
+      SELECT r.yearID, r.lgID, r.value, r.teamID, r.nteams,
+             TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name
+      FROM ranked r JOIN People pe ON pe.playerID = r.playerID
+      WHERE r.rnk = 1
+      ORDER BY r.yearID DESC, r.lgID, name""".format(
+        decided=DECIDED, haslg=has_lg("t"), p=prefix, sums=sum_cols,
+        table=table, floor=MIN_SCHEDULE, expr=expr, order=order, qual=qual)
+
+    out = []
+    for r in conn.execute(sql, (y0, y1, y0, y1)):
+        key = (r["yearID"], r["lgID"])
+        if out and (out[-1]["yearID"], out[-1]["lgID"]) == key:
+            out[-1]["leaders"].append({"name": r["name"], "teamID": r["teamID"]})
+            out[-1]["tied"] += 1
+        else:
+            out.append({"yearID": r["yearID"], "lgID": r["lgID"],
+                        "value": r["value"], "tied": 1,
+                        "leaders": [{"name": r["name"], "teamID": r["teamID"]}]})
+    return {"rows": out, "stat": stat, "cat": cat, "start": y0, "end": y1}
 
 
 def api_leaders(q, conn):
@@ -632,6 +720,7 @@ ROUTES = {
     "franchises": api_franchises,
     "season_leaders": api_season_leaders,
     "best_seasons": api_best_seasons,
+    "history": api_history,
 }
 
 

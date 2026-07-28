@@ -85,10 +85,11 @@ use Safari's *Add to Home Screen* to run it like an app.
   they played in before (Dodgers *formerly Brooklyn*, Nationals *formerly
   Montreal*). Open one for its location timeline, every name it has ever
   had, and a season-by-season record.
-- **Leaders** — one tab with four spans, top 10/25/50 for any stat:
-  *Single Year* (1927 home runs), *Season* (the best individual seasons —
-  Bonds' 73 in 2001), *Multi-Year* (totals over a span, e.g. home runs
-  1990–1999), and *Career*.
+- **Leaders** — one tab with five spans, top 10/25/50 for any stat:
+  *Season* (the best individual seasons — Bonds' 73 in 2001), *Year by Year*
+  (every league's leader in every year, newest first — the whole line of
+  succession on one page), *Career*, *Single Year* (1927 home runs), and
+  *Multi-Year* (totals over a span, e.g. home runs 1990–1999).
 
   *Season* picks its span by era rather than year pair — **All time**,
   **Modern 1901–**, **Divisional 1969–**, or Custom — because the answer
@@ -163,7 +164,8 @@ API endpoints: `/api/meta`, `/api/search?q=`, `/api/player/<id>`,
 `/api/teams?year=`, `/api/roster?year=&team=`, `/api/postseason?year=`,
 `/api/season_leaders?year=`, `/api/franchises`, `/api/franchise/<franchID>`,
 `/api/leaders?year=&stat=&cat=`, `/api/leaders_range?start=&end=&stat=&cat=`,
-`/api/best_seasons?start=&end=&stat=&cat=`.
+`/api/best_seasons?start=&end=&stat=&cat=`,
+`/api/history?start=&end=&stat=&cat=`.
 
 ### Franchise history
 

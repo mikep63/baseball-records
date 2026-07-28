@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = 'c43eeaf3f8e0';
+const APP_BUILD = 'c8c6b607c6a5';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -218,7 +218,7 @@ async function showPlayer(pid) {
   const d = await api('player/' + encodeURIComponent(pid));
   if (d.error) { el.innerHTML = `<p class="note">${esc(d.error)}</p>`; return; }
   const b = d.bio;
-  const name = `${b.nameFirst || ''} ${b.nameLast || ''}`;
+  const name = `${b.nameFirst || ''} ${b.nameLast || ''}`.trim();
   const born = b.birthYear
     ? `Born ${b.birthYear}${b.birthCity ? ', ' + b.birthCity : ''}${b.birthState ? ', ' + b.birthState : ''}${b.birthCountry && b.birthCountry !== 'USA' ? ', ' + b.birthCountry : ''}`
     : '';
@@ -757,14 +757,17 @@ function syncLeaderControls() {
   const mode = $('#lead-mode').value;
   // Season picks an era; Multi-Year still takes an explicit year pair, and
   // Season falls back to the same pair when its era is Custom.
-  const pair = mode === 'multi' || (mode === 'season' && leadEra === 'custom');
+  const byEra = mode === 'season' || mode === 'history';
+  const pair = mode === 'multi' || (byEra && leadEra === 'custom');
   // the detail row disappears entirely for Career, which needs nothing
   $('#lead-span-detail').style.display = mode === 'career' ? 'none' : '';
   $('#lead-year-wrap').style.display = mode === 'year' ? '' : 'none';
-  $('#lead-era-wrap').style.display = mode === 'season' ? '' : 'none';
+  $('#lead-era-wrap').style.display = byEra ? '' : 'none';
+  // Year by Year shows one leader per league-season, so a count has no meaning
+  $('#lead-limit-wrap').style.display = mode === 'history' ? 'none' : '';
   $('#lead-start-wrap').style.display = pair ? '' : 'none';
   $('#lead-end-wrap').style.display = pair ? '' : 'none';
-  if (mode === 'season' && leadEra === 'custom' && lastLeaderMode !== 'season') {
+  if (byEra && leadEra === 'custom' && lastLeaderMode !== mode) {
     $('#lead-start').value = META.minYear;
     $('#lead-end').value = META.maxYear;
   }
@@ -806,6 +809,18 @@ async function runLeaders() {
     path = `best_seasons?start=${start}&end=${end}&stat=${stat}&cat=${cat}&limit=${limit}`;
     heading = `Best Seasons: ${label}${suffix}`;
     qualNote = 'Rate stats require qualifying playing time in that season (≈3.1 plate appearances or 1 inning pitched per game the player\'s league played).';
+  } else if (mode === 'history') {
+    const r = leadEra === 'custom'
+      ? { start: +$('#lead-start').value, end: +$('#lead-end').value }
+      : eraRange();
+    if (r.end < r.start) {
+      note.innerHTML = `<span class="warn">⚠ The ending year (${r.end}) is before the starting year (${r.start}) — please swap them.</span>`;
+      el.innerHTML = '';
+      return;
+    }
+    path = `history?start=${r.start}&end=${r.end}&stat=${stat}&cat=${cat}`;
+    heading = `Year by Year: ${label}`;
+    qualNote = 'Rate stats require qualifying playing time in that season (≈3.1 plate appearances or 1 inning pitched per game the league scheduled).';
   } else if (mode === 'multi') {
     const start = $('#lead-start').value, end = $('#lead-end').value;
     if (+end < +start) {
@@ -827,6 +842,24 @@ async function runLeaders() {
   const d = await api(path);
 
   let html = `<h2>${esc(heading)}</h2>`;
+  if (mode === 'history') {
+    if (!d.rows.length) {
+      el.innerHTML = html + '<p class="note">No qualifying players in this span.</p>';
+      return;
+    }
+    html += table(['Year', 'Lg', 'Leader', 'Team', label],
+      d.rows.map((r) => ({ cells: [
+        `<a class="team-link" href="#teams/${r.yearID}">${r.yearID}</a>`,
+        esc(r.lgID),
+        r.tied > 2 ? `<span class="tile-tied">${r.tied} tied</span>`
+          : r.leaders.map((l) => esc(l.name)).join(' / '),
+        r.tied === 1 ? teamCell(r.leaders[0].teamID, r.yearID) : '',
+        `<strong>${fmtStat(stat, r.value)}</strong>`] })),
+      { txtCols: [0, 1, 2, 3] });
+    el.innerHTML = html + `<p class="note">${d.rows.length} league-seasons,
+      ${d.start}–${d.end}.</p>`;
+    return;
+  }
   if (!d.leaders.length) {
     // rate stats in a thin season can leave nobody over the qualifier
     el.innerHTML = html + `<p class="note">No qualifying players${isRate

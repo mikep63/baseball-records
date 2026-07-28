@@ -136,6 +136,9 @@ window.LocalAPI = (function () {
 
   /* ---------------------------------------------------- stat math */
   const nz = (v) => (v == null ? 0 : v);
+  /* 413 players, all from the Negro League records, have no first name;
+     plain concatenation leaves a leading space. */
+  const fullName = (p) => ((p.nameFirst || '') + ' ' + (p.nameLast || '')).trim();
 
   function batValue(stat, s) {   // s: object with summed batting columns
     const ab = nz(s.AB), h = nz(s.H);
@@ -219,7 +222,7 @@ window.LocalAPI = (function () {
       term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '.*'), 'i');
     const hits = [];
     for (const p of D.people) {
-      const full = (p.nameFirst + ' ' + p.nameLast);
+      const full = fullName(p);
       if (rx.test(full) || rx.test(p.nameLast)) hits.push(p);
     }
     hits.sort((a, b) =>
@@ -229,7 +232,7 @@ window.LocalAPI = (function () {
     return {
       players: hits.slice(0, 25).map((p) => ({
         playerID: p.playerID,
-        name: p.nameFirst + ' ' + p.nameLast,
+        name: fullName(p),
         birthYear: p.birthYear,
         debut: (p.debut || '').slice(0, 4),
         finalGame: (p.finalGame || '').slice(0, 4),
@@ -398,7 +401,7 @@ window.LocalAPI = (function () {
       const pe = IDX.person.get(a.playerID);
       return {
         playerID: a.playerID,
-        name: pe ? pe.nameFirst + ' ' + pe.nameLast : a.playerID,
+        name: pe ? fullName(pe) : a.playerID,
         POS: (posBest.get(a.playerID) || {}).pos || '',
         G: a.G, AB: a.AB, R: a.R, H: a.H, D2: a['2B'], D3: a['3B'],
         HR: a.HR, RBI: a.RBI, SB: a.SB, BB: a.BB,
@@ -417,7 +420,7 @@ window.LocalAPI = (function () {
       const pe = IDX.person.get(a.playerID);
       return {
         playerID: a.playerID,
-        name: pe ? pe.nameFirst + ' ' + pe.nameLast : a.playerID,
+        name: pe ? fullName(pe) : a.playerID,
         W: a.W, L: a.L, G: a.G, GS: a.GS, SV: a.SV,
         IP: round1(nz(a.IPouts) / 3.0), SO: a.SO, BB: a.BB,
         ERA: pitValue('ERA', a),
@@ -492,7 +495,7 @@ window.LocalAPI = (function () {
         nyears: a.years.size, firstYear: first, lastYear: last,
         nteams: a.teams.size, teamID: a.teamID,
         value,
-        name: pe ? pe.nameFirst + ' ' + pe.nameLast : a.playerID,
+        name: pe ? fullName(pe) : a.playerID,
       };
     }
   }
@@ -560,7 +563,7 @@ window.LocalAPI = (function () {
     const named = (r) => {
       const pe = IDX.person.get(r.playerID);
       return { playerID: r.playerID, teamID: r.teamID,
-        name: pe ? pe.nameFirst + ' ' + pe.nameLast : r.playerID };
+        name: pe ? fullName(pe) : r.playerID };
     };
 
     const leagues = Array.from(games.keys()).sort().map((lg) => {
@@ -626,6 +629,65 @@ window.LocalAPI = (function () {
     };
   }
 
+  /* Each league's leader in one stat, every year, newest first. The other
+     spans answer "who was best" once; this answers it repeatedly, so one page
+     carries the whole line of succession. Ties are kept, not broken. */
+  function apiHistory(q) {
+    let y0 = +q.start || 0, y1 = +q.end || 0;
+    if (y1 < y0) { const t = y0; y0 = y1; y1 = t; }
+    const stat = q.stat || 'HR', cat = q.cat || 'batting';
+    const pitching = cat === 'pitching';
+    const stats = pitching ? PITCHING_STATS : BATTING_STATS;
+    if (!(stat in stats)) throw new Error('bad stat');
+    const src = pitching ? D.pitching : D.batting;
+    const sumCols = pitching ? PIT_SUM_COLS : BAT_SUM_COLS;
+    const valueFn = pitching ? pitValue : batValue;
+    const isRate = (pitching ? RATE_PITCHING : RATE_BATTING).includes(stat);
+    const asc = ASCENDING.includes(stat);
+
+    const agg = new Map();
+    for (const r of src) {
+      if (r.yearID < y0 || r.yearID > y1 || !r.lgID) continue;
+      const k = r.yearID + '|' + r.lgID + '|' + r.playerID;
+      let a = agg.get(k);
+      if (!a) {
+        a = { yearID: r.yearID, lgID: r.lgID, playerID: r.playerID, teamID: r.teamID };
+        agg.set(k, a);
+      }
+      if (r.teamID < a.teamID) a.teamID = r.teamID;
+      sumInto(a, r, sumCols);
+    }
+
+    const best = new Map();
+    for (const a of agg.values()) {
+      const bar = Math.max(IDX.lgTeamG.get(a.yearID + '|' + a.lgID) || 0, MIN_SCHEDULE);
+      if (isRate) {
+        if (!pitching && paOf(a) < 3.1 * bar) continue;
+        if (pitching && nz(a.IPouts) / 3.0 < bar) continue;
+      }
+      let v = valueFn(stat, a);
+      if (v == null) continue;
+      v = Math.round(v * 1e9) / 1e9;
+      const k = a.yearID + '|' + a.lgID;
+      const e = best.get(k);
+      if (!e || (asc ? v < e.value : v > e.value)) {
+        best.set(k, { yearID: a.yearID, lgID: a.lgID, value: v, rows: [a] });
+      } else if (v === e.value) e.rows.push(a);
+    }
+
+    const named = (a) => {
+      const pe = IDX.person.get(a.playerID);
+      return { name: pe ? fullName(pe) : a.playerID,
+        teamID: a.teamID };
+    };
+    const out = Array.from(best.values()).map((e) => ({
+      yearID: e.yearID, lgID: e.lgID, value: e.value, tied: e.rows.length,
+      leaders: e.rows.map(named).sort((x, y) => (x.name < y.name ? -1 : 1)),
+    }));
+    out.sort((a, b) => b.yearID - a.yearID || (a.lgID < b.lgID ? -1 : 1));
+    return { rows: out, stat, cat, start: y0, end: y1 };
+  }
+
   function apiLeaders(q) {
     const year = +q.year || 0;
     const stat = q.stat || 'HR', cat = q.cat || 'batting';
@@ -678,6 +740,7 @@ window.LocalAPI = (function () {
     if (route === 'leaders') return apiLeaders(q);
     if (route === 'leaders_range') return apiLeadersRange(q);
     if (route === 'best_seasons') return apiBestSeasons(q);
+    if (route === 'history') return apiHistory(q);
     if (route === 'season_leaders') return apiSeasonDashboard(q);
     if (route === 'franchises') return apiFranchises();
     if (route.startsWith('franchise/')) return apiFranchise(decodeURIComponent(route.slice(10)));
