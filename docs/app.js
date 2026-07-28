@@ -190,7 +190,9 @@ async function doSearch(q) {
   el.innerHTML = '<div class="result-list">' + data.players.map((p) => `
     <div class="result-item" onclick="location.hash='player/${esc(p.playerID)}'">
       <span><strong>${esc(p.name)}</strong></span>
-      <span class="meta">${esc(p.debut)}–${esc(p.finalGame)} · ${p.careerG} G</span>
+      <span class="meta">${p.debut || p.finalGame
+        ? `${esc(p.debut)}–${esc(p.finalGame)} · ${p.careerG} G`
+        : 'no playing record'}</span>
     </div>`).join('') + '</div>';
 }
 
@@ -334,6 +336,12 @@ async function showPlayer(pid) {
       </details>`;
     }
   }
+  // People carries managers, coaches and others who never played; without
+  // this their page is a bio that simply stops.
+  if (!d.batting.length && !d.pitching.length && !d.fielding.length) {
+    html += '<p class="note">No playing statistics recorded for this person.</p>';
+  }
+
   el.innerHTML = html;
 }
 
