@@ -39,18 +39,6 @@ window.LocalAPI = (function () {
   const RATE_PITCHING = ['ERA', 'WHIP'];
   const ASCENDING = ['ERA', 'WHIP'];
 
-  /* Leaderboards rank major-league play only, and "major league" means the
-     list MLB itself recognises: the six early majors, plus the seven Negro
-     major leagues added in 2020. Everything else Lahman carries is
-     independent or touring ball (IND, WES, EAS, NAC, INT) — a handful of
-     recorded games against whoever turned up, not a season anyone led.
-
-     The National Association (1871-75) is deliberately absent: MLB does not
-     recognise it. Its seasons still appear everywhere else in the app, they
-     just have no leaderboard. */
-  const MAJOR_LEAGUES = new Set(['NL', 'AA', 'UA', 'PL', 'AL', 'FL',
-    'NNL', 'ECL', 'ANL', 'EWL', 'NSL', 'NN2', 'NAL']);
-
   const D = {};          // file -> array of row objects
   const IDX = {};        // built indexes
   let readyResolve;
@@ -108,9 +96,6 @@ window.LocalAPI = (function () {
       if ((t.G || 0) > (IDX.lgTeamG.get(k) || 0)) IDX.lgTeamG.set(k, t.G);
     }
     IDX.minYear = minYear; IDX.maxYear = maxYear;
-    // first season with a recognised major league — see MAJOR_LEAGUES
-    IDX.leaderMinYear = D.teams.reduce((lo, t) =>
-      (MAJOR_LEAGUES.has(t.lgID) && t.yearID < lo ? t.yearID : lo), Infinity);
     IDX.batByPlayer = groupBy(D.batting, 'playerID');
     IDX.pitByPlayer = groupBy(D.pitching, 'playerID');
     IDX.fldByPlayer = groupBy(D.fielding, 'playerID');
@@ -195,7 +180,6 @@ window.LocalAPI = (function () {
   function apiMeta() {
     return {
       minYear: IDX.minYear, maxYear: IDX.maxYear,
-      leaderMinYear: IDX.leaderMinYear,
       battingStats: BATTING_STATS, pitchingStats: PITCHING_STATS,
       rateStats: RATE_BATTING.concat(RATE_PITCHING).sort(),
     };
@@ -407,7 +391,6 @@ window.LocalAPI = (function () {
     const agg = new Map();
     for (const r of rows) {
       if (r.yearID < y0 || r.yearID > y1) continue;
-      if (!MAJOR_LEAGUES.has(r.lgID)) continue;
       const key = perSeason ? r.playerID + '|' + r.yearID : r.playerID;
       let a = agg.get(key);
       if (!a) {
@@ -486,7 +469,7 @@ window.LocalAPI = (function () {
     const year = +q.year || 0;
     const games = new Map();
     for (const t of D.teams) {
-      if (t.yearID !== year || !MAJOR_LEAGUES.has(t.lgID)) continue;
+      if (t.yearID !== year || !t.lgID) continue;
       if ((t.G || 0) > (games.get(t.lgID) || 0)) games.set(t.lgID, t.G);
     }
     if (!games.size) return { year, leagues: [] };
@@ -495,7 +478,7 @@ window.LocalAPI = (function () {
     const agg = (rows, cols) => {
       const m = new Map();
       for (const r of rows) {
-        if (r.yearID !== year || !MAJOR_LEAGUES.has(r.lgID)) continue;
+        if (r.yearID !== year || !r.lgID) continue;
         const k = r.lgID + '|' + r.playerID;
         let a = m.get(k);
         if (!a) {

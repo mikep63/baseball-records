@@ -58,6 +58,82 @@
     <div id="franch-detail"></div>
   </section>
 
+  <!-- ============ About ============ -->
+  <section id="tab-about" class="tab">
+    <h2>About</h2>
+    <p class="about-lead">A browser for the Lahman Baseball Database, covering
+      every major-league season from 1871 to 2025 — players, seasons,
+      franchises and leaders. It runs entirely on your device: there is no
+      server, no account, and no tracking.</p>
+
+    <h3>The data</h3>
+    <p>All statistics come from the
+      <a href="https://sabr.org/lahman-database/" target="_blank" rel="noopener">Lahman
+      Baseball Database</a>, copyright © 1996–2025
+      <a href="https://sabr.org/" target="_blank" rel="noopener">SABR</a>
+      (Society for American Baseball Research), via generous donation from
+      Sean Lahman. It is used under a
+      <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">Creative
+      Commons Attribution-ShareAlike 3.0 Unported</a> licence, and the data
+      files this app downloads are shared under that same licence.</p>
+
+    <h3>Changes made to the database</h3>
+    <p>The data files here are modified derivatives rather than verbatim
+      copies. Each carries only the columns the app reads; a career-games
+      column is added to the player file; the franchise files are new tables
+      with no counterpart in the original, reconstructing every rename and
+      relocation from the per-season team rows; and the Hall of Fame file
+      keeps inducted members only. No statistic has been altered.</p>
+
+    <h3>Which leagues count</h3>
+    <p>Leaderboards rank every league in the database. All of them are
+      major-league caliber by SABR's reckoning, including the barnstorming
+      clubs — the Cuban X Giants, Philadelphia Giants, Brooklyn Royal Giants
+      and their peers — which SABR describes as
+      <em>“selected as major league caliber in light of the economic and
+      social conditions that forced them to play outside a typical league
+      structure.”</em> Segregation is why those clubs have no league to be
+      listed under, so they are ranked alongside everyone else.</p>
+    <p>Rate titles use the official qualifier of 3.1 plate appearances, or one
+      inning pitched, per game the player's own league played — not per game
+      the longest league that year played, which would hold a short schedule
+      to someone else's bar. That bar is floored at a 40-game schedule so a
+      handful of recorded games cannot produce a batting crown.</p>
+
+    <h3>Negro League statistics</h3>
+    <p>Negro League data comes from
+      <a href="https://www.seamheads.com/NegroLgs/" target="_blank" rel="noopener">Seamheads</a>,
+      following SABR's
+      <a href="https://sabr.org/latest/sabr-negro-leagues-task-force-issues-recommendations-on-major-league-status/" target="_blank" rel="noopener">2021</a>
+      and
+      <a href="https://sabr.org/latest/sabr-special-committee-acknowledges-1949-50-negro-american-league-independent-black-baseball-teams-as-major-league-caliber/" target="_blank" rel="noopener">2024</a>
+      recommendations on major-league status. Recovering these records is
+      ongoing work, and totals can change as new sources are found. Missing
+      values are unknown rather than zero.</p>
+
+    <h3>Acknowledgements</h3>
+    <p>The database exists because of a long line of researchers. <strong>Pete
+      Palmer</strong> compiled much of the raw batting, pitching and fielding
+      data. <strong>Sean Lahman</strong> built the first relational version and
+      gave it away free from 1995. <strong>Sean Forman</strong> created
+      Baseball-Reference and, with Lahman, launched the Baseball Databank.
+      <strong>Ted Turocy</strong> automated the annual updates through the
+      2010s and linked the data to Retrosheet play-by-play.
+      <strong>Tom Ruane</strong>'s work at Retrosheet underpins much of the
+      underlying quality, and <strong>Keith Woolner</strong> helped turn the
+      early collection into a relational database.</p>
+    <p>Substantial ongoing contributions from Derek Adair, Mike Crain, Kevin
+      Johnson, Rod Nelson, Tom Tango and Paul Wendt, with Hall of Fame research
+      by <strong>Graham Womack</strong> and <strong>Bryan Walko</strong> — and
+      many dozens more who have sent corrections over three decades.</p>
+
+    <h3>This app</h3>
+    <p>Open source and free to use. The code is MIT licensed; the data keeps
+      its own licence above. Nothing here is affiliated with or endorsed by
+      SABR, MLB, or any club.</p>
+    <p class="note" id="about-version"></p>
+  </section>
+
   <!-- ============ Leaders ============ -->
   <section id="tab-leaders" class="tab">
     <div class="controls">
@@ -85,7 +161,10 @@
 </main>
 
 <footer>
-  <p>Data: <a href="http://seanlahman.com" target="_blank" rel="noopener">Lahman Baseball Database</a> (CC BY-SA 3.0)</p>
+  <p>Data: <a href="https://sabr.org/lahman-database/" target="_blank" rel="noopener">Lahman
+    Baseball Database</a> © SABR, modified, used under
+    <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>
+    · <a href="#about">About &amp; acknowledgements</a></p>
 </footer>
 
 <script src="app.js"></script>

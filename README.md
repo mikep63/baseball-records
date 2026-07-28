@@ -94,23 +94,37 @@ use Safari's *Add to Home Screen* to run it like an app.
 
 ### How leaderboards are scoped
 
-Leaderboards rank **major-league play only**, using the list MLB itself
-recognises: NL, AA, UA, PL, AL, FL, plus the seven Negro major leagues
-recognised in 2020 (NNL, ECL, ANL, EWL, NSL, NN2, NAL). Lahman also carries
-independent and touring ball — a handful of recorded games against whoever
-turned up — which is not a season anyone led. The National Association
-(1871–75) is excluded for the same reason MLB excludes it, so those seasons
-are browsable but have no leaderboard and are left out of the year pickers.
+Leaderboards rank **every league in the database**, with no whitelist. All 19
+are major-league caliber by SABR's own reckoning (`data/readme2025.txt` §1.1):
+the National Association, American Association, Union Association, Players
+League, Federal League, AL and NL, the seven Negro major leagues, and the
+barnstorming clubs filed under the pseudo-leagues `IND`, `EAS`, `WES`, `NAC`
+and `INT`. Of those last, SABR writes that they were
+
+> selected as major league caliber in light of the economic and social
+> conditions that forced them to play outside a typical league structure.
+
+Those are the Cuban X Giants, Philadelphia Giants, Brooklyn Royal Giants and
+their peers — 876 players. Segregation is why they have no league to be listed
+under, so filtering them out would drop them for the shape of their records
+rather than the substance.
+
+Sample size is a separate question, answered by the schedule floor below.
 
 Rate stats then apply the official playing-time qualifier: **3.1 PA (or 1 IP)
 per game the player's own league played** — not per game the longest league
 in that year played, which would hold a short-schedule league to someone
 else's bar. That distinction matters twice over: the Negro Leagues played
 ~80-game seasons against the AL's 157, and in strike-shortened 1994 it decides
-the AL ERA title. The bar is floored at a 40-game schedule, since even a
-recognised league can post a stub season (the ECL folded seven games into
-1928). A player traded across leagues mid-season is held to the longest
-schedule he appeared in.
+the AL ERA title. A player traded across leagues mid-season is held to the
+longest schedule he appeared in.
+
+The bar is floored at a **40-game schedule**. Some clubs have only a handful
+of recorded games, where 3.1 per game is a bar of three plate appearances and
+a 1-for-1 afternoon takes the batting crown; the floor also catches stub
+seasons in the established leagues, like the ECL folding seven games into
+1928. It filters on sample size rather than on which league a player was
+allowed to play in.
 
 Multi-season and career leaderboards use a heuristic of our own rather than
 any official rule: 400 PA (or 130 IP) per year in the span, capped at
@@ -186,6 +200,16 @@ the generic OF position).
 
 ## Data & license
 
-Player and team data from the [Lahman Baseball Database](http://seanlahman.com)
-/ Baseball Databank, used under
+Player and team data from the
+[Lahman Baseball Database](https://sabr.org/lahman-database/), copyright
+© 1996–2025 **SABR** via generous donation from Sean Lahman, used under
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).
+
+The exports in `docs/data/` are **modified** derivatives — column subsets, a
+derived `careerG` column, the reconstructed franchise tables, and inducted
+Hall of Famers only — and are shared under that same licence. No statistic is
+altered. See [LICENSE](LICENSE) for the full breakdown, and the app's About
+page for acknowledgements of the researchers behind the database.
+
+The code in this repository is MIT licensed; the data is not. Nothing here is
+affiliated with or endorsed by SABR, MLB, or any club.

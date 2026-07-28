@@ -119,7 +119,7 @@ async function api(path) {
 }
 
 /* ---------------------------------------------------------- routing */
-const TABS = ['players', 'teams', 'franchises', 'leaders'];
+const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
 
 function route() {
   const hash = location.hash.slice(1) || 'players';
@@ -140,13 +140,14 @@ function route() {
   if (parts[0] === 'team' && parts[2]) showRoster(+parts[1], parts[2]);
   if (parts[0] === 'franchise' && parts[1]) showFranchise(parts[1]);
   if (parts[0] === 'franchises') showFranchiseList();
+  if (parts[0] === 'about') showAbout();
   // #leaders/<year>/<cat>/<stat> — where the season dashboard tiles point
   if (parts[0] === 'leaders' && parts[1]) openLeaders(+parts[1], parts[2], parts[3]);
   window.scrollTo(0, 0);
 }
 
 function openLeaders(year, cat, stat) {
-  if (!META || !(year >= META.leaderMinYear && year <= META.maxYear)) return;
+  if (!META || !(year >= META.minYear && year <= META.maxYear)) return;
   const c = cat === 'pitching' ? 'pitching' : 'batting';
   const stats = c === 'pitching' ? META.pitchingStats : META.battingStats;
   const s = stat in stats ? stat : (c === 'pitching' ? 'W' : 'HR');
@@ -632,10 +633,9 @@ async function showFranchise(fid) {
 }
 
 /* ---------------------------------------------------------- leaders tabs */
-function fillYears(sel, selected, from) {
-  const lo = from == null ? META.minYear : from;
+function fillYears(sel, selected) {
   const opts = [];
-  for (let y = META.maxYear; y >= lo; y--) {
+  for (let y = META.maxYear; y >= META.minYear; y--) {
     opts.push(`<option${y === selected ? ' selected' : ''}>${y}</option>`);
   }
   sel.innerHTML = opts.join('');
@@ -648,12 +648,9 @@ function fillStats(sel, cat, selected) {
 }
 
 function initLeaders() {
-  // 1871-75 is National Association only, which MLB does not recognise, so
-  // it has no leaderboard — keep those years out of the pickers entirely.
-  const lo = META.leaderMinYear;
-  fillYears($('#lead-year'), META.maxYear, lo);
-  fillYears($('#lead-start'), 1990, lo);
-  fillYears($('#lead-end'), 1999, lo);
+  fillYears($('#lead-year'), META.maxYear);
+  fillYears($('#lead-start'), 1990);
+  fillYears($('#lead-end'), 1999);
   fillStats($('#lead-stat'), 'batting', 'HR');
   $('#lead-cat').addEventListener('change', () =>
     fillStats($('#lead-stat'), $('#lead-cat').value,
@@ -702,7 +699,7 @@ async function runLeaders() {
     heading = `${label} Leaders, ${start}–${end}`;
     qualNote = 'Rate stats require minimum playing time over the span (400 plate appearances or 130 innings pitched per year, capped at 3,000 PA / 1,000 IP).';
   } else {
-    path = `leaders_range?start=${META.leaderMinYear}&end=${META.maxYear}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    path = `leaders_range?start=${META.minYear}&end=${META.maxYear}&stat=${stat}&cat=${cat}&limit=${limit}`;
     heading = `Career ${label} Leaders`;
     qualNote = 'Rate stats require a full career of playing time (3,000 plate appearances or 1,000 innings pitched).';
   }
@@ -744,6 +741,17 @@ async function runLeaders() {
     }
   }
   el.innerHTML = html;
+}
+
+/* ---------------------------------------------------------- about tab */
+/* Reachable from the footer rather than the nav, so browsing keeps the four
+   tabs. The attribution here is a licence requirement, not decoration:
+   CC BY-SA asks for credit and for changes to be stated. */
+function showAbout() {
+  const el = $('#about-version');
+  if (el && !el.textContent) {
+    el.textContent = `Seasons ${META.minYear}–${META.maxYear}.`;
+  }
 }
 
 /* ---------------------------------------------------------- boot */

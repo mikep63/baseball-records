@@ -224,3 +224,11 @@ footer a { color: var(--muted); }
   main { padding-left: max(.75rem, env(safe-area-inset-left)); padding-right: max(.75rem, env(safe-area-inset-right)); }
   footer { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
 }
+
+/* about page — attribution and acknowledgements */
+#tab-about { max-width: 46rem; }
+#tab-about h3 { margin-top: 1.4rem; }
+#tab-about p { line-height: 1.55; margin: .5rem 0; }
+#tab-about blockquote, #tab-about em { color: var(--muted); }
+.about-lead { font-size: 1.02rem; }
+footer p { line-height: 1.6; }

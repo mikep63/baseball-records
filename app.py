@@ -41,21 +41,22 @@ RATE_BATTING = {"AVG", "OBP", "SLG", "OPS"}
 RATE_PITCHING = {"ERA", "WHIP"}
 ASCENDING = {"ERA", "WHIP"}  # lower is better
 
-# Leaderboards rank major-league play only, and "major league" means the list
-# MLB itself recognises: the six early majors, plus the seven Negro major
-# leagues added in 2020. Everything else Lahman carries is independent or
-# touring ball (IND, WES, EAS, NAC, INT) — a handful of recorded games against
-# whoever turned up, which is not a season anyone led.
+# Leaderboards rank every league in the database, with no whitelist: all 19 of
+# them are major-league caliber by SABR's own reckoning (readme2025.txt §1.1).
+# That includes the barnstorming clubs filed under IND, EAS, WES, NAC and INT —
+# the Cuban X Giants, Philadelphia Giants, Brooklyn Royal Giants and their
+# peers — which SABR states were "selected as major league caliber in light of
+# the economic and social conditions that forced them to play outside a typical
+# league structure". Segregation is why they have no league to be listed under;
+# filtering them out would drop 876 players for the shape of their records
+# rather than the substance.
 #
-# The National Association (1871-75) is deliberately absent: MLB does not
-# recognise it. Its seasons still appear everywhere else in the app, they just
-# have no leaderboard, which LEADER_MIN_YEAR below keeps out of the pickers.
-MAJOR_LEAGUES = ("NL", "AA", "UA", "PL", "AL", "FL",
-                 "NNL", "ECL", "ANL", "EWL", "NSL", "NN2", "NAL")
-
-# Shortest schedule treated as a real season when setting a rate qualifier.
-# Even a recognised league can post a stub season — the ECL folded seven
-# games into 1928 — so the floor backs up the list above.
+# Sample size is a separate question, and MIN_SCHEDULE is what answers it.
+# A league season too short to establish a rate title sets no rate title: some
+# of these clubs have a single recorded game, where 3.1 PA per game is a bar of
+# three plate appearances and a 1-for-1 afternoon takes the batting crown. This
+# floors that bar, and catches stub seasons in the established leagues too —
+# the ECL folded seven games into 1928.
 MIN_SCHEDULE = 40
 
 def batting_expr(stat, p="b"):
@@ -112,14 +113,8 @@ def rows_to_dicts(rows):
 # ---------------------------------------------------------------- api handlers
 def api_meta(q, conn):
     yr = conn.execute('SELECT MIN(yearID) lo, MAX(yearID) hi FROM Teams').fetchone()
-    # Seasons run from 1871, but leaderboards only from the first recognised
-    # major league, so the year pickers do not offer years that can return
-    # nothing. Derived, not hardcoded, so it tracks MAJOR_LEAGUES.
-    lead_lo = conn.execute(
-        'SELECT MIN(yearID) lo FROM Teams WHERE lgID IN (%s)'
-        % ", ".join("'%s'" % lg for lg in MAJOR_LEAGUES)).fetchone()["lo"]
     return {
-        "minYear": yr["lo"], "maxYear": yr["hi"], "leaderMinYear": lead_lo,
+        "minYear": yr["lo"], "maxYear": yr["hi"],
         "battingStats": BATTING_STATS, "pitchingStats": PITCHING_STATS,
         "rateStats": sorted(RATE_BATTING | RATE_PITCHING),
     }
@@ -328,11 +323,13 @@ def _dashboard_top(rows, value_of, qualifies, ascending=False):
 def api_season_leaders(q, conn):
     """Every league's leaders for one season, for the Seasons tab panel."""
     year = int(q.get("year", ["0"])[0])
-    majors = ", ".join("'%s'" % lg for lg in MAJOR_LEAGUES)
+    # every league counts (see MIN_SCHEDULE above); this only skips rows whose
+    # league is blank, which would otherwise group into a nameless "" league
+    has_lg = lambda p: "{p}.lgID IS NOT NULL AND {p}.lgID <> ''".format(p=p)
 
     games = {r["lgID"]: r["g"] for r in conn.execute(
-        'SELECT lgID, MAX(G) g FROM Teams WHERE yearID = ? AND lgID IN (%s) '
-        'GROUP BY lgID' % majors, (year,))}
+        'SELECT lgID, MAX(G) g FROM Teams t WHERE t.yearID = ? AND %s '
+        'GROUP BY lgID' % has_lg("t"), (year,))}
     if not games:
         return {"year": year, "leagues": []}
 
@@ -343,15 +340,15 @@ def api_season_leaders(q, conn):
              SUM(COALESCE(b.AB,0)+COALESCE(b.BB,0)+COALESCE(b.HBP,0)
                  +COALESCE(b.SH,0)+COALESCE(b.SF,0)) AS PA
       FROM Batting b JOIN People pe ON pe.playerID = b.playerID
-      WHERE b.yearID = ? AND b.lgID IN (%s)
-      GROUP BY b.lgID, b.playerID''' % majors, (year,)))
+      WHERE b.yearID = ? AND %s
+      GROUP BY b.lgID, b.playerID''' % has_lg("b"), (year,)))
     pit = rows_to_dicts(conn.execute('''
       SELECT p.lgID, p.playerID, pe.nameFirst || ' ' || pe.nameLast AS name,
              MIN(p.teamID) AS teamID, SUM(p.W) W, SUM(p.SO) SO,
              SUM(p.IPouts) AS IPouts, SUM(p.ER) ER
       FROM Pitching p JOIN People pe ON pe.playerID = p.playerID
-      WHERE p.yearID = ? AND p.lgID IN (%s)
-      GROUP BY p.lgID, p.playerID''' % majors, (year,)))
+      WHERE p.yearID = ? AND %s
+      GROUP BY p.lgID, p.playerID''' % has_lg("p"), (year,)))
 
     by_lg = {}
     for r in bat:
@@ -473,11 +470,9 @@ def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
              MIN({p}.teamID) AS teamID, {sums}{lg}
       FROM {table} {p}
       WHERE {p}.yearID BETWEEN ? AND ?
-        AND {p}.lgID IN ({majors})
       GROUP BY {group}'''.format(
         p=prefix, year_col=('%s.yearID' % prefix) if per_season else 'NULL',
-        sums=sum_cols, lg=lg_games, table=table, group=group,
-        majors=", ".join("'%s'" % lg for lg in MAJOR_LEAGUES))
+        sums=sum_cols, lg=lg_games, table=table, group=group)
 
     # Qualifiers for rate stats (min playing time). Single seasons follow the
     # official rule — 3.1 PA (or 1 IP) per game the player's league played.
