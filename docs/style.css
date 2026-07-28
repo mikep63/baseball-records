@@ -245,13 +245,16 @@ footer p { line-height: 1.6; }
   margin-right: .2rem; }
 .pos-sep { color: var(--muted); font-size: .8rem; padding: 0 .1rem; }
 
-/* era picker: a few named spans, so a segmented control rather than a slider.
-   It takes its own row beneath the drop-downs — the buttons are a different
-   height from a select, so sharing the row leaves the baseline ragged. */
-#lead-era-wrap {
-  display: flex; flex-direction: column; gap: .2rem;
-  flex: 0 0 100%; order: 1;
+/* Whatever narrows the span — a year, an era, a year pair — shares one row
+   beneath the drop-downs. Keeping them together matters: the era buttons are
+   a different height from a select, so they leave the baseline ragged inline,
+   and picking Custom must reveal From/To next to the button that revealed
+   them rather than back up among the other controls. */
+#lead-span-detail {
+  order: 1; flex: 0 0 100%;
+  display: flex; gap: .9rem; align-items: end; flex-wrap: wrap;
 }
+#lead-era-wrap { display: flex; flex-direction: column; gap: .2rem; }
 .seg-label { font-size: .8rem; color: var(--muted); }
 .segmented { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
 .segmented button {

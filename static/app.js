@@ -758,6 +758,8 @@ function syncLeaderControls() {
   // Season picks an era; Multi-Year still takes an explicit year pair, and
   // Season falls back to the same pair when its era is Custom.
   const pair = mode === 'multi' || (mode === 'season' && leadEra === 'custom');
+  // the detail row disappears entirely for Career, which needs nothing
+  $('#lead-span-detail').style.display = mode === 'career' ? 'none' : '';
   $('#lead-year-wrap').style.display = mode === 'year' ? '' : 'none';
   $('#lead-era-wrap').style.display = mode === 'season' ? '' : 'none';
   $('#lead-start-wrap').style.display = pair ? '' : 'none';

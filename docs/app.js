@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '571eea019715';
+const APP_BUILD = 'e471289e373d';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -758,6 +758,8 @@ function syncLeaderControls() {
   // Season picks an era; Multi-Year still takes an explicit year pair, and
   // Season falls back to the same pair when its era is Custom.
   const pair = mode === 'multi' || (mode === 'season' && leadEra === 'custom');
+  // the detail row disappears entirely for Career, which needs nothing
+  $('#lead-span-detail').style.display = mode === 'career' ? 'none' : '';
   $('#lead-year-wrap').style.display = mode === 'year' ? '' : 'none';
   $('#lead-era-wrap').style.display = mode === 'season' ? '' : 'none';
   $('#lead-start-wrap').style.display = pair ? '' : 'none';
