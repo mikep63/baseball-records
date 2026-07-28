@@ -84,10 +84,11 @@ use Safari's *Add to Home Screen* to run it like an app.
   they played in before (Dodgers *formerly Brooklyn*, Nationals *formerly
   Montreal*). Open one for its location timeline, every name it has ever
   had, and a season-by-season record.
-- **Season Leaders** — pick a year, category (batting/pitching), and stat;
-  top 10/25/50.
-- **Range Leaders** — pick a start year, end year, and stat (e.g. home runs
-  1990–1999) for the top 10/25/50 aggregated over the span.
+- **Leaders** — one tab with four spans, top 10/25/50 for any stat:
+  *Single Season* (1927 home runs), *Best Seasons* (the greatest individual
+  seasons ever, or within a range — Bonds' 73 in 2001, Kilroy's 513 strikeouts
+  in 1886), *Multi-Season* (totals over a span, e.g. home runs 1990–1999), and
+  *Career*.
 
 ### Stats available
 
@@ -148,7 +149,8 @@ any official rule: 400 PA (or 130 IP) per year in the span, capped at
 API endpoints: `/api/meta`, `/api/search?q=`, `/api/player/<id>`,
 `/api/teams?year=`, `/api/roster?year=&team=`, `/api/postseason?year=`,
 `/api/season_leaders?year=`, `/api/franchises`, `/api/franchise/<franchID>`,
-`/api/leaders?year=&stat=&cat=`, `/api/leaders_range?start=&end=&stat=&cat=`.
+`/api/leaders?year=&stat=&cat=`, `/api/leaders_range?start=&end=&stat=&cat=`,
+`/api/best_seasons?start=&end=&stat=&cat=`.
 
 ### Franchise history
 

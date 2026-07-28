@@ -602,6 +602,17 @@ window.LocalAPI = (function () {
     return { leaders: leaders(cat, stat, year, year, limit, true), stat, cat, year };
   }
 
+  /* Best individual seasons in a span — one row per player-season. The other
+     span modes aggregate, so over all years they answer "most career home
+     runs"; this answers "best home run season" instead. */
+  function apiBestSeasons(q) {
+    let y0 = +q.start || 0, y1 = +q.end || 0;
+    if (y1 < y0) { const t = y0; y0 = y1; y1 = t; }
+    const stat = q.stat || 'HR', cat = q.cat || 'batting';
+    const limit = Math.min(+q.limit || 10, 50);
+    return { leaders: leaders(cat, stat, y0, y1, limit, true), stat, cat, start: y0, end: y1 };
+  }
+
   function apiLeadersRange(q) {
     let y0 = +q.start || 0, y1 = +q.end || 0;
     if (y1 < y0) { const t = y0; y0 = y1; y1 = t; }
@@ -635,6 +646,7 @@ window.LocalAPI = (function () {
     if (route === 'roster') return apiRoster(q);
     if (route === 'leaders') return apiLeaders(q);
     if (route === 'leaders_range') return apiLeadersRange(q);
+    if (route === 'best_seasons') return apiBestSeasons(q);
     if (route === 'season_leaders') return apiSeasonDashboard(q);
     if (route === 'franchises') return apiFranchises();
     if (route.startsWith('franchise/')) return apiFranchise(decodeURIComponent(route.slice(10)));

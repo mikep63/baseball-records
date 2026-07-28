@@ -554,6 +554,24 @@ def api_leaders(q, conn):
     return {"leaders": rows, "stat": stat, "cat": cat, "year": year}
 
 
+def api_best_seasons(q, conn):
+    """Best individual seasons in a span — one row per player-season.
+
+    The other span modes aggregate: over all years they answer "most career
+    home runs" (Bonds 762). This ranks the seasons themselves, so the same
+    span answers "best home run season" (Bonds 73 in 2001) instead.
+    """
+    y0 = int(q.get("start", ["0"])[0])
+    y1 = int(q.get("end", ["0"])[0])
+    if y1 < y0:
+        y0, y1 = y1, y0
+    stat = q.get("stat", ["HR"])[0]
+    cat = q.get("cat", ["batting"])[0]
+    limit = min(int(q.get("limit", ["10"])[0]), 50)
+    rows = _leaders(conn, cat, stat, y0, y1, limit, per_season=True)
+    return {"leaders": rows, "stat": stat, "cat": cat, "start": y0, "end": y1}
+
+
 def api_leaders_range(q, conn):
     y0 = int(q.get("start", ["0"])[0])
     y1 = int(q.get("end", ["0"])[0])
@@ -576,6 +594,7 @@ ROUTES = {
     "leaders_range": api_leaders_range,
     "franchises": api_franchises,
     "season_leaders": api_season_leaders,
+    "best_seasons": api_best_seasons,
 }
 
 

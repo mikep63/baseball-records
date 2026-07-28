@@ -683,11 +683,21 @@ function initLeaders() {
 }
 
 /* Show only the year pickers the current span needs. */
+let lastLeaderMode = null;
+
 function syncLeaderControls() {
   const mode = $('#lead-mode').value;
+  const ranged = mode === 'multi' || mode === 'best';
   $('#lead-year-wrap').style.display = mode === 'season' ? '' : 'none';
-  $('#lead-start-wrap').style.display = mode === 'multi' ? '' : 'none';
-  $('#lead-end-wrap').style.display = mode === 'multi' ? '' : 'none';
+  $('#lead-start-wrap').style.display = ranged ? '' : 'none';
+  $('#lead-end-wrap').style.display = ranged ? '' : 'none';
+  // Best Seasons is asked all-time far more often than of a decade, so it
+  // opens on the full range; narrowing it afterwards still works.
+  if (mode === 'best' && lastLeaderMode !== 'best') {
+    $('#lead-start').value = META.minYear;
+    $('#lead-end').value = META.maxYear;
+  }
+  lastLeaderMode = mode;
 }
 
 async function runLeaders() {
@@ -706,6 +716,18 @@ async function runLeaders() {
     path = `leaders?year=${year}&stat=${stat}&cat=${cat}&limit=${limit}`;
     heading = `${year} ${label} Leaders`;
     qualNote = 'Rate stats require qualifying playing time (≈3.1 plate appearances or 1 inning pitched per team game).';
+  } else if (mode === 'best') {
+    const start = $('#lead-start').value, end = $('#lead-end').value;
+    if (+end < +start) {
+      note.innerHTML = `<span class="warn">⚠ The ending year (${esc(end)}) is before the starting year (${esc(start)}) — please swap them.</span>`;
+      el.innerHTML = '';
+      return;
+    }
+    path = `best_seasons?start=${start}&end=${end}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    const allTime = +start === META.minYear && +end === META.maxYear;
+    heading = allTime ? `Best Seasons: ${label}`
+      : `Best Seasons: ${label}, ${start}–${end}`;
+    qualNote = 'Rate stats require qualifying playing time in that season (≈3.1 plate appearances or 1 inning pitched per game the player\'s league played).';
   } else if (mode === 'multi') {
     const start = $('#lead-start').value, end = $('#lead-end').value;
     if (+end < +start) {
@@ -733,7 +755,17 @@ async function runLeaders() {
       ? ' — nobody reached the minimum playing time that season.' : '.'}</p>`;
     return;
   }
-  if (mode === 'season') {
+  if (mode === 'best') {
+    // one row per player-season, so the year carries the meaning here
+    html += table(['#', 'Player', 'Year', 'Team', label],
+      d.leaders.map((r, i) => ({ cells: [
+        `<span class="rank-num">${i + 1}</span>`,
+        playerLink(r.playerID, r.name),
+        `<a class="team-link" href="#leaders/${r.yearID}/${cat}/${esc(stat)}">${r.yearID}</a>`,
+        r.nteams > 1 ? `${r.nteams} teams` : teamCell(r.teamID, r.yearID),
+        `<strong>${fmtStat(stat, r.value)}</strong>`] })),
+      { txtCols: [1, 2, 3] });
+  } else if (mode === 'season') {
     html += table(['#', 'Player', 'Team', label],
       d.leaders.map((r, i) => ({ cells: [
         `<span class="rank-num">${i + 1}</span>`,
