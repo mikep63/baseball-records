@@ -202,8 +202,12 @@ string. `franchises.py` reconstructs both, which takes three fixes:
   appear under each sponsor in turn, but Cincinnati is Crosley Field for all 58
   seasons from 1912, including the 22 when the sign said Redland Field. `Parks`
   records the other names but no dates for them, so they are listed as *also
-  Redland Field* rather than given a span the data cannot support. 268 of 466
-  park runs carry one. Where a season names two grounds the club moved during
+  Redland Field* rather than given a span the data cannot support. An other
+  name is dropped where it duplicates a run already on the page — Riverfront
+  Stadium and Cinergy Field are both listed in their own right, since Lahman
+  did file seasons under each, so naming them from each other would just
+  point two rows at one another. 245 of 466 park runs carry a name worth
+  showing. Where a season names two grounds the club moved during
   the year, so each gets its own stretch — Cincinnati runs to 1970 at Crosley
   and from 1970 at Riverfront.
 

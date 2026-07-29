@@ -193,15 +193,25 @@ def park_runs(team_rows, look):
                         park=name,
                         city=(info.get("city") or "").strip(),
                         state=(info.get("state") or "").strip(),
-                        alias=", ".join(other_names(info, name)))
+                        alias=other_names(info, name))
                 continue
             out.append({
                 "park": name,
                 "city": (info.get("city") or "").strip() if info else "",
                 "state": (info.get("state") or "").strip() if info else "",
-                "alias": ", ".join(other_names(info, name)),
+                "alias": other_names(info, name),
                 "firstYear": year, "lastYear": year,
             })
+
+    # Drop an other-name that is already a run of its own. Where Lahman did
+    # record a rename season by season, both names are on the page already,
+    # and naming each from the other just points the two rows at each other:
+    # Riverfront Stadium "also Cinergy Field" sitting above Cinergy Field
+    # "also Riverfront Stadium". Redland Field survives because Lahman never
+    # filed a season under it.
+    shown = {_norm(r["park"]) for r in out}
+    for r in out:
+        r["alias"] = ", ".join(a for a in r["alias"] if _norm(a) not in shown)
     return out
 
 
