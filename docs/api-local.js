@@ -5,7 +5,8 @@
 
 window.LocalAPI = (function () {
   const FILES = ['people', 'batting', 'pitching', 'fielding', 'teams',
-    'awards', 'allstar', 'hof', 'seriespost', 'franchises', 'franchise_eras', 'managers'];
+    'awards', 'allstar', 'hof', 'seriespost', 'franchises', 'franchise_eras', 'managers',
+    'franchise_parks'];
   // numeric columns per file (everything else stays a string)
   const NUMERIC = {
     people: ['birthYear', 'height', 'weight', 'careerG'],
@@ -23,6 +24,7 @@ window.LocalAPI = (function () {
       'titles', 'nameCount'],
     franchise_eras: ['firstYear', 'lastYear'],
     managers: ['yearID', 'inseason', 'G', 'W', 'L'],
+    franchise_parks: ['firstYear', 'lastYear'],
   };
 
   const BATTING_STATS = {
@@ -127,6 +129,7 @@ window.LocalAPI = (function () {
     IDX.fldByPlayer = groupBy(D.fielding, 'playerID');
     IDX.teamsByFranch = groupBy(D.teams, 'franchID');
     IDX.erasByFranch = groupBy(D.franchise_eras || [], 'franchID');
+    IDX.parksByFranch = groupBy(D.franchise_parks || [], 'franchID');
     // who ran each club that year, in the order they held the job
     // every series a club played that October, for the franchise page
     IDX.postByTeamYear = new Map();
@@ -679,6 +682,10 @@ window.LocalAPI = (function () {
       locations: eras.filter((e) => e.kind === 'location').map((e) => ({
         location: e.label, firstYear: e.firstYear, lastYear: e.lastYear,
       })),
+      parks: (IDX.parksByFranch.get(fid) || []).slice()
+        .sort((a, b) => a.firstYear - b.firstYear)
+        .map((p) => ({ park: p.park, city: p.city, state: p.state,
+          firstYear: p.firstYear, lastYear: p.lastYear })),
       seasons,
     };
   }

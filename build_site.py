@@ -75,6 +75,12 @@ def export_franchises():
               ["franchID", "kind", "label", "firstYear", "lastYear",
                "teamID", "lgID"], era_rows)
 
+    write_csv("franchise_parks.csv",
+              ["franchID", "park", "city", "state", "firstYear", "lastYear"],
+              [[f["franchID"], p["park"], p["city"], p["state"],
+                p["firstYear"], p["lastYear"]]
+               for f in built for p in f["parks"]])
+
 
 def export_data():
     os.makedirs(DATA_OUT, exist_ok=True)
@@ -147,7 +153,7 @@ def export_data():
 DATA_FILES = ["people.csv", "batting.csv", "pitching.csv", "fielding.csv",
               "teams.csv", "awards.csv", "allstar.csv", "hof.csv",
               "seriespost.csv", "franchises.csv", "franchise_eras.csv",
-              "managers.csv"]
+              "managers.csv", "franchise_parks.csv"]
 
 # ------------------------------------------------------------- icon (pure py)
 

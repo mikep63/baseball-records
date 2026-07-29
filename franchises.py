@@ -119,6 +119,52 @@ def _int(v):
         return 0
 
 
+# --------------------------------------------------------------------- parks
+def park_lookup(park_rows):
+    """Park name -> row, including the aliases.
+
+    A stadium keeps its identity through a rename, and Lahman records the
+    season under whatever it was called at the time: the Marlins' Joe Robbie,
+    Pro Player, Dolphin and Sun Life Stadium are one building. Matching the
+    alias column as well as the name takes the join from 67% of team-seasons
+    to 82%.
+    """
+    look = {}
+    for p in park_rows:
+        name = (p.get("parkname") or "").strip()
+        if name:
+            look.setdefault(name, p)
+        for alias in (p.get("parkalias") or "").split(";"):
+            alias = alias.strip()
+            if alias:
+                look.setdefault(alias, p)
+    return look
+
+
+def park_runs(team_rows, look):
+    """Consecutive seasons in one ballpark, oldest first.
+
+    Seasons with no park on record are skipped rather than shown as a blank
+    row; 24 team-seasons have none, nearly all of them touring clubs with no
+    home ground to name.
+    """
+    out = []
+    for t in sorted(team_rows, key=lambda r: _int(r["yearID"])):
+        name = (t.get("park") or "").strip()
+        year = _int(t["yearID"])
+        if out and out[-1]["park"] == name:
+            out[-1]["lastYear"] = year
+            continue
+        info = look.get(name)
+        out.append({
+            "park": name,
+            "city": (info.get("city") or "").strip() if info else "",
+            "state": (info.get("state") or "").strip() if info else "",
+            "firstYear": year, "lastYear": year,
+        })
+    return [r for r in out if r["park"]]
+
+
 # ------------------------------------------------------------------- builder
 def build(team_rows, franchise_rows, park_rows):
     """One record per franchise, newest name first, with its full history.
@@ -127,6 +173,7 @@ def build(team_rows, franchise_rows, park_rows):
     W, L, WSWin, LgWin. Rows may arrive in any order.
     """
     vocab = build_vocab(park_rows)
+    parks = park_lookup(park_rows)
     meta = {f["franchID"]: f for f in franchise_rows}
 
     by_franchise = {}
@@ -188,6 +235,7 @@ def build(team_rows, franchise_rows, park_rows):
             "lgID": eras[-1]["lgID"],
             "locations": locations,
             "eras": eras,
+            "parks": park_runs(rows, parks),
         })
 
     out.sort(key=lambda f: f["name"])

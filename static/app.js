@@ -686,13 +686,25 @@ async function showFranchise(fid) {
       <p class="note"><a class="team-link" href="#franchises">← all franchises</a></p>
     </div>`;
 
-  if (d.locations.length) {
+  // Where it played comes from the ballparks, not the name. The Marlins were
+  // branded Florida then Miami but never left Miami, so a list built from the
+  // name would report a move that did not happen.
+  if (d.parks && d.parks.length) {
     html += '<h3>Where it played</h3>';
-    html += table(['City', 'From', 'To', 'Seasons'],
-      d.locations.map((l) => ({ cells: [
-        esc(l.location), l.firstYear, l.lastYear,
-        fmtInt(l.lastYear - l.firstYear + 1)] })),
-      { txtCols: [0, 1, 2] });
+    html += table(['Ballpark', 'City', 'From', 'To'],
+      d.parks.map((p) => ({ cells: [
+        esc(p.park) || '—',
+        p.city ? esc(p.city) + (p.state ? ', ' + esc(p.state) : '') : '—',
+        p.firstYear, p.lastYear] })),
+      { txtCols: [0, 1, 2, 3] });
+  }
+
+  if (d.locations.length > 1) {
+    html += '<h3>Known as</h3><p class="pos-arc">' + d.locations.map((l) => {
+      const span = l.firstYear === l.lastYear ? `${l.firstYear}`
+        : `${l.firstYear}–${l.lastYear}`;
+      return `<span class="pos-run"><b>${esc(l.location)}</b> ${span}</span>`;
+    }).join('<span class="pos-sep">→</span>') + '</p>';
   }
 
   html += '<h3>What it was called</h3>';

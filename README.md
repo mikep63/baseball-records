@@ -188,11 +188,15 @@ string. `franchises.py` reconstructs both, which takes three fixes:
 - **Eras are contiguous runs, not `GROUP BY name`.** Early nicknames were
   informal and alternate year to year (Brooklyn ran Superbas → Dodgers →
   Superbas → Robins → Dodgers), so min/max per name yields overlapping spans.
-- **Location comes from the name prefix, not the ballpark.** Park cities look
-  tempting but flip on temporary venues, inventing moves the franchise never
-  made. The prefix is matched against park cities plus states and regions, so
-  *Minnesota* and *Tampa Bay* resolve; an unparseable name inherits the
-  previous location rather than faking a move.
+- **The name's location and the ballpark's are different questions.** The
+  prefix — matched against park cities plus states and regions, so *Minnesota*
+  and *Tampa Bay* resolve — gives what a club called itself, which is what the
+  listing's *formerly* line is about. It is not where it played: the Marlins
+  were branded Florida then Miami without ever leaving Miami. So the franchise
+  page lists actual ballparks from `Teams.park`, joined to `Parks` on name and
+  alias, which is what carries a stadium through a rename — Joe Robbie, Pro
+  Player, Dolphin and Sun Life are one building. That join reaches 82% of
+  team-seasons; the rest show the park with no city.
 
 ## Future work
 

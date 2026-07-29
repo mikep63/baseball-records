@@ -502,11 +502,12 @@ def _franchises(conn):
     if _FRANCHISES is None:
         _FRANCHISES = franchises.build(
             rows_to_dicts(conn.execute(
-                'SELECT franchID, yearID, teamID, lgID, name, W, L, WSWin, '
+                'SELECT franchID, yearID, teamID, lgID, name, park, W, L, WSWin, '
                 'LgWin FROM Teams')),
             rows_to_dicts(conn.execute(
                 'SELECT franchID, franchName, active FROM TeamsFranchises')),
-            rows_to_dicts(conn.execute('SELECT city FROM Parks')))
+            rows_to_dicts(conn.execute(
+                'SELECT parkname, parkalias, city, state FROM Parks')))
     return _FRANCHISES
 
 
@@ -554,7 +555,8 @@ def api_franchise(fid, conn):
         s_["managers"] = mgrs.get((s_["yearID"], s_["teamID"]), [])
         s_["post"] = post.get((s_["yearID"], s_["teamID"]), [])
     return {"franchise": franchises.summary(f), "eras": f["eras"],
-            "locations": f["locations"], "seasons": seasons}
+            "locations": f["locations"], "parks": f["parks"],
+            "seasons": seasons}
 
 
 def _leaders(conn, cat, stat, y0, y1, limit=10, per_season=False):
