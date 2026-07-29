@@ -9,6 +9,7 @@ listed by what it is called now and what it used to be called.
 Shared by app.py (reads sqlite) and build_site.py (reads the CSVs); both
 hand it the same row dicts.
 """
+import re
 
 # ------------------------------------------------------------------ locations
 # A franchise brands itself with a place, but not always a city: the Twins
@@ -141,28 +142,67 @@ def park_lookup(park_rows):
     return look
 
 
+def _norm(s):
+    """Park names for comparison, ignoring case and punctuation."""
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def other_names(info, recorded):
+    """The park's other names — what it was called before or after.
+
+    Lahman is inconsistent about which one it files a season under. The
+    Marlins' ground appears season by season as Joe Robbie, Pro Player,
+    Dolphin and Sun Life, but Cincinnati's is Crosley Field for all 58
+    seasons from 1912, including the 22 when it was Redland Field. Parks
+    carries the other names but no dates for them, so they are listed
+    without a claim about when the sign changed.
+    """
+    if not info:
+        return []
+    names = [(info.get("parkname") or "").strip()]
+    names += [a.strip() for a in (info.get("parkalias") or "").split(";")]
+    return [n for n in names if n and n != recorded]
+
+
 def park_runs(team_rows, look):
     """Consecutive seasons in one ballpark, oldest first.
 
     Seasons with no park on record are skipped rather than shown as a blank
-    row; 24 team-seasons have none, nearly all of them touring clubs with no
+    row; 56 team-seasons have none, nearly all of them touring clubs with no
     home ground to name.
     """
     out = []
     for t in sorted(team_rows, key=lambda r: _int(r["yearID"])):
-        name = (t.get("park") or "").strip()
         year = _int(t["yearID"])
-        if out and out[-1]["park"] == name:
-            out[-1]["lastYear"] = year
-            continue
-        info = look.get(name)
-        out.append({
-            "park": name,
-            "city": (info.get("city") or "").strip() if info else "",
-            "state": (info.get("state") or "").strip() if info else "",
-            "firstYear": year, "lastYear": year,
-        })
-    return [r for r in out if r["park"]]
+        raw = (t.get("park") or "").strip()
+        # 31 seasons name two grounds, and three name a third: the club moved
+        # during the year. Each is its own stretch, so Cincinnati reads
+        # Crosley Field to 1970 and Riverfront Stadium from 1970.
+        for name in (p.strip() for p in raw.split("/")):
+            if not name:
+                continue
+            info = look.get(name)
+            # Lahman spells five parks two ways — Great American Ball Park and
+            # Ballpark, Petco and PETCO — which would otherwise split one
+            # ground into consecutive rows. Same park, so same run, keeping
+            # whichever spelling Parks recognises.
+            if out and _norm(out[-1]["park"]) == _norm(name):
+                out[-1]["lastYear"] = year
+                if info and not out[-1]["city"]:
+                    out[-1].update(
+                        park=name,
+                        city=(info.get("city") or "").strip(),
+                        state=(info.get("state") or "").strip(),
+                        alias=", ".join(other_names(info, name)))
+                continue
+            out.append({
+                "park": name,
+                "city": (info.get("city") or "").strip() if info else "",
+                "state": (info.get("state") or "").strip() if info else "",
+                "alias": ", ".join(other_names(info, name)),
+                "firstYear": year, "lastYear": year,
+            })
+    return out
 
 
 # ------------------------------------------------------------------- builder

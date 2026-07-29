@@ -195,8 +195,17 @@ string. `franchises.py` reconstructs both, which takes three fixes:
   were branded Florida then Miami without ever leaving Miami. So the franchise
   page lists actual ballparks from `Teams.park`, joined to `Parks` on name and
   alias, which is what carries a stadium through a rename — Joe Robbie, Pro
-  Player, Dolphin and Sun Life are one building. That join reaches 82% of
-  team-seasons; the rest show the park with no city.
+  Player, Dolphin and Sun Life are one building. 88% of park runs resolve to a
+  city; the rest show the park alone.
+
+  Lahman is inconsistent about which name a season is filed under. The Marlins
+  appear under each sponsor in turn, but Cincinnati is Crosley Field for all 58
+  seasons from 1912, including the 22 when the sign said Redland Field. `Parks`
+  records the other names but no dates for them, so they are listed as *also
+  Redland Field* rather than given a span the data cannot support. 268 of 466
+  park runs carry one. Where a season names two grounds the club moved during
+  the year, so each gets its own stretch — Cincinnati runs to 1970 at Crosley
+  and from 1970 at Riverfront.
 
 ## Future work
 

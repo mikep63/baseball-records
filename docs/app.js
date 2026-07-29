@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = 'e852e919f62a';
+const APP_BUILD = 'b708fbf914b8';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -693,7 +693,8 @@ async function showFranchise(fid) {
     html += '<h3>Where it played</h3>';
     html += table(['Ballpark', 'City', 'From', 'To'],
       d.parks.map((p) => ({ cells: [
-        esc(p.park) || '—',
+        (esc(p.park) || '—') + (p.alias
+          ? `<span class="park-alias">also ${esc(p.alias)}</span>` : ''),
         p.city ? esc(p.city) + (p.state ? ', ' + esc(p.state) : '') : '—',
         p.firstYear, p.lastYear] })),
       { txtCols: [0, 1, 2, 3] });

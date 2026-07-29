@@ -693,7 +693,8 @@ async function showFranchise(fid) {
     html += '<h3>Where it played</h3>';
     html += table(['Ballpark', 'City', 'From', 'To'],
       d.parks.map((p) => ({ cells: [
-        esc(p.park) || '—',
+        (esc(p.park) || '—') + (p.alias
+          ? `<span class="park-alias">also ${esc(p.alias)}</span>` : ''),
         p.city ? esc(p.city) + (p.state ? ', ' + esc(p.state) : '') : '—',
         p.firstYear, p.lastYear] })),
       { txtCols: [0, 1, 2, 3] });

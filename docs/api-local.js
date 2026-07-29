@@ -684,7 +684,7 @@ window.LocalAPI = (function () {
       })),
       parks: (IDX.parksByFranch.get(fid) || []).slice()
         .sort((a, b) => a.firstYear - b.firstYear)
-        .map((p) => ({ park: p.park, city: p.city, state: p.state,
+        .map((p) => ({ park: p.park, alias: p.alias, city: p.city, state: p.state,
           firstYear: p.firstYear, lastYear: p.lastYear })),
       seasons,
     };

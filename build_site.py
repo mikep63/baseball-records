@@ -76,9 +76,10 @@ def export_franchises():
                "teamID", "lgID"], era_rows)
 
     write_csv("franchise_parks.csv",
-              ["franchID", "park", "city", "state", "firstYear", "lastYear"],
-              [[f["franchID"], p["park"], p["city"], p["state"],
-                p["firstYear"], p["lastYear"]]
+              ["franchID", "park", "alias", "city", "state", "firstYear",
+               "lastYear"],
+              [[f["franchID"], p["park"], p["alias"], p["city"],
+                p["state"], p["firstYear"], p["lastYear"]]
                for f in built for p in f["parks"]])
 
 
