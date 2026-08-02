@@ -122,24 +122,92 @@ def _int(v):
 
 # --------------------------------------------------------------------- parks
 def park_lookup(park_rows):
-    """Park name -> row, including the aliases.
+    """Park name -> every building it could mean, likeliest first.
 
     A stadium keeps its identity through a rename, and Lahman records the
     season under whatever it was called at the time: the Marlins' Joe Robbie,
     Pro Player, Dolphin and Sun Life Stadium are one building. Matching the
     alias column as well as the name takes the join from 67% of team-seasons
     to 82%.
+
+    A name is not an identifier, though. Fifteen names belong to more than one
+    ballpark — three Columbia Parks, two Wrigley Fields, five Athletic Parks —
+    and Parks has no team column to settle which is meant, so the candidates
+    are all kept and resolve_parks picks between them per season. Names come
+    before aliases: a park called X outranks one merely also called X.
     """
     look = {}
     for p in park_rows:
         name = (p.get("parkname") or "").strip()
         if name:
-            look.setdefault(name, p)
+            look.setdefault(name, []).append(p)
+    for p in park_rows:
         for alias in (p.get("parkalias") or "").split(";"):
             alias = alias.strip()
-            if alias:
-                look.setdefault(alias, p)
+            if not alias:
+                continue
+            candidates = look.setdefault(alias, [])
+            # Identity, not a key: these rows are dicts from the CSV in one
+            # caller and sqlite3.Row objects from lahman.sqlite in another.
+            if all(c is not p for c in candidates):
+                candidates.append(p)
     return look
+
+
+def _city(info):
+    return (info.get("city") or "").strip() if info else ""
+
+
+def resolve_parks(seasons, look):
+    """Which building each season's park name refers to.
+
+    Unambiguous names settle themselves. The rest are decided on the evidence
+    around them, in this order:
+
+    Where the club played either side of the season in question. A ground in
+    1911 is in the same city as the ground in 1910 unless the club moved, and
+    when it did move the seasons on the far side say where to. This is what
+    rescues Cleveland's League Park II from Cincinnati's, 37 seasons of it.
+
+    Then the club's own name, which usually carries its city — though not for
+    the Homestead Grays or the Cuban Stars, which is why it is not first.
+
+    Then a name match over an alias match, and finally the order Parks lists
+    them in, so the result does not depend on how the loop happens to run.
+    """
+    for s in seasons:
+        s["info"] = s["candidates"][0] if len(s["candidates"]) == 1 else None
+
+    for index, s in enumerate(seasons):
+        if s["info"] or not s["candidates"]:
+            continue
+
+        # The nearest season either side that already knows its ballpark.
+        nearby = []
+        for step in (-1, 1):
+            j = index + step
+            while 0 <= j < len(seasons):
+                if seasons[j]["info"]:
+                    nearby.append(_city(seasons[j]["info"]))
+                    break
+                j += step
+
+        team = (s["team"] or "").lower()
+        best, best_score = None, None
+        for rank, info in enumerate(s["candidates"]):
+            city = _city(info)
+            score = 0.0
+            if city and city in nearby:
+                score += 4
+            if city and city.lower() in team:
+                score += 2
+            if (info.get("parkname") or "").strip() == s["name"]:
+                score += 1
+            score -= rank * 0.001        # ties keep Parks' own order
+            if best_score is None or score > best_score:
+                best, best_score = info, score
+        s["info"] = best
+    return seasons
 
 
 def _norm(s):
@@ -171,7 +239,10 @@ def park_runs(team_rows, look):
     row; 56 team-seasons have none, nearly all of them touring clubs with no
     home ground to name.
     """
-    out = []
+    # Every season's ground in order, then resolved together: an ambiguous name
+    # is decided partly by the seasons around it, so they all have to be in
+    # hand before any of them is settled.
+    seasons = []
     for t in sorted(team_rows, key=lambda r: _int(r["yearID"])):
         year = _int(t["yearID"])
         raw = (t.get("park") or "").strip()
@@ -179,34 +250,40 @@ def park_runs(team_rows, look):
         # during the year. Each is its own stretch, so Cincinnati reads
         # Crosley Field to 1970 and Riverfront Stadium from 1970.
         for name in (p.strip() for p in raw.split("/")):
-            if not name:
-                continue
-            info = look.get(name)
-            # Lahman spells five parks two ways — Great American Ball Park and
-            # Ballpark, Petco and PETCO — which would otherwise split one
-            # ground into consecutive rows. Same park, so same run, keeping
-            # whichever spelling Parks recognises.
-            if out and _norm(out[-1]["park"]) == _norm(name):
-                out[-1]["lastYear"] = year
-                if info and not out[-1]["city"]:
-                    out[-1].update(
-                        park=name,
-                        parkkey=(info.get("parkkey") or "").strip(),
-                        city=(info.get("city") or "").strip(),
-                        state=(info.get("state") or "").strip(),
-                        alias=other_names(info, name))
-                continue
-            out.append({
-                "park": name,
-                # The building, as distinct from what the sign said on it. Five
-                # names over 57 years in Oakland are one ballpark, and without
-                # this key a reader cannot tell a rename from a move.
-                "parkkey": (info.get("parkkey") or "").strip() if info else "",
-                "city": (info.get("city") or "").strip() if info else "",
-                "state": (info.get("state") or "").strip() if info else "",
-                "alias": other_names(info, name),
-                "firstYear": year, "lastYear": year,
-            })
+            if name:
+                seasons.append({"year": year, "name": name,
+                                "team": t.get("name") or "",
+                                "candidates": look.get(name, [])})
+    resolve_parks(seasons, look)
+
+    out = []
+    for s in seasons:
+        year, name, info = s["year"], s["name"], s["info"]
+        # Lahman spells five parks two ways — Great American Ball Park and
+        # Ballpark, Petco and PETCO — which would otherwise split one
+        # ground into consecutive rows. Same park, so same run, keeping
+        # whichever spelling Parks recognises.
+        if out and _norm(out[-1]["park"]) == _norm(name):
+            out[-1]["lastYear"] = year
+            if info and not out[-1]["city"]:
+                out[-1].update(
+                    park=name,
+                    parkkey=(info.get("parkkey") or "").strip(),
+                    city=(info.get("city") or "").strip(),
+                    state=(info.get("state") or "").strip(),
+                    alias=other_names(info, name))
+            continue
+        out.append({
+            "park": name,
+            # The building, as distinct from what the sign said on it. Five
+            # names over 57 years in Oakland are one ballpark, and without
+            # this key a reader cannot tell a rename from a move.
+            "parkkey": (info.get("parkkey") or "").strip() if info else "",
+            "city": (info.get("city") or "").strip() if info else "",
+            "state": (info.get("state") or "").strip() if info else "",
+            "alias": other_names(info, name),
+            "firstYear": year, "lastYear": year,
+        })
 
     # Drop an other-name that is already a run of its own. Where Lahman did
     # record a rename season by season, both names are on the page already,
