@@ -191,12 +191,17 @@ def park_runs(team_rows, look):
                 if info and not out[-1]["city"]:
                     out[-1].update(
                         park=name,
+                        parkkey=(info.get("parkkey") or "").strip(),
                         city=(info.get("city") or "").strip(),
                         state=(info.get("state") or "").strip(),
                         alias=other_names(info, name))
                 continue
             out.append({
                 "park": name,
+                # The building, as distinct from what the sign said on it. Five
+                # names over 57 years in Oakland are one ballpark, and without
+                # this key a reader cannot tell a rename from a move.
+                "parkkey": (info.get("parkkey") or "").strip() if info else "",
                 "city": (info.get("city") or "").strip() if info else "",
                 "state": (info.get("state") or "").strip() if info else "",
                 "alias": other_names(info, name),

@@ -1,467 +1,467 @@
-franchID,park,alias,city,state,firstYear,lastYear
-ACG,League Park II,,Cincinnati,OH,1933,1933
-AB,Fair Grounds,,Algona,IA,1903,1903
-ALT,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1884,1884
-ARI,Bank One Ballpark,,Phoenix,AZ,1998,2005
-ARI,Chase Field,,Phoenix,AZ,2006,2025
-OAK,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1901,1908
-OAK,Shibe Park,,Philadelphia,PA,1909,1952
-OAK,Connie Mack Stadium,,Philadelphia,PA,1953,1954
-OAK,Municipal Stadium I,,,,1955,1967
-OAK,Oakland Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,1968,2003
-OAK,Network Associates Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2004,2004
-OAK,McAfee Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2005,2008
-OAK,Oakland-Alameda County Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2009,2011
-OAK,O.co Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2012,2022
-OAK,Oakland-Alameda County Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2023,2024
-OAK,Sutter Health Park,,,,2025,2025
-ATL,South End Grounds I,"Walpole Street Grounds, Union Baseball Grounds, Boston National League Base Ball Park, Boston Base Ball Grounds",Boston,MA,1876,1887
-ATL,South End Grounds II,Grand Pavilion,Boston,MA,1888,1894
-ATL,Congress Street Grounds,,Boston,MA,1894,1894
-ATL,South End Grounds III,Boston National League Base Ball Park,Boston,MA,1894,1914
-ATL,Fenway Park I,,,,1915,1915
-ATL,Braves Field,National League Park,Boston,MA,1915,1952
-ATL,County Stadium,"Milwaukee County Stadium, Milwaukee County Municipal Stadium",Milwaukee,WI,1953,1965
-ATL,Atlanta-Fulton County Stadium,"Fulton County Stadium, Atlanta Stadium",Atlanta,GA,1966,1996
-ATL,Turner Field,Centennial Olympic Stadium,Atlanta,GA,1997,2016
-ATL,SunTrust Park,,Atlanta,GA,2017,2020
-ATL,Truist Park,,Atlanta,GA,2021,2025
-BG2,Bacharach Park,,Atlantic City,NJ,1923,1929
-BBS,Maryland Park,,Baltimore,MD,1922,1932
-BBS,Bugle Field,,Baltimore,MD,1933,1934
-BLC,Newington Park,,Baltimore,MD,1872,1874
-BEG,Wilson Park,Tom Wilson Park,Nashville,TN,1930,1930
-BEG,Hardware Field,Cleveland Hardware Field,Cleveland,OH,1931,1931
-BEG,Wilson Park,Tom Wilson Park,Nashville,TN,1932,1934
-BEG,Neil Park,,,,1935,1935
-BEG,Griffith Stadium,"National Park, American League Park",Washington,DC,1936,1937
-BEG,Bugle Field,,Baltimore,MD,1938,1938
-BEG,Oriole Park,,,,1939,1941
-BEG,Bugle Field,,Baltimore,MD,1942,1948
-MAR,Newington Park,,Baltimore,MD,1873,1873
-BLU,Belair Lot,"Union Park, Union Association Grounds",Baltimore,MD,1884,1884
-BLO,Newington Park,,Baltimore,MD,1882,1882
-BLO,Oriole Park,,,,1883,1890
-BLO,Union Park,"Belair Lot, Union Association Grounds",Baltimore,MD,1891,1899
-BAL,Lloyd Street Grounds,,Milwaukee,WI,1901,1901
-BAL,Sportsman's Park III,Busch Stadium I,St. Louis,MO,1902,1908
-BAL,Sportsman's Park IV,,,,1909,1953
-BAL,Memorial Stadium,Baltimore Memorial Stadium,Baltimore,MD,1954,1991
-BAL,Oriole Park at Camden Yards,Camden Yards,Baltimore,MD,1992,2025
-BLT,Terrapin Park,Oriole Park V,Baltimore,MD,1914,1915
-BBB,Rickwood Field,,Birmingham,AL,1923,1948
-BOS,Huntington Avenue Grounds,,,,1901,1911
-BOS,Fenway Park I,,,,1912,1933
-BOS,Fenway Park II,,,,1934,2022
-BOS,Fenway Park,,Boston,MA,2023,2025
-BNA,South End Grounds I,"Walpole Street Grounds, Union Baseball Grounds, Boston National League Base Ball Park, Boston Base Ball Grounds",Boston,MA,1871,1875
-BRD,Dartmouth Grounds,"Union Park, Union Athletic Grounds, Union Grounds",Boston,MA,1884,1884
-BRS,Congress Street Grounds,,Boston,MA,1890,1891
-BRA,Capitoline Grounds,Capitoline Skating Lake and Base Ball Ground,Brooklyn,NY,1872,1872
-BRA,Union Grounds,"Dartmouth Grounds, Union Park, Union Athletic Grounds",Boston,MA,1873,1875
-ECK,Union Grounds,"Dartmouth Grounds, Union Park, Union Athletic Grounds",Boston,MA,1872,1872
-BRG,Ridgewood Park,,,,1890,1890
-BR2,Saratoga Park,,Brooklyn,NY,1906,1906
-BR2,Washington Park III,,Brooklyn,NY,1907,1907
-BR2,Meyerrose Park,,Queens,NY,1908,1911
-BR2,Ridgewood Grounds,"Ridgewood Park I, Grauer's Ridgewood Park, Grauer's Woods",Queens,NY,1912,1917
-BR2,Dexter Park,,Queens,NY,1918,1927
-BTT,Washington Park IV,,Brooklyn,NY,1914,1915
-BWW,Eastern Park,,Brooklyn,NY,1890,1890
-BUF,Riverside Park,Greenbush Grounds,Rensselaer,NY,1879,1883
-BUF,Olympic Park I,,Buffalo,NY,1884,1885
-BFB,Olympic Park II,Buffalo Baseball Park,Buffalo,NY,1890,1890
-BFL,Federal League Park,International Fair Association Grounds,Buffalo,NY,1914,1915
-CAG,Schorling Park,"South Side Park III, Schorling's Park II, White Sox Park",Chicago,IL,1911,1928
-CAG,South Side Park,,,,1929,1932
-CAG,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1933,1933
-CAG,Cole's Park,"South Side Park III, Schorling's Park II, White Sox Park",Chicago,IL,1934,1935
-CAG,American Giants Park,"South Side Park III, Schorling's Park II, White Sox Park",Chicago,IL,1936,1940
-CAG,Comiskey Park I,White Sox Park,Chicago,IL,1941,1948
-CCG,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1899,1901
-CCG,South Side Park III,"Schorling Park, Schorling's Park II, Cole's Park, American Giants Park, White Sox Park",Chicago,IL,1902,1902
-CHC,23rd Street Grounds,,,,1876,1877
-CHC,Lake Front Park I,"Union Base-Ball Grounds, White-Stocking Park",Chicago,IL,1878,1882
-CHC,Lake Front Park II,"Lake-Shore Park, Lake Front Park, Lake Park",Chicago,IL,1882,1884
-CHC,West Side Park I,,,,1885,1890
-CHC,South Side Park I,"Cricket Club Grounds, Union Base Ball Park, 39th Street Grounds",Chicago,IL,1891,1893
-CHC,West Side Park II,,,,1894,1915
-CHC,Wrigley Field,"Weeghman Park, Cubs Park",Chicago,IL,1916,2025
-COG,Red Sox Park,Osterman's Red Sox park,Chicago,IL,1910,1910
-COG,Schorling Park,"South Side Park III, Schorling's Park II, Cole's Park, American Giants Park, White Sox Park",Chicago,IL,1911,1913
-LEL,Auburn Park,Schorling's Park I,Chicago,IL,1905,1907
-LEL,Logan Square Park,,Chicago,IL,1908,1909
-LEL,Normal Park,,Chicago,IL,1910,1910
-CHP,South Side Park II,"White Stocking Park, Brotherhood Park",Chicago,IL,1890,1890
-CIU,Union Park,"Belair Lot, Union Association Grounds",Baltimore,MD,1897,1900
-CHH,Wrigley Field,"Weeghman Park, Cubs Park",Chicago,IL,1914,1915
-CHW,South Side Park II,"White Stocking Park, Brotherhood Park",Chicago,IL,1901,1910
-CHW,Comiskey Park,,,,1910,1990
-CHW,Comiskey Park II,White Sox Park,Chicago,IL,1991,2002
-CHW,U.S. Cellular Field,White Sox Park,Chicago,IL,2003,2016
-CHW,Guaranteed Rate Field,White Sox Park,Chicago,IL,2017,2024
-CHW,Rate Field,White Sox Park,Chicago,IL,2025,2025
-CNA,Union Base-Ball Grounds,"Lake Front Park I, White-Stocking Park",Chicago,IL,1871,1871
-CNA,23rd Street Grounds,,,,1874,1875
-CPI,South Side Park,,,,1884,1884
-CPI,Exposition Park,,Kansas City,MO,1884,1884
-CKK,East End Park,Pendleton Park,Cincinnati,OH,1891,1891
-COR,Bank Street Grounds,Union Athletic Park,Cincinnati,OH,1884,1884
-CNR,Avenue Grounds,"Brighton Park, Cincinnati Baseball Park",Cincinnati,OH,1876,1879
-CNR,Bank Street Grounds,Union Athletic Park,Cincinnati,OH,1880,1880
-CIN,Bank Street Grounds,Union Athletic Park,Cincinnati,OH,1882,1883
-CIN,League Park I in Cincinnati,,,,1884,1893
-CIN,League Park II in Cincinnati,,,,1894,1901
-CIN,Palace of the Fans,League Park III,Cincinnati,OH,1902,1911
-CIN,Crosley Field,Redland Field,Cincinnati,OH,1912,1970
-CIN,Riverfront Stadium,,Cincinnati,OH,1970,1996
-CIN,Cinergy Field,,Cincinnati,OH,1997,2002
-CIN,Great American Ballpark,,Cincinnati,OH,2003,2025
-CT,Crosley Field,Redland Field,Cincinnati,OH,1937,1937
-CBL,Kennard Street Park,"League Park I, National League Park I, Kennard Street Baseball Grounds",Cleveland,OH,1879,1884
-CBN,Hooper Field,"Tate Field, Slavia Hooper Field",Newburgh Heights,OH,1924,1924
-CBE,Crosley Field,Redland Field,Cincinnati,OH,1942,1942
-CBE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1943,1943
-CBE,League Park II,,Cincinnati,OH,1944,1948
-CEL,Hooper Field,"Tate Field, Slavia Hooper Field",Newburgh Heights,OH,1926,1926
-CFC,National Association Grounds,,Cleveland,OH,1871,1872
-CLE,League Park I,"Cincinnati Base Ball Grounds, Western Avenue Grounds, American Park",Cincinnati,OH,1901,1909
-CLE,League Park II,,Cincinnati,OH,1910,1932
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1932,1932
-CLE,League Park II,,Cincinnati,OH,1933,1933
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1933,1933
-CLE,League Park II,,Cincinnati,OH,1934,1934
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1934,1934
-CLE,League Park II,,Cincinnati,OH,1935,1935
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1935,1935
-CLE,League Park II,,Cincinnati,OH,1936,1936
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1936,1936
-CLE,League Park II,,Cincinnati,OH,1937,1937
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1937,1937
-CLE,League Park II,,Cincinnati,OH,1938,1938
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1938,1938
-CLE,League Park II,,Cincinnati,OH,1939,1939
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1939,1939
-CLE,League Park II,,Cincinnati,OH,1940,1940
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1940,1940
-CLE,League Park II,,Cincinnati,OH,1941,1941
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1941,1941
-CLE,League Park II,,Cincinnati,OH,1942,1942
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1942,1942
-CLE,League Park II,,Cincinnati,OH,1943,1943
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1943,1943
-CLE,League Park II,,Cincinnati,OH,1944,1944
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1944,1944
-CLE,League Park II,,Cincinnati,OH,1945,1945
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1945,1945
-CLE,League Park II,,Cincinnati,OH,1946,1946
-CLE,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1946,1993
-CLE,Jacobs Field,,Cleveland,OH,1994,2011
-CLE,Progressive Field,,Cleveland,OH,2012,2025
-CHT,Hooper Field,"Tate Field, Slavia Hooper Field",Newburgh Heights,OH,1927,1927
-CLI,Brotherhood Park,"South Side Park II, White Stocking Park",Chicago,IL,1890,1890
-CRS,League Park II,,Cincinnati,OH,1934,1934
-CLV,National League Park II,"League Park II, American Association Park, Association Park, Association Park",Cleveland,OH,1887,1888
-CLV,National League Park,Braves Field,Boston,MA,1889,1890
-CLV,League Park I,"Cincinnati Base Ball Grounds, Western Avenue Grounds, American Park",Cincinnati,OH,1891,1899
-CL2,Luna Park,Luna Bowl,Cleveland,OH,1932,1932
-CTS,Tate Field,"Hooper Field, Slavia Hooper Field",Newburgh Heights,OH,1922,1922
-CTG,Luna Park,Luna Bowl,Cleveland,OH,1928,1928
-COL,Mile High Stadium,Bears Stadium,Denver,CO,1993,1994
-COL,Coors Field,,Denver,CO,1995,2025
-CBB,Neil Park II,,Columbus,OH,1933,1933
-CBK,Recreation Park I,,Columbus,OH,1883,1884
-COB,Neil Park,,,,1921,1921
-CLS,Recreation Park II,,Columbus,OH,1889,1891
-COT,Panhandle Park,,Columbus,OH,1932,1932
-CBG,Long Island Grounds,"Maspeth Ball Grounds, Long Island Recreation Grounds",Maspeth,NY,1891,1891
-CSE,Dexter Park,,Queens,NY,1922,1922
-CSE,West Side Park,,Chicago,IL,1925,1925
-CSE,Dexter Park,,Queens,NY,1926,1926
-CSE,Davids Stadium,Ruppert Stadium,Newark,NJ,1927,1927
-CSE,Dexter Park,,Queens,NY,1928,1929
-CSW,Redland Field,Crosley Field,Cincinnati,OH,1921,1921
-DYM,Westwood Field,West Side Park,Dayton,OH,1920,1926
-DS,Mack Park,,Detroit,MI,1919,1929
-DS,Hamtramck Stadium,Roesink Stadium,Hamtramck,MI,1930,1931
-DTS,Hamtramck Stadium,Roesink Stadium,Hamtramck,MI,1937,1937
-DET,Bennett Park,,Detroit,MI,1901,1911
-DET,Navin Field,,Detroit,MI,1912,1937
-DET,Briggs Stadium,,Detroit,MI,1938,1960
-DET,Tiger Stadium,,Detroit,MI,1961,1999
-DET,Comerica Park,,Detroit,MI,2000,2025
-DTN,Recreation Park,,Detroit,MI,1881,1888
-DW,Hamtramck Stadium,Roesink Stadium,Hamtramck,MI,1932,1932
-RES,Waverly Fairgrounds,Waverly Park,Waverly,NJ,1873,1873
-KEK,Hamilton Field,"Kekionga Ball Grounds, Grand Duchess",Fort Wayne,IN,1871,1871
-FLP,Pluto Park,,French Lick,IN,1913,1913
-HBG,Island Park,City Island,Harrisburg,PA,1924,1927
-SNH,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1938,1938
-SNH,South End Grounds,"South End Park, National Nite Baseball Park",St. Louis,MO,1939,1940
-SNH,Pelican Stadium,Heinemann Park,New Orleans,LA,1941,1941
-SNH,Island Park,City Island,Harrisburg,PA,1943,1943
-HNA,Hartford Ball Club Grounds,,Hartford,CT,1874,1875
-HAR,Hartford Ball Club Grounds,,Hartford,CT,1876,1876
-HAR,Union Grounds (Brooklyn),,,,1877,1877
-HIL,Hilldale Park,,Yeadon,PA,1918,1932
-HG,Forbes Field,,Pittsburgh,PA,1928,1931
-HG,Greenlee Field,,Pittsburgh,PA,1932,1935
-HG,Forbes Field,,Pittsburgh,PA,1936,1936
-HG,Greenlee Field,,Pittsburgh,PA,1937,1938
-HG,Forbes Field,,Pittsburgh,PA,1939,1939
-HG,Griffith Stadium,"National Park, American League Park",Washington,DC,1940,1948
-HOU,Colt Stadium,"Estadio Superior, Estadio Ángel Castro, Estadio de Béisbol Mecano, Millón de Tuercas",Houston,TX,1962,1964
-HOU,Astrodome,,Houston,TX,1965,1999
-HOU,Enron Field,"The Ballpark at Union Station, Astros Field",Houston,TX,2000,2001
-HOU,Minute Maid Park,"The Ballpark at Union Station, Astros Field",Houston,TX,2002,2024
-HOU,Daikin Park,"The Ballpark at Union Station, Astros Field",Houston,TX,2025,2025
-ABC,Northwestern Park,"East Ohio Street Grounds, League Park",Indianapolis,IN,1914,1915
-ABC,Federal League Park,International Fair Association Grounds,Buffalo,NY,1916,1916
-ABC,Washington Park II,,Brooklyn,NY,1917,1926
-BCA,Ponce De Leon Park,"Spiller Park, Spiller Field",Atlanta,GA,1932,1939
-AB2,Washington Park II,,Brooklyn,NY,1931,1931
-AB2,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1932,1933
-IA,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1937,1937
-IBL,South Street Park,"South Street Grounds, National Park",Indianapolis,IN,1878,1878
-IC,Crosley Field,Redland Field,Cincinnati,OH,1943,1945
-IC,Victory Field I,"Perry Stadium, Owen J. Bush Stadium, Bush Stadium",Indianapolis,IN,1946,1948
-IHO,Seventh Street Park,,,,1884,1884
-IND,Athletic Park I,,,,1887,1887
-IND,Athletic Park II,"Indianapolis Park, League Park",Indianapolis,IN,1888,1889
-JRC,Durkee Field,"J. P. Small Memorial Stadium, Barrs Field, Myrtle Avenue Ball Park",Jacksonville,FL,1938,1938
-JRC,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1939,1939
-JRC,League Park II,,Cincinnati,OH,1940,1940
-JRC,Red Cap Stadium,"J. P. Small Memorial Stadium, Barrs Field, Myrtle Avenue Ball Park",Jacksonville,FL,1941,1942
-KCU,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1884,1884
-KCN,Association Park,"League Park II, National League Park II, American Association Park",Cleveland,OH,1886,1886
-KCC,Association Park I,"Association Park, League Park",Kansas City,MO,1888,1888
-KCC,Exposition Park,,Kansas City,MO,1889,1889
-KCG,Riverside Park,Greenbush Grounds,Rensselaer,NY,1909,1910
-KCM,Association Park II,,Kansas City,MO,1920,1923
-KCM,Muehlebach Field,Municipal Stadium,Kansas City,MO,1924,1937
-KCM,Ruppert Stadium,Municipal Stadium,Kansas City,MO,1938,1945
-KCM,Blues Stadium,Municipal Stadium,Kansas City,MO,1946,1948
-KCP,Gordon and Koppel Field,"Gordon and Koppel Stadium, Gordon-Koppel Field, Gordon & Koppel Field, Gordon & Koppel Stadium",Kansas City,MO,1914,1915
-KRG,Shelley Park,,Kansas City,MO,1910,1912
-KCR,Municipal Stadium II,,,,1969,1972
-KCR,Royals Stadium,,Kansas City,MO,1973,1992
-KCR,Kauffman Stadium,,Kansas City,MO,1993,2025
-WES,Perry Park,Walte's Pasture,Keokuk,IA,1875,1875
-LRG,Crump Park,Crump's Park,Little Rock,AR,1932,1932
-ANA,Wrigley Field (LA),,,,1961,1961
-ANA,Dodger Stadium,Chavez Ravine,Los Angeles,CA,1962,1965
-ANA,Anaheim Stadium,Edison Field,Anaheim,CA,1966,1996
-ANA,Edison International Field,,,,1997,2003
-ANA,Angels Stadium of Anaheim,,,,2004,2004
-ANA,Angel Stadium,,,,2005,2011
-ANA,Angel Stadium of Anaheim,Edison Field,Anaheim,CA,2012,2025
-LAD,Washington Park I,,Brooklyn,NY,1884,1889
-LAD,Washington Park II,,Brooklyn,NY,1890,1890
-LAD,Eastern Park,,Brooklyn,NY,1891,1897
-LAD,Washington Park III,,Brooklyn,NY,1898,1912
-LAD,Ebbets Field,,Brooklyn,NY,1913,1957
-LAD,Los Angeles Memorial Coliseum,"Los Angeles Coliseum, L.A. Coliseum, Olympic Stadium",Los Angeles,CA,1958,1961
-LAD,Dodger Stadium,Chavez Ravine,Los Angeles,CA,1962,2025
-LVB,Parkway Field,Colonels Field,Louisville,KY,1931,1932
-LOU,Eclipse Park I,,Louisville,KY,1882,1892
-LOU,Eclipse Park II,,Louisville,KY,1893,1899
-LGR,Louisville Baseball Park,Louisville Baseball Grounds,Louisville,KY,1876,1877
-MRS,Lewis Park,Martin Stadium,Memphis,TN,1923,1932
-MRS,Martin Park,Martin Stadium,Memphis,TN,1937,1945
-MRS,Russwood Park,"Elm Wood Park, Red Elm Park",Memphis,TN,1946,1946
-MRS,Martin Park,Martin Stadium,Memphis,TN,1947,1948
-FLA,Joe Robbie Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,1993,1998
-FLA,Pro Player Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,1999,2004
-FLA,Dolphin Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,2005,2010
-FLA,Sun Life Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,2011,2011
-FLA,Marlins Park,,Miami,FL,2012,2020
-FLA,loanDepot park,,Miami,FL,2021,2025
-MAN,Mansfield Club Grounds,"Mansfield Park, Fort Hill Grounds",Middletown,CT,1872,1872
-MB,Borchert Park,"Athletic Park, Borchert Field",Milwaukee,WI,1923,1923
-MLU,Wright Street Grounds,,Milwaukee,WI,1884,1884
-MLA,Athletic Field,,,,1891,1891
-MIL,Sicks Stadium,,,,1969,1969
-MIL,County Stadium,"Milwaukee County Stadium, Milwaukee County Municipal Stadium",Milwaukee,WI,1970,2000
-MIL,Miller Park,,Milwaukee,WI,2001,2020
-MIL,American Family Field,,Milwaukee,WI,2021,2025
-MLG,Eclipse Park II,,Louisville,KY,1878,1878
-MIN,American League Park I,,Washington,DC,1901,1903
-MIN,American League Park II,"Boundary Field, National Park, Nationals' Park",Washington,DC,1904,1910
-MIN,Griffith Stadium I,,,,1911,1955
-MIN,Griffith Stadium II,,,,1956,1960
-MIN,Metropolitan Stadium,Met Stadium,Bloomington,MN,1961,1981
-MIN,Hubert H Humphrey Metrodome,,,,1982,2009
-MIN,Target Field,,Minneapolis,MN,2010,2025
-MRM,Casino Park,,Monroe,LA,1932,1932
-MGS,College Hill Park,,Montgomery,AL,1932,1932
-NHV,Hamilton Park,"Howard Avenue Grounds, Brewster Park",New Haven,CT,1875,1875
-BG1,Bacharach Park,,Atlantic City,NJ,1918,1918
-BG1,Inlet Park,,Atlantic City,NJ,1919,1919
-BG1,Inlet Park II,,Atlantic City,NJ,1920,1921
-BG1,New York Oval,,Bronx,NY,1922,1922
-NBY,Yankee Stadium I,,New York,NY,1931,1931
-NBY,Dyckman Oval,,New York,NY,1932,1932
-NBY,Hinchliffe Stadium,,Paterson,NJ,1933,1935
-NBY,Municipal Stadium,"Cleveland Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1936,1936
-NBY,Dyckman Oval,,New York,NY,1937,1937
-NBY,Hinchliffe Stadium,,Paterson,NJ,1938,1938
-NBY,Yankee Stadium I,,New York,NY,1940,1947
-NBY,Red Wing Stadium,Silver Stadium,Rochester,NY,1948,1948
-NYC,Dyckman Oval,,New York,NY,1935,1936
-NYC,Yankee Stadium I,,New York,NY,1941,1943
-NYC,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1944,1948
-NYI,Polo Grounds III,"New Polo Grounds, Manhattan Field",New York,NY,1890,1890
-GOR,Island Park,City Island,Harrisburg,PA,1891,1891
-NLG,Olympic Field,,New York,NY,1911,1919
-NLG,Catholic Protectory Oval,New York Catholic Protectory,Bronx,NY,1920,1930
-NLS,Lenox Oval,,New York,NY,1914,1916
-NYP,Polo Grounds I West Diamond,,,,1883,1885
-NYP,St. George Cricket Grounds,St. George Grounds,New York,NY,1886,1887
-NYM,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1962,1963
-NYM,Shea Stadium,"Flushing Meadow Park Municipal Stadium, William A. Shea Municipal Stadium",New York,NY,1964,2008
-NYM,Citi Field,,New York,NY,2009,2025
-NNA,Union Grounds (Brooklyn),,,,1871,1875
-NYU,Union Grounds (Brooklyn),,,,1876,1876
-NYY,Oriole Park,,,,1901,1902
-NYY,Hilltop Park,American League Park,New York,NY,1903,1912
-NYY,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1913,1922
-NYY,Yankee Stadium I,,New York,NY,1923,1973
-NYY,Shea Stadium,"Flushing Meadow Park Municipal Stadium, William A. Shea Municipal Stadium",New York,NY,1974,1975
-NYY,Yankee Stadium II,,New York,NY,1976,2008
-NYY,Yankee Stadium III,,,,2009,2022
-NYY,Yankee Stadium II,,New York,NY,2023,2025
-NWB,General Electric Field,Sprague Field,Bloomfield,NJ,1932,1932
-ND,General Electric Field,Sprague Field,Bloomfield,NJ,1934,1934
-ND,Ollemar Stadium,Ollemar Field,Irvington,NJ,1935,1935
-NE,Ebbets Field,,Brooklyn,NY,1935,1935
-NE,Ruppert Stadium,"Municipal Stadium, Muehlebach Field, Blues Stadium",Kansas City,MO,1936,1948
-NEW,Federal League Park,International Fair Association Grounds,Buffalo,NY,1914,1914
-NEW,Harrison Field,Federal Baseball Park,Harrison,NJ,1915,1915
-NS,Davids Stadium,Ruppert Stadium,Newark,NJ,1926,1926
-OKM,Colcord Park,Saratoga Park,Oklahoma City,OK,1910,1910
-PNA,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1871,1875
-ATH,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1876,1876
-PHA,Oakdale Park,Oakland Athletic Association Field,Jersey City,NJ,1882,1882
-PHA,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1883,1890
-PHQ,Forepaugh Park,Brotherhood Park,Philadelphia,PA,1890,1890
-PHQ,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1891,1891
-PBG,Passon Field,,Philadelphia,PA,1934,1934
-CEN,Centennial Grounds,Centennial Park,Philadelphia,PA,1875,1875
-PG,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1903,1906
-PG,Baker Bowl,"Philadelphia Baseball Grounds, National League Park",Philadelphia,PA,1907,1907
-PG,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1908,1908
-PHK,Keystone Park,,Philadelphia,PA,1884,1884
-PHI,Recreation Park,,Detroit,MI,1883,1886
-PHI,Philadelphia Baseball Grounds,"Huntingdon Grounds I, National League Park",Philadelphia,PA,1887,1894
-PHI,Baker Bowl,National League Park,Philadelphia,PA,1895,1938
-PHI,Shibe Park,,Philadelphia,PA,1938,1952
-PHI,Connie Mack Stadium,,Philadelphia,PA,1953,1970
-PHI,Veterans Stadium,,Philadelphia,PA,1971,2003
-PHI,Citizens Bank Park,,Philadelphia,PA,2004,2025
-PS,Hilldale Park,,Yeadon,PA,1933,1933
-PS,Passon Field,,Philadelphia,PA,1934,1934
-PS,PRR-YMCA Field,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1935,1935
-PS,44th & Parkside,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1936,1938
-PS,Parkside Athletic Field,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1939,1943
-PS,44th & Parkside,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1944,1947
-PS,Shibe Park,Connie Mack Stadium,Philadelphia,PA,1948,1948
-PTG,Pencoyd Field,"Bala Cynwyd Park, Pencoyd Park",Philadelphia,PA,1928,1928
-PWS,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1873,1875
-PBB,Exposition Park III,,Pittsburgh,PA,1890,1890
-PBK,Central Park,Central Amusement Park,Pittsburgh,PA,1922,1922
-PIT,Exposition Park I,,Pittsburgh,PA,1882,1883
-PIT,Recreation Park,,Detroit,MI,1884,1890
-PIT,Exposition Park,,Kansas City,MO,1891,1909
-PIT,Forbes Field,,Pittsburgh,PA,1909,1970
-PIT,Three Rivers Stadium,,Pittsburgh,PA,1970,2000
-PIT,PNC Park,,Pittsburgh,PA,2001,2025
-PBS,Exposition Park III,,Pittsburgh,PA,1914,1915
-PRO,Messer Street Grounds,"Messer Park, Messer Field",Providence,RI,1878,1885
-RIC,Allen Pasture,,,,1884,1884
-ROC,Culver Field I,,Rochester,NY,1890,1890
-ROK,Agricultural Society Fair Grounds,Fair Grounds Park,Rockford,IL,1871,1871
-SDP,Jack Murphy Stadium,"San Diego Stadium, SDCCU Stadium",San Diego,CA,1969,1996
-SDP,Qualcomm Stadium,"San Diego Stadium, SDCCU Stadium",San Diego,CA,1997,2003
-SDP,Petco Park,,San Diego,CA,2004,2025
-SFG,Polo Grounds I,,,,1883,1888
-SFG,Polo Grounds II,,,,1889,1890
-SFG,Polo Grounds III,"New Polo Grounds, Manhattan Field",New York,NY,1891,1911
-SFG,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1911,1957
-SFG,Seals Stadium,,San Francisco,CA,1958,1959
-SFG,Candlestick Park,"Bay View Stadium, 3Com Park at Candlestick Point",San Francisco,CA,1960,1996
-SFG,3Com Park,"Bay View Stadium, 3Com Park at Candlestick Point",San Francisco,CA,1997,1999
-SFG,PacBell Park,,,,2000,2003
-SFG,SBC Park,Pacific Bell Park,San Francisco,CA,2004,2005
-SFG,AT&T Park,Pacific Bell Park,San Francisco,CA,2006,2018
-SFG,Oracle Park,,,,2019,2025
-MOH,Island Park,City Island,Harrisburg,PA,1913,1913
-SEA,Kingdome,King County Stadium,Seattle,WA,1977,1999
-SEA,Safeco Field,,Seattle,WA,1999,2018
-SEA,T-Mobile Park,,Seattle,WA,2019,2025
-SNA,Grand Avenue Park,"Grand Avenue Ball Grounds, Sportsman's Park, Athletic Park",St. Louis,MO,1875,1875
-SBS,Sportsman's Park I,"Grand Avenue Ball Grounds, Grand Avenue Park, Athletic Park",St. Louis,MO,1876,1877
-STL,Sportsman's Park I,"Grand Avenue Ball Grounds, Grand Avenue Park, Athletic Park",St. Louis,MO,1882,1892
-STL,Robison Field,"New Sportsmans' Park, League Park, Cardinal Field",St. Louis,MO,1893,1920
-STL,Sportsman's Park IV,,,,1920,1966
-STL,Busch Stadium II,Busch Memorial Stadium,St. Louis,MO,1966,2005
-STL,Busch Stadium III,,St. Louis,MO,2006,2025
-SLM,Union Base Ball Park,"South Side Park I, Cricket Club Grounds, 39th Street Grounds",Chicago,IL,1884,1884
-SLM,Sportsman's Park I,"Grand Avenue Ball Grounds, Grand Avenue Park, Athletic Park",St. Louis,MO,1885,1886
-SLR,Red Stocking Baseball Park,Compton Avenue Park,St. Louis,MO,1875,1875
-SLS,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1911,1912
-SLS,Kuebler Park,"Kuebler's Park, Giants Park I",St. Louis,MO,1915,1915
-SLS,Christian Brothers College Diamond,"Christian Brothers College High School, CBC High School",St. Louis,MO,1916,1916
-SLS,Giants Park II,Metropolitan Park,St. Louis,MO,1920,1921
-SLS,Stars Park,,St. Louis,MO,1922,1931
-SL2,Metropolitan Park,,New York,NY,1937,1937
-SLI,Handlan's Park,Federal League Park,St. Louis,MO,1914,1915
-SPG,Downtown Park,,St. Paul,MN,1909,1909
-STP,West Seventh Street Park,"Fort Street Grounds, Fort Road Grounds",St. Paul,MN,1884,1884
-SYR,Newell Park,Star Park I,Syracuse,NY,1879,1879
-SYS,Star Park II,,Syracuse,NY,1890,1890
-TBD,Tropicana Field,"Florida Suncoast Dome, ThunderDome",St. Petersburg,FL,1998,2024
-TBD,Steinbrenner Field,,,,2025,2025
-TEX,Griffith Stadium II,,,,1961,1961
-TEX,R.F.K. Stadium,,,,1962,1971
-TEX,Arlington Stadium,,Arlington,TX,1972,1993
-TEX,The Ballpark at Arlington,,,,1994,2004
-TEX,Ameriquest Field,,,,2005,2006
-TEX,Rangers Ballpark in Arlington,"The Ballpark in Arlington, Ameriquest Field in Arlington",Arlington,TX,2007,2013
-TEX,Globe Life Park in Arlington,"The Ballpark in Arlington, Ameriquest Field in Arlington",Arlington,TX,2014,2019
-TEX,Globe Life Field,,Arlington,TX,2020,2025
-TOL,League Park,Mahaffey Park,Canton,OH,1884,1884
-TLM,Speranza Park,,Toledo,OH,1890,1890
-TT,Swayne Field,,Toledo,OH,1923,1923
-PC,Greenlee Field,,Pittsburgh,PA,1932,1938
-PC,Swayne Field,,Toledo,OH,1939,1940
-TOR,Exhibition Stadium,"Canadian National Exhibition Stadium, CNE Stadium",Toronto,ON,1977,1989
-TOR,Skydome,,,,1989,2004
-TOR,Rogers Centre,"Ontario Stadium Project, Pan-Am Dome, Pan-Am Ceremonies Venue",Toronto,ON,2005,2019
-TOR,Sahlen Field,"Pilot Field, Downtown Ballpark, North AmeriCare Park, Dunn Tire Park, Coca-Cola Field",Buffalo,NY,2020,2020
-TOR,Rogers Centre,"Ontario Stadium Project, Pan-Am Dome, Pan-Am Ceremonies Venue",Toronto,ON,2021,2025
-TRO,Haymakers' Grounds,Vail's Lot,Troy,NY,1871,1872
-TRT,Putnam Grounds,,Troy,NY,1879,1879
-TRT,Haymakers' Grounds,Vail's Lot,Troy,NY,1880,1881
-TRT,Troy Ball Club Grounds,,Watervliet,NY,1882,1882
-SEN,Griffith Stadium,"National Park, American League Park",Washington,DC,1938,1938
-WBL,Olympics Grounds,,,,1873,1873
-NAT,Nationals Grounds,,,,1872,1872
-WNT,Olympics Grounds,,,,1875,1875
-WST,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1884,1884
-WNA,Capitol Grounds,Capitol Park I,Washington,DC,1884,1884
-WNL,Swampdoodle Grounds,,,,1886,1889
-WSN,Jarry Park,"Stade Parc Jarry, Jarry Park Stadium",Montreal,QC,1969,1976
-WSN,Stade Olympique,Olympic Stadium,Montreal,QC,1977,2003
-WSN,Hiram Bithorn Stadium,Estadio Hiram Bithorn,San Juan,,2003,2003
-WSN,Stade Olympique,Olympic Stadium,Montreal,QC,2004,2004
-WSN,Hiram Bithorn Stadium,Estadio Hiram Bithorn,San Juan,,2004,2004
-WSN,R.F.K. Stadium,,,,2005,2007
-WSN,Nationals Park,,Washington,DC,2008,2025
-OLY,Olympics Grounds,,,,1871,1872
-WAP,Griffith Stadium,"National Park, American League Park",Washington,DC,1932,1932
-WAS,Boundary Field,"American League Park II, National Park, Nationals' Park",Washington,DC,1891,1899
-WBS,Sprudel Park,,West Baden Springs,IN,1910,1913
-WP,American League Park,Oriole Park IV,Baltimore,MD,1924,1924
-WP,Harlan Field,,Wilmington,DE,1925,1925
-WIL,Union Street Park,,Wilmington,DE,1884,1884
-WOR,Worcester Driving Park Grounds,,Worcester,MA,1880,1882
+franchID,parkkey,park,alias,city,state,firstYear,lastYear
+ACG,CIN05,League Park II,,Cincinnati,OH,1933,1933
+AB,ALG01,Fair Grounds,,Algona,IA,1903,1903
+ALT,ALT01,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1884,1884
+ARI,PHO01,Bank One Ballpark,,Phoenix,AZ,1998,2005
+ARI,PHO01,Chase Field,,Phoenix,AZ,2006,2025
+OAK,ALT01,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1901,1908
+OAK,PHI11,Shibe Park,,Philadelphia,PA,1909,1952
+OAK,PHI11,Connie Mack Stadium,,Philadelphia,PA,1953,1954
+OAK,,Municipal Stadium I,,,,1955,1967
+OAK,OAK01,Oakland Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,1968,2003
+OAK,OAK01,Network Associates Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2004,2004
+OAK,OAK01,McAfee Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2005,2008
+OAK,OAK01,Oakland-Alameda County Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2009,2011
+OAK,OAK01,O.co Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2012,2022
+OAK,OAK01,Oakland-Alameda County Coliseum,"Overstock.com Coliseum, RingCentral Coliseum",Oakland,CA,2023,2024
+OAK,,Sutter Health Park,,,,2025,2025
+ATL,BOS01,South End Grounds I,"Walpole Street Grounds, Union Baseball Grounds, Boston National League Base Ball Park, Boston Base Ball Grounds",Boston,MA,1876,1887
+ATL,BOS03,South End Grounds II,Grand Pavilion,Boston,MA,1888,1894
+ATL,BOS04,Congress Street Grounds,,Boston,MA,1894,1894
+ATL,BOS05,South End Grounds III,Boston National League Base Ball Park,Boston,MA,1894,1914
+ATL,,Fenway Park I,,,,1915,1915
+ATL,BOS08,Braves Field,National League Park,Boston,MA,1915,1952
+ATL,MIL05,County Stadium,"Milwaukee County Stadium, Milwaukee County Municipal Stadium",Milwaukee,WI,1953,1965
+ATL,ATL01,Atlanta-Fulton County Stadium,"Fulton County Stadium, Atlanta Stadium",Atlanta,GA,1966,1996
+ATL,ATL02,Turner Field,Centennial Olympic Stadium,Atlanta,GA,1997,2016
+ATL,ATL03,SunTrust Park,,Atlanta,GA,2017,2020
+ATL,ATL03,Truist Park,,Atlanta,GA,2021,2025
+BG2,ATC01,Bacharach Park,,Atlantic City,NJ,1923,1929
+BBS,BAL14,Maryland Park,,Baltimore,MD,1922,1932
+BBS,BAL13,Bugle Field,,Baltimore,MD,1933,1934
+BLC,BAL02,Newington Park,,Baltimore,MD,1872,1874
+BEG,NSH02,Wilson Park,Tom Wilson Park,Nashville,TN,1930,1930
+BEG,CLE10,Hardware Field,Cleveland Hardware Field,Cleveland,OH,1931,1931
+BEG,NSH02,Wilson Park,Tom Wilson Park,Nashville,TN,1932,1934
+BEG,,Neil Park,,,,1935,1935
+BEG,WAS09,Griffith Stadium,"National Park, American League Park",Washington,DC,1936,1937
+BEG,BAL13,Bugle Field,,Baltimore,MD,1938,1938
+BEG,,Oriole Park,,,,1939,1941
+BEG,BAL13,Bugle Field,,Baltimore,MD,1942,1948
+MAR,BAL02,Newington Park,,Baltimore,MD,1873,1873
+BLU,BAL04,Belair Lot,"Union Park, Union Association Grounds",Baltimore,MD,1884,1884
+BLO,BAL02,Newington Park,,Baltimore,MD,1882,1882
+BLO,,Oriole Park,,,,1883,1890
+BLO,BAL04,Union Park,"Belair Lot, Union Association Grounds",Baltimore,MD,1891,1899
+BAL,MIL04,Lloyd Street Grounds,,Milwaukee,WI,1901,1901
+BAL,STL07,Sportsman's Park III,Busch Stadium I,St. Louis,MO,1902,1908
+BAL,,Sportsman's Park IV,,,,1909,1953
+BAL,BAL11,Memorial Stadium,Baltimore Memorial Stadium,Baltimore,MD,1954,1991
+BAL,BAL12,Oriole Park at Camden Yards,Camden Yards,Baltimore,MD,1992,2025
+BLT,BAL10,Terrapin Park,Oriole Park V,Baltimore,MD,1914,1915
+BBB,BIR01,Rickwood Field,,Birmingham,AL,1923,1948
+BOS,,Huntington Avenue Grounds,,,,1901,1911
+BOS,,Fenway Park I,,,,1912,1933
+BOS,,Fenway Park II,,,,1934,2022
+BOS,BOS07,Fenway Park,,Boston,MA,2023,2025
+BNA,BOS01,South End Grounds I,"Walpole Street Grounds, Union Baseball Grounds, Boston National League Base Ball Park, Boston Base Ball Grounds",Boston,MA,1871,1875
+BRD,BOS02,Dartmouth Grounds,"Union Park, Union Athletic Grounds, Union Grounds",Boston,MA,1884,1884
+BRS,BOS04,Congress Street Grounds,,Boston,MA,1890,1891
+BRA,NYC02,Capitoline Grounds,Capitoline Skating Lake and Base Ball Ground,Brooklyn,NY,1872,1872
+BRA,BOS02,Union Grounds,"Dartmouth Grounds, Union Park, Union Athletic Grounds",Boston,MA,1873,1875
+ECK,BOS02,Union Grounds,"Dartmouth Grounds, Union Park, Union Athletic Grounds",Boston,MA,1872,1872
+BRG,,Ridgewood Park,,,,1890,1890
+BR2,NYC29,Saratoga Park,,Brooklyn,NY,1906,1906
+BR2,NYC12,Washington Park III,,Brooklyn,NY,1907,1907
+BR2,NYC26,Meyerrose Park,,Queens,NY,1908,1911
+BR2,NYC07,Ridgewood Grounds,"Ridgewood Park I, Grauer's Ridgewood Park, Grauer's Woods",Queens,NY,1912,1917
+BR2,NYC23,Dexter Park,,Queens,NY,1918,1927
+BTT,NYC19,Washington Park IV,,Brooklyn,NY,1914,1915
+BWW,NYC11,Eastern Park,,Brooklyn,NY,1890,1890
+BUF,ALB01,Riverside Park,Greenbush Grounds,Rensselaer,NY,1879,1883
+BUF,BUF02,Olympic Park I,,Buffalo,NY,1884,1885
+BFB,BUF03,Olympic Park II,Buffalo Baseball Park,Buffalo,NY,1890,1890
+BFL,BUF04,Federal League Park,International Fair Association Grounds,Buffalo,NY,1914,1915
+CAG,CHI09,Schorling Park,"South Side Park III, Schorling's Park II, White Sox Park",Chicago,IL,1911,1928
+CAG,,South Side Park,,,,1929,1932
+CAG,IND09,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1933,1933
+CAG,CHI09,Cole's Park,"South Side Park III, Schorling's Park II, White Sox Park",Chicago,IL,1934,1935
+CAG,CHI09,American Giants Park,"South Side Park III, Schorling's Park II, White Sox Park",Chicago,IL,1936,1940
+CAG,CHI10,Comiskey Park I,White Sox Park,Chicago,IL,1941,1948
+CCG,ALT01,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1899,1901
+CCG,CHI09,South Side Park III,"Schorling Park, Schorling's Park II, Cole's Park, American Giants Park, White Sox Park",Chicago,IL,1902,1902
+CHC,,23rd Street Grounds,,,,1876,1877
+CHC,CHI01,Lake Front Park I,"Union Base-Ball Grounds, White-Stocking Park",Chicago,IL,1878,1882
+CHC,CHI03,Lake Front Park II,"Lake-Shore Park, Lake Front Park, Lake Park",Chicago,IL,1882,1884
+CHC,,West Side Park I,,,,1885,1890
+CHC,CHI05,South Side Park I,"Cricket Club Grounds, Union Base Ball Park, 39th Street Grounds",Chicago,IL,1891,1893
+CHC,,West Side Park II,,,,1894,1915
+CHC,CHI11,Wrigley Field,"Weeghman Park, Cubs Park",Chicago,IL,1916,2025
+COG,CHI18,Red Sox Park,Osterman's Red Sox park,Chicago,IL,1910,1910
+COG,CHI09,Schorling Park,"South Side Park III, Schorling's Park II, Cole's Park, American Giants Park, White Sox Park",Chicago,IL,1911,1913
+LEL,CHI13,Auburn Park,Schorling's Park I,Chicago,IL,1905,1907
+LEL,CHI16,Logan Square Park,,Chicago,IL,1908,1909
+LEL,CHI17,Normal Park,,Chicago,IL,1910,1910
+CHP,CHI07,South Side Park II,"White Stocking Park, Brotherhood Park",Chicago,IL,1890,1890
+CIU,BAL04,Union Park,"Belair Lot, Union Association Grounds",Baltimore,MD,1897,1900
+CHH,CHI11,Wrigley Field,"Weeghman Park, Cubs Park",Chicago,IL,1914,1915
+CHW,CHI07,South Side Park II,"White Stocking Park, Brotherhood Park",Chicago,IL,1901,1910
+CHW,,Comiskey Park,,,,1910,1990
+CHW,CHI12,Comiskey Park II,White Sox Park,Chicago,IL,1991,2002
+CHW,CHI12,U.S. Cellular Field,White Sox Park,Chicago,IL,2003,2016
+CHW,CHI12,Guaranteed Rate Field,White Sox Park,Chicago,IL,2017,2024
+CHW,CHI12,Rate Field,White Sox Park,Chicago,IL,2025,2025
+CNA,CHI01,Union Base-Ball Grounds,"Lake Front Park I, White-Stocking Park",Chicago,IL,1871,1871
+CNA,,23rd Street Grounds,,,,1874,1875
+CPI,,South Side Park,,,,1884,1884
+CPI,KAN03,Exposition Park,,Kansas City,MO,1884,1884
+CKK,PEN01,East End Park,Pendleton Park,Cincinnati,OH,1891,1891
+COR,CIN03,Bank Street Grounds,Union Athletic Park,Cincinnati,OH,1884,1884
+CNR,CIN02,Avenue Grounds,"Brighton Park, Cincinnati Baseball Park",Cincinnati,OH,1876,1879
+CNR,CIN03,Bank Street Grounds,Union Athletic Park,Cincinnati,OH,1880,1880
+CIN,CIN03,Bank Street Grounds,Union Athletic Park,Cincinnati,OH,1882,1883
+CIN,,League Park I in Cincinnati,,,,1884,1893
+CIN,,League Park II in Cincinnati,,,,1894,1901
+CIN,CIN06,Palace of the Fans,League Park III,Cincinnati,OH,1902,1911
+CIN,CIN07,Crosley Field,Redland Field,Cincinnati,OH,1912,1970
+CIN,CIN08,Riverfront Stadium,,Cincinnati,OH,1970,1996
+CIN,CIN08,Cinergy Field,,Cincinnati,OH,1997,2002
+CIN,CIN09,Great American Ballpark,,Cincinnati,OH,2003,2025
+CT,CIN07,Crosley Field,Redland Field,Cincinnati,OH,1937,1937
+CBL,CLE02,Kennard Street Park,"League Park I, National League Park I, Kennard Street Baseball Grounds",Cleveland,OH,1879,1884
+CBN,CLE11,Hooper Field,"Tate Field, Slavia Hooper Field",Newburgh Heights,OH,1924,1924
+CBE,CIN07,Crosley Field,Redland Field,Cincinnati,OH,1942,1942
+CBE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1943,1943
+CBE,CIN05,League Park II,,Cincinnati,OH,1944,1948
+CEL,CLE11,Hooper Field,"Tate Field, Slavia Hooper Field",Newburgh Heights,OH,1926,1926
+CFC,CLE01,National Association Grounds,,Cleveland,OH,1871,1872
+CLE,CIN04,League Park I,"Cincinnati Base Ball Grounds, Western Avenue Grounds, American Park",Cincinnati,OH,1901,1909
+CLE,CIN05,League Park II,,Cincinnati,OH,1910,1932
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1932,1932
+CLE,CIN05,League Park II,,Cincinnati,OH,1933,1933
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1933,1933
+CLE,CIN05,League Park II,,Cincinnati,OH,1934,1934
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1934,1934
+CLE,CIN05,League Park II,,Cincinnati,OH,1935,1935
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1935,1935
+CLE,CIN05,League Park II,,Cincinnati,OH,1936,1936
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1936,1936
+CLE,CIN05,League Park II,,Cincinnati,OH,1937,1937
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1937,1937
+CLE,CIN05,League Park II,,Cincinnati,OH,1938,1938
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1938,1938
+CLE,CIN05,League Park II,,Cincinnati,OH,1939,1939
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1939,1939
+CLE,CIN05,League Park II,,Cincinnati,OH,1940,1940
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1940,1940
+CLE,CIN05,League Park II,,Cincinnati,OH,1941,1941
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1941,1941
+CLE,CIN05,League Park II,,Cincinnati,OH,1942,1942
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1942,1942
+CLE,CIN05,League Park II,,Cincinnati,OH,1943,1943
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1943,1943
+CLE,CIN05,League Park II,,Cincinnati,OH,1944,1944
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1944,1944
+CLE,CIN05,League Park II,,Cincinnati,OH,1945,1945
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1945,1945
+CLE,CIN05,League Park II,,Cincinnati,OH,1946,1946
+CLE,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1946,1993
+CLE,CLE08,Jacobs Field,,Cleveland,OH,1994,2011
+CLE,CLE08,Progressive Field,,Cleveland,OH,2012,2025
+CHT,CLE11,Hooper Field,"Tate Field, Slavia Hooper Field",Newburgh Heights,OH,1927,1927
+CLI,CHI07,Brotherhood Park,"South Side Park II, White Stocking Park",Chicago,IL,1890,1890
+CRS,CIN05,League Park II,,Cincinnati,OH,1934,1934
+CLV,CLE03,National League Park II,"League Park II, American Association Park, Association Park, Association Park",Cleveland,OH,1887,1888
+CLV,BOS08,National League Park,Braves Field,Boston,MA,1889,1890
+CLV,CIN04,League Park I,"Cincinnati Base Ball Grounds, Western Avenue Grounds, American Park",Cincinnati,OH,1891,1899
+CL2,CLE12,Luna Park,Luna Bowl,Cleveland,OH,1932,1932
+CTS,CLE11,Tate Field,"Hooper Field, Slavia Hooper Field",Newburgh Heights,OH,1922,1922
+CTG,CLE12,Luna Park,Luna Bowl,Cleveland,OH,1928,1928
+COL,DEN01,Mile High Stadium,Bears Stadium,Denver,CO,1993,1994
+COL,DEN02,Coors Field,,Denver,CO,1995,2025
+CBB,COL04,Neil Park II,,Columbus,OH,1933,1933
+CBK,COL01,Recreation Park I,,Columbus,OH,1883,1884
+COB,,Neil Park,,,,1921,1921
+CLS,COL02,Recreation Park II,,Columbus,OH,1889,1891
+COT,COL05,Panhandle Park,,Columbus,OH,1932,1932
+CBG,MAS01,Long Island Grounds,"Maspeth Ball Grounds, Long Island Recreation Grounds",Maspeth,NY,1891,1891
+CSE,NYC23,Dexter Park,,Queens,NY,1922,1922
+CSE,CHI06,West Side Park,,Chicago,IL,1925,1925
+CSE,NYC23,Dexter Park,,Queens,NY,1926,1926
+CSE,NWK02,Davids Stadium,Ruppert Stadium,Newark,NJ,1927,1927
+CSE,NYC23,Dexter Park,,Queens,NY,1928,1929
+CSW,CIN07,Redland Field,Crosley Field,Cincinnati,OH,1921,1921
+DYM,DAY02,Westwood Field,West Side Park,Dayton,OH,1920,1926
+DS,DET06,Mack Park,,Detroit,MI,1919,1929
+DS,HAM01,Hamtramck Stadium,Roesink Stadium,Hamtramck,MI,1930,1931
+DTS,HAM01,Hamtramck Stadium,Roesink Stadium,Hamtramck,MI,1937,1937
+DET,DET02,Bennett Park,,Detroit,MI,1901,1911
+DET,DET04,Navin Field,,Detroit,MI,1912,1937
+DET,DET04,Briggs Stadium,,Detroit,MI,1938,1960
+DET,DET04,Tiger Stadium,,Detroit,MI,1961,1999
+DET,DET05,Comerica Park,,Detroit,MI,2000,2025
+DTN,DET01,Recreation Park,,Detroit,MI,1881,1888
+DW,HAM01,Hamtramck Stadium,Roesink Stadium,Hamtramck,MI,1932,1932
+RES,WAV01,Waverly Fairgrounds,Waverly Park,Waverly,NJ,1873,1873
+KEK,FOR01,Hamilton Field,"Kekionga Ball Grounds, Grand Duchess",Fort Wayne,IN,1871,1871
+FLP,FRL01,Pluto Park,,French Lick,IN,1913,1913
+HBG,HSB01,Island Park,City Island,Harrisburg,PA,1924,1927
+SNH,IND09,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1938,1938
+SNH,STL15,South End Grounds,"South End Park, National Nite Baseball Park",St. Louis,MO,1939,1940
+SNH,NOL01,Pelican Stadium,Heinemann Park,New Orleans,LA,1941,1941
+SNH,HSB01,Island Park,City Island,Harrisburg,PA,1943,1943
+HNA,HRT01,Hartford Ball Club Grounds,,Hartford,CT,1874,1875
+HAR,HRT01,Hartford Ball Club Grounds,,Hartford,CT,1876,1876
+HAR,,Union Grounds (Brooklyn),,,,1877,1877
+HIL,YEA01,Hilldale Park,,Yeadon,PA,1918,1932
+HG,PIT06,Forbes Field,,Pittsburgh,PA,1928,1931
+HG,PIT10,Greenlee Field,,Pittsburgh,PA,1932,1935
+HG,PIT06,Forbes Field,,Pittsburgh,PA,1936,1936
+HG,PIT10,Greenlee Field,,Pittsburgh,PA,1937,1938
+HG,PIT06,Forbes Field,,Pittsburgh,PA,1939,1939
+HG,WAS09,Griffith Stadium,"National Park, American League Park",Washington,DC,1940,1948
+HOU,HOU01,Colt Stadium,"Estadio Superior, Estadio Ángel Castro, Estadio de Béisbol Mecano, Millón de Tuercas",Houston,TX,1962,1964
+HOU,HOU02,Astrodome,,Houston,TX,1965,1999
+HOU,HOU03,Enron Field,"The Ballpark at Union Station, Astros Field",Houston,TX,2000,2001
+HOU,HOU03,Minute Maid Park,"The Ballpark at Union Station, Astros Field",Houston,TX,2002,2024
+HOU,HOU03,Daikin Park,"The Ballpark at Union Station, Astros Field",Houston,TX,2025,2025
+ABC,IND08,Northwestern Park,"East Ohio Street Grounds, League Park",Indianapolis,IN,1914,1915
+ABC,BUF04,Federal League Park,International Fair Association Grounds,Buffalo,NY,1916,1916
+ABC,NYC08,Washington Park II,,Brooklyn,NY,1917,1926
+BCA,ATL04,Ponce De Leon Park,"Spiller Park, Spiller Field",Atlanta,GA,1932,1939
+AB2,NYC08,Washington Park II,,Brooklyn,NY,1931,1931
+AB2,IND09,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1932,1933
+IA,IND09,Perry Stadium,"Owen J. Bush Stadium, Bush Stadium, Victory Field I",Indianapolis,IN,1937,1937
+IBL,IND01,South Street Park,"South Street Grounds, National Park",Indianapolis,IN,1878,1878
+IC,CIN07,Crosley Field,Redland Field,Cincinnati,OH,1943,1945
+IC,IND09,Victory Field I,"Perry Stadium, Owen J. Bush Stadium, Bush Stadium",Indianapolis,IN,1946,1948
+IHO,,Seventh Street Park,,,,1884,1884
+IND,,Athletic Park I,,,,1887,1887
+IND,IND06,Athletic Park II,"Indianapolis Park, League Park",Indianapolis,IN,1888,1889
+JRC,JAX01,Durkee Field,"J. P. Small Memorial Stadium, Barrs Field, Myrtle Avenue Ball Park",Jacksonville,FL,1938,1938
+JRC,CLE07,Cleveland Stadium,"Municipal Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1939,1939
+JRC,CIN05,League Park II,,Cincinnati,OH,1940,1940
+JRC,JAX01,Red Cap Stadium,"J. P. Small Memorial Stadium, Barrs Field, Myrtle Avenue Ball Park",Jacksonville,FL,1941,1942
+KCU,IND02,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1884,1884
+KCN,CLE03,Association Park,"League Park II, National League Park II, American Association Park",Cleveland,OH,1886,1886
+KCC,KAN02,Association Park I,"Association Park, League Park",Kansas City,MO,1888,1888
+KCC,KAN03,Exposition Park,,Kansas City,MO,1889,1889
+KCG,ALB01,Riverside Park,Greenbush Grounds,Rensselaer,NY,1909,1910
+KCM,KAN07,Association Park II,,Kansas City,MO,1920,1923
+KCM,KAN05,Muehlebach Field,Municipal Stadium,Kansas City,MO,1924,1937
+KCM,KAN05,Ruppert Stadium,Municipal Stadium,Kansas City,MO,1938,1945
+KCM,KAN05,Blues Stadium,Municipal Stadium,Kansas City,MO,1946,1948
+KCP,KAN04,Gordon and Koppel Field,"Gordon and Koppel Stadium, Gordon-Koppel Field, Gordon & Koppel Field, Gordon & Koppel Stadium",Kansas City,MO,1914,1915
+KRG,KAN09,Shelley Park,,Kansas City,MO,1910,1912
+KCR,,Municipal Stadium II,,,,1969,1972
+KCR,KAN06,Royals Stadium,,Kansas City,MO,1973,1992
+KCR,KAN06,Kauffman Stadium,,Kansas City,MO,1993,2025
+WES,KEO01,Perry Park,Walte's Pasture,Keokuk,IA,1875,1875
+LRG,LRO01,Crump Park,Crump's Park,Little Rock,AR,1932,1932
+ANA,,Wrigley Field (LA),,,,1961,1961
+ANA,LOS03,Dodger Stadium,Chavez Ravine,Los Angeles,CA,1962,1965
+ANA,ANA01,Anaheim Stadium,Edison Field,Anaheim,CA,1966,1996
+ANA,,Edison International Field,,,,1997,2003
+ANA,,Angels Stadium of Anaheim,,,,2004,2004
+ANA,,Angel Stadium,,,,2005,2011
+ANA,ANA01,Angel Stadium of Anaheim,Edison Field,Anaheim,CA,2012,2025
+LAD,NYC05,Washington Park I,,Brooklyn,NY,1884,1889
+LAD,NYC08,Washington Park II,,Brooklyn,NY,1890,1890
+LAD,NYC11,Eastern Park,,Brooklyn,NY,1891,1897
+LAD,NYC12,Washington Park III,,Brooklyn,NY,1898,1912
+LAD,NYC15,Ebbets Field,,Brooklyn,NY,1913,1957
+LAD,LOS01,Los Angeles Memorial Coliseum,"Los Angeles Coliseum, L.A. Coliseum, Olympic Stadium",Los Angeles,CA,1958,1961
+LAD,LOS03,Dodger Stadium,Chavez Ravine,Los Angeles,CA,1962,2025
+LVB,LOU05,Parkway Field,Colonels Field,Louisville,KY,1931,1932
+LOU,LOU02,Eclipse Park I,,Louisville,KY,1882,1892
+LOU,LOU03,Eclipse Park II,,Louisville,KY,1893,1899
+LGR,LOU01,Louisville Baseball Park,Louisville Baseball Grounds,Louisville,KY,1876,1877
+MRS,MEM01,Lewis Park,Martin Stadium,Memphis,TN,1923,1932
+MRS,MEM01,Martin Park,Martin Stadium,Memphis,TN,1937,1945
+MRS,MEM02,Russwood Park,"Elm Wood Park, Red Elm Park",Memphis,TN,1946,1946
+MRS,MEM01,Martin Park,Martin Stadium,Memphis,TN,1947,1948
+FLA,MIA01,Joe Robbie Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,1993,1998
+FLA,MIA01,Pro Player Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,1999,2004
+FLA,MIA01,Dolphin Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,2005,2010
+FLA,MIA01,Sun Life Stadium,"Hard Rock Stadium, Pro Player Park, Dolphins Stadium, Land Shark Stadium",Miami,FL,2011,2011
+FLA,MIA02,Marlins Park,,Miami,FL,2012,2020
+FLA,MIA02,loanDepot park,,Miami,FL,2021,2025
+MAN,MID01,Mansfield Club Grounds,"Mansfield Park, Fort Hill Grounds",Middletown,CT,1872,1872
+MB,MIL03,Borchert Park,"Athletic Park, Borchert Field",Milwaukee,WI,1923,1923
+MLU,MIL02,Wright Street Grounds,,Milwaukee,WI,1884,1884
+MLA,,Athletic Field,,,,1891,1891
+MIL,,Sicks Stadium,,,,1969,1969
+MIL,MIL05,County Stadium,"Milwaukee County Stadium, Milwaukee County Municipal Stadium",Milwaukee,WI,1970,2000
+MIL,MIL06,Miller Park,,Milwaukee,WI,2001,2020
+MIL,MIL06,American Family Field,,Milwaukee,WI,2021,2025
+MLG,LOU03,Eclipse Park II,,Louisville,KY,1878,1878
+MIN,WAS07,American League Park I,,Washington,DC,1901,1903
+MIN,WAS06,American League Park II,"Boundary Field, National Park, Nationals' Park",Washington,DC,1904,1910
+MIN,,Griffith Stadium I,,,,1911,1955
+MIN,,Griffith Stadium II,,,,1956,1960
+MIN,MIN02,Metropolitan Stadium,Met Stadium,Bloomington,MN,1961,1981
+MIN,,Hubert H Humphrey Metrodome,,,,1982,2009
+MIN,MIN04,Target Field,,Minneapolis,MN,2010,2025
+MRM,MNR01,Casino Park,,Monroe,LA,1932,1932
+MGS,MTG01,College Hill Park,,Montgomery,AL,1932,1932
+NHV,NEW01,Hamilton Park,"Howard Avenue Grounds, Brewster Park",New Haven,CT,1875,1875
+BG1,ATC01,Bacharach Park,,Atlantic City,NJ,1918,1918
+BG1,ATC02,Inlet Park,,Atlantic City,NJ,1919,1919
+BG1,ATC03,Inlet Park II,,Atlantic City,NJ,1920,1921
+BG1,NYC27,New York Oval,,Bronx,NY,1922,1922
+NBY,NYC16,Yankee Stadium I,,New York,NY,1931,1931
+NBY,NYC24,Dyckman Oval,,New York,NY,1932,1932
+NBY,PAT01,Hinchliffe Stadium,,Paterson,NJ,1933,1935
+NBY,CLE07,Municipal Stadium,"Cleveland Stadium, Lakefront Stadium, Cleveland Municipal Stadium",Cleveland,OH,1936,1936
+NBY,NYC24,Dyckman Oval,,New York,NY,1937,1937
+NBY,PAT01,Hinchliffe Stadium,,Paterson,NJ,1938,1938
+NBY,NYC16,Yankee Stadium I,,New York,NY,1940,1947
+NBY,ROC04,Red Wing Stadium,Silver Stadium,Rochester,NY,1948,1948
+NYC,NYC24,Dyckman Oval,,New York,NY,1935,1936
+NYC,NYC16,Yankee Stadium I,,New York,NY,1941,1943
+NYC,NYC10,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1944,1948
+NYI,NYC09,Polo Grounds III,"New Polo Grounds, Manhattan Field",New York,NY,1890,1890
+GOR,HSB01,Island Park,City Island,Harrisburg,PA,1891,1891
+NLG,NYC28,Olympic Field,,New York,NY,1911,1919
+NLG,BNX01,Catholic Protectory Oval,New York Catholic Protectory,Bronx,NY,1920,1930
+NLS,NYC25,Lenox Oval,,New York,NY,1914,1916
+NYP,,Polo Grounds I West Diamond,,,,1883,1885
+NYP,SAI01,St. George Cricket Grounds,St. George Grounds,New York,NY,1886,1887
+NYM,NYC10,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1962,1963
+NYM,NYC17,Shea Stadium,"Flushing Meadow Park Municipal Stadium, William A. Shea Municipal Stadium",New York,NY,1964,2008
+NYM,NYC20,Citi Field,,New York,NY,2009,2025
+NNA,,Union Grounds (Brooklyn),,,,1871,1875
+NYU,,Union Grounds (Brooklyn),,,,1876,1876
+NYY,,Oriole Park,,,,1901,1902
+NYY,NYC13,Hilltop Park,American League Park,New York,NY,1903,1912
+NYY,NYC10,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1913,1922
+NYY,NYC16,Yankee Stadium I,,New York,NY,1923,1973
+NYY,NYC17,Shea Stadium,"Flushing Meadow Park Municipal Stadium, William A. Shea Municipal Stadium",New York,NY,1974,1975
+NYY,NYC21,Yankee Stadium II,,New York,NY,1976,2008
+NYY,,Yankee Stadium III,,,,2009,2022
+NYY,NYC21,Yankee Stadium II,,New York,NY,2023,2025
+NWB,BLO01,General Electric Field,Sprague Field,Bloomfield,NJ,1932,1932
+ND,BLO01,General Electric Field,Sprague Field,Bloomfield,NJ,1934,1934
+ND,NWK03,Ollemar Stadium,Ollemar Field,Irvington,NJ,1935,1935
+NE,NYC15,Ebbets Field,,Brooklyn,NY,1935,1935
+NE,KAN05,Ruppert Stadium,"Municipal Stadium, Muehlebach Field, Blues Stadium",Kansas City,MO,1936,1948
+NEW,BUF04,Federal League Park,International Fair Association Grounds,Buffalo,NY,1914,1914
+NEW,HAR01,Harrison Field,Federal Baseball Park,Harrison,NJ,1915,1915
+NS,NWK02,Davids Stadium,Ruppert Stadium,Newark,NJ,1926,1926
+OKM,OKC01,Colcord Park,Saratoga Park,Oklahoma City,OK,1910,1910
+PNA,PHI01,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1871,1875
+ATH,PHI01,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1876,1876
+PHA,JER01,Oakdale Park,Oakland Athletic Association Field,Jersey City,NJ,1882,1882
+PHA,PHI01,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1883,1890
+PHQ,PHI07,Forepaugh Park,Brotherhood Park,Philadelphia,PA,1890,1890
+PHQ,IND02,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1891,1891
+PBG,PHI16,Passon Field,,Philadelphia,PA,1934,1934
+CEN,PHI02,Centennial Grounds,Centennial Park,Philadelphia,PA,1875,1875
+PG,ALT01,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1903,1906
+PG,PHI09,Baker Bowl,"Philadelphia Baseball Grounds, National League Park",Philadelphia,PA,1907,1907
+PG,ALT01,Columbia Park,Fourth Avenue Grounds,Altoona,PA,1908,1908
+PHK,PHI05,Keystone Park,,Philadelphia,PA,1884,1884
+PHI,DET01,Recreation Park,,Detroit,MI,1883,1886
+PHI,PHI06,Philadelphia Baseball Grounds,"Huntingdon Grounds I, National League Park",Philadelphia,PA,1887,1894
+PHI,PHI09,Baker Bowl,National League Park,Philadelphia,PA,1895,1938
+PHI,PHI11,Shibe Park,,Philadelphia,PA,1938,1952
+PHI,PHI11,Connie Mack Stadium,,Philadelphia,PA,1953,1970
+PHI,PHI12,Veterans Stadium,,Philadelphia,PA,1971,2003
+PHI,PHI13,Citizens Bank Park,,Philadelphia,PA,2004,2025
+PS,YEA01,Hilldale Park,,Yeadon,PA,1933,1933
+PS,PHI16,Passon Field,,Philadelphia,PA,1934,1934
+PS,PHI15,PRR-YMCA Field,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1935,1935
+PS,PHI15,44th & Parkside,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1936,1938
+PS,PHI15,Parkside Athletic Field,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1939,1943
+PS,PHI15,44th & Parkside,"P.R.R. YMCA Athletic Field, Penmar Park, 44th and Parkside ballpark",Philadelphia,PA,1944,1947
+PS,PHI11,Shibe Park,Connie Mack Stadium,Philadelphia,PA,1948,1948
+PTG,PHI17,Pencoyd Field,"Bala Cynwyd Park, Pencoyd Park",Philadelphia,PA,1928,1928
+PWS,PHI01,Jefferson Street Grounds,"Athletics Park, Twenty-Fifth and Jefferson Streets, Olympic Ball Ground",Philadelphia,PA,1873,1875
+PBB,PIT05,Exposition Park III,,Pittsburgh,PA,1890,1890
+PBK,PIT09,Central Park,Central Amusement Park,Pittsburgh,PA,1922,1922
+PIT,PIT02,Exposition Park I,,Pittsburgh,PA,1882,1883
+PIT,DET01,Recreation Park,,Detroit,MI,1884,1890
+PIT,KAN03,Exposition Park,,Kansas City,MO,1891,1909
+PIT,PIT06,Forbes Field,,Pittsburgh,PA,1909,1970
+PIT,PIT07,Three Rivers Stadium,,Pittsburgh,PA,1970,2000
+PIT,PIT08,PNC Park,,Pittsburgh,PA,2001,2025
+PBS,PIT05,Exposition Park III,,Pittsburgh,PA,1914,1915
+PRO,PRO02,Messer Street Grounds,"Messer Park, Messer Field",Providence,RI,1878,1885
+RIC,,Allen Pasture,,,,1884,1884
+ROC,ROC01,Culver Field I,,Rochester,NY,1890,1890
+ROK,RCK01,Agricultural Society Fair Grounds,Fair Grounds Park,Rockford,IL,1871,1871
+SDP,SAN01,Jack Murphy Stadium,"San Diego Stadium, SDCCU Stadium",San Diego,CA,1969,1996
+SDP,SAN01,Qualcomm Stadium,"San Diego Stadium, SDCCU Stadium",San Diego,CA,1997,2003
+SDP,SAN02,Petco Park,,San Diego,CA,2004,2025
+SFG,,Polo Grounds I,,,,1883,1888
+SFG,,Polo Grounds II,,,,1889,1890
+SFG,NYC09,Polo Grounds III,"New Polo Grounds, Manhattan Field",New York,NY,1891,1911
+SFG,NYC10,Polo Grounds IV,"New Polo Grounds, Brotherhood Park",New York,NY,1911,1957
+SFG,SFO01,Seals Stadium,,San Francisco,CA,1958,1959
+SFG,SFO02,Candlestick Park,"Bay View Stadium, 3Com Park at Candlestick Point",San Francisco,CA,1960,1996
+SFG,SFO02,3Com Park,"Bay View Stadium, 3Com Park at Candlestick Point",San Francisco,CA,1997,1999
+SFG,,PacBell Park,,,,2000,2003
+SFG,SFO03,SBC Park,Pacific Bell Park,San Francisco,CA,2004,2005
+SFG,SFO03,AT&T Park,Pacific Bell Park,San Francisco,CA,2006,2018
+SFG,,Oracle Park,,,,2019,2025
+MOH,HSB01,Island Park,City Island,Harrisburg,PA,1913,1913
+SEA,SEA02,Kingdome,King County Stadium,Seattle,WA,1977,1999
+SEA,SEA03,Safeco Field,,Seattle,WA,1999,2018
+SEA,SEA03,T-Mobile Park,,Seattle,WA,2019,2025
+SNA,STL02,Grand Avenue Park,"Grand Avenue Ball Grounds, Sportsman's Park, Athletic Park",St. Louis,MO,1875,1875
+SBS,STL03,Sportsman's Park I,"Grand Avenue Ball Grounds, Grand Avenue Park, Athletic Park",St. Louis,MO,1876,1877
+STL,STL03,Sportsman's Park I,"Grand Avenue Ball Grounds, Grand Avenue Park, Athletic Park",St. Louis,MO,1882,1892
+STL,STL05,Robison Field,"New Sportsmans' Park, League Park, Cardinal Field",St. Louis,MO,1893,1920
+STL,,Sportsman's Park IV,,,,1920,1966
+STL,STL09,Busch Stadium II,Busch Memorial Stadium,St. Louis,MO,1966,2005
+STL,STL10,Busch Stadium III,,St. Louis,MO,2006,2025
+SLM,CHI05,Union Base Ball Park,"South Side Park I, Cricket Club Grounds, 39th Street Grounds",Chicago,IL,1884,1884
+SLM,STL03,Sportsman's Park I,"Grand Avenue Ball Grounds, Grand Avenue Park, Athletic Park",St. Louis,MO,1885,1886
+SLR,STL01,Red Stocking Baseball Park,Compton Avenue Park,St. Louis,MO,1875,1875
+SLS,IND02,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1911,1912
+SLS,STL14,Kuebler Park,"Kuebler's Park, Giants Park I",St. Louis,MO,1915,1915
+SLS,STL12,Christian Brothers College Diamond,"Christian Brothers College High School, CBC High School",St. Louis,MO,1916,1916
+SLS,STL13,Giants Park II,Metropolitan Park,St. Louis,MO,1920,1921
+SLS,STL16,Stars Park,,St. Louis,MO,1922,1931
+SL2,NYC06,Metropolitan Park,,New York,NY,1937,1937
+SLI,STL08,Handlan's Park,Federal League Park,St. Louis,MO,1914,1915
+SPG,SPA02,Downtown Park,,St. Paul,MN,1909,1909
+STP,SPA01,West Seventh Street Park,"Fort Street Grounds, Fort Road Grounds",St. Paul,MN,1884,1884
+SYR,SYR01,Newell Park,Star Park I,Syracuse,NY,1879,1879
+SYS,SYR02,Star Park II,,Syracuse,NY,1890,1890
+TBD,STP01,Tropicana Field,"Florida Suncoast Dome, ThunderDome",St. Petersburg,FL,1998,2024
+TBD,,Steinbrenner Field,,,,2025,2025
+TEX,,Griffith Stadium II,,,,1961,1961
+TEX,,R.F.K. Stadium,,,,1962,1971
+TEX,ARL01,Arlington Stadium,,Arlington,TX,1972,1993
+TEX,,The Ballpark at Arlington,,,,1994,2004
+TEX,,Ameriquest Field,,,,2005,2006
+TEX,ARL02,Rangers Ballpark in Arlington,"The Ballpark in Arlington, Ameriquest Field in Arlington",Arlington,TX,2007,2013
+TEX,ARL02,Globe Life Park in Arlington,"The Ballpark in Arlington, Ameriquest Field in Arlington",Arlington,TX,2014,2019
+TEX,ARL03,Globe Life Field,,Arlington,TX,2020,2025
+TOL,CAN01,League Park,Mahaffey Park,Canton,OH,1884,1884
+TLM,TOL03,Speranza Park,,Toledo,OH,1890,1890
+TT,TOL05,Swayne Field,,Toledo,OH,1923,1923
+PC,PIT10,Greenlee Field,,Pittsburgh,PA,1932,1938
+PC,TOL05,Swayne Field,,Toledo,OH,1939,1940
+TOR,TOR01,Exhibition Stadium,"Canadian National Exhibition Stadium, CNE Stadium",Toronto,ON,1977,1989
+TOR,,Skydome,,,,1989,2004
+TOR,TOR02,Rogers Centre,"Ontario Stadium Project, Pan-Am Dome, Pan-Am Ceremonies Venue",Toronto,ON,2005,2019
+TOR,BUF05,Sahlen Field,"Pilot Field, Downtown Ballpark, North AmeriCare Park, Dunn Tire Park, Coca-Cola Field",Buffalo,NY,2020,2020
+TOR,TOR02,Rogers Centre,"Ontario Stadium Project, Pan-Am Dome, Pan-Am Ceremonies Venue",Toronto,ON,2021,2025
+TRO,TRO01,Haymakers' Grounds,Vail's Lot,Troy,NY,1871,1872
+TRT,TRO02,Putnam Grounds,,Troy,NY,1879,1879
+TRT,TRO01,Haymakers' Grounds,Vail's Lot,Troy,NY,1880,1881
+TRT,WAT01,Troy Ball Club Grounds,,Watervliet,NY,1882,1882
+SEN,WAS09,Griffith Stadium,"National Park, American League Park",Washington,DC,1938,1938
+WBL,,Olympics Grounds,,,,1873,1873
+NAT,,Nationals Grounds,,,,1872,1872
+WNT,,Olympics Grounds,,,,1875,1875
+WST,IND02,Athletic Park,"Seventh Street Park I, Tinker Park",Indianapolis,IN,1884,1884
+WNA,WAS03,Capitol Grounds,Capitol Park I,Washington,DC,1884,1884
+WNL,,Swampdoodle Grounds,,,,1886,1889
+WSN,MON01,Jarry Park,"Stade Parc Jarry, Jarry Park Stadium",Montreal,QC,1969,1976
+WSN,MON02,Stade Olympique,Olympic Stadium,Montreal,QC,1977,2003
+WSN,SJU01,Hiram Bithorn Stadium,Estadio Hiram Bithorn,San Juan,,2003,2003
+WSN,MON02,Stade Olympique,Olympic Stadium,Montreal,QC,2004,2004
+WSN,SJU01,Hiram Bithorn Stadium,Estadio Hiram Bithorn,San Juan,,2004,2004
+WSN,,R.F.K. Stadium,,,,2005,2007
+WSN,WAS11,Nationals Park,,Washington,DC,2008,2025
+OLY,,Olympics Grounds,,,,1871,1872
+WAP,WAS09,Griffith Stadium,"National Park, American League Park",Washington,DC,1932,1932
+WAS,WAS06,Boundary Field,"American League Park II, National Park, Nationals' Park",Washington,DC,1891,1899
+WBS,WBS01,Sprudel Park,,West Baden Springs,IN,1910,1913
+WP,BAL09,American League Park,Oriole Park IV,Baltimore,MD,1924,1924
+WP,WIL03,Harlan Field,,Wilmington,DE,1925,1925
+WIL,WIL01,Union Street Park,,Wilmington,DE,1884,1884
+WOR,WOR03,Worcester Driving Park Grounds,,Worcester,MA,1880,1882

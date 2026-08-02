@@ -75,10 +75,12 @@ def export_franchises():
               ["franchID", "kind", "label", "firstYear", "lastYear",
                "teamID", "lgID"], era_rows)
 
+    # parkkey identifies the building. Without it a rename is indistinguishable
+    # from a move, and the Athletics read as five Oakland grounds.
     write_csv("franchise_parks.csv",
-              ["franchID", "park", "alias", "city", "state", "firstYear",
-               "lastYear"],
-              [[f["franchID"], p["park"], p["alias"], p["city"],
+              ["franchID", "parkkey", "park", "alias", "city", "state",
+               "firstYear", "lastYear"],
+              [[f["franchID"], p["parkkey"], p["park"], p["alias"], p["city"],
                 p["state"], p["firstYear"], p["lastYear"]]
                for f in built for p in f["parks"]])
 
