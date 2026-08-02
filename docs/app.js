@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = 'e89eae40ab8a';
+const APP_BUILD = 'e45a031e9573';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -660,6 +660,29 @@ function renderFranchiseList() {
     (moved ? ` · ${moved} played in more than one city` : '') + '.</p>';
 }
 
+/* Consecutive runs of the same building, collapsed into one stay.
+
+   Lahman files each season under whatever the ballpark was called that year,
+   so a rename arrives as a fresh row: the Athletics' 57 years in the Oakland
+   Coliseum came through as five ballparks, with "also Overstock.com Coliseum"
+   printed beside 1968-2003 — a name it did not carry until 2011. Grouping on
+   the park key puts the building back together, and the names Lahman does date
+   are shown dated beneath it. Only consecutive runs merge: a club that leaves
+   a ground and comes back played there twice. A run with no key never merges,
+   since an unknown building is not evidence of the same one. */
+function ballparks(parks) {
+  const out = [];
+  for (const p of parks) {
+    const current = out[out.length - 1];
+    if (current && p.parkkey && current[current.length - 1].parkkey === p.parkkey) {
+      current.push(p);
+    } else {
+      out.push([p]);
+    }
+  }
+  return out;
+}
+
 async function showFranchise(fid) {
   $('#franch-list').innerHTML = '';
   const el = $('#franch-detail');
@@ -691,13 +714,30 @@ async function showFranchise(fid) {
   // name would report a move that did not happen.
   if (d.parks && d.parks.length) {
     html += '<h3>Where it played</h3>';
-    html += table(['Ballpark', 'City', 'From', 'To'],
-      d.parks.map((p) => ({ cells: [
-        (esc(p.park) || '—') + (p.alias
-          ? `<span class="park-alias">also ${esc(p.alias)}</span>` : ''),
-        p.city ? esc(p.city) + (p.state ? ', ' + esc(p.state) : '') : '—',
-        p.firstYear, p.lastYear] })),
-      { txtCols: [0, 1, 2, 3] });
+    const parkRows = [];
+    for (const runs of ballparks(d.parks)) {
+      const last = runs[runs.length - 1];
+      // The most recent name, which is what the ground is called now. The
+      // other names carry no dates in Parks, so they say so rather than
+      // sitting beside a span and implying one.
+      parkRows.push({ cells: [
+        `<strong>${esc(last.park) || '—'}</strong>` + (last.alias
+          ? `<span class="park-alias">also known as ${esc(last.alias)}` +
+            ` — dates not recorded</span>` : ''),
+        last.city ? esc(last.city) + (last.state ? ', ' + esc(last.state) : '') : '—',
+        runs[0].firstYear, last.lastYear] });
+      // The renames, dated, because these Lahman does date: it filed each
+      // season under the name of the day.
+      if (runs.length > 1) {
+        for (const r of runs) {
+          parkRows.push({ cells: [
+            `<span class="park-era">${esc(r.park)}</span>`, '',
+            r.firstYear, r.lastYear] });
+        }
+      }
+    }
+    html += table(['Ballpark', 'City', 'From', 'To'], parkRows,
+                  { txtCols: [0, 1, 2, 3] });
   }
 
   if (d.locations.length > 1) {
