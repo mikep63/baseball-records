@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '8c7da33c3882';
+const APP_BUILD = '84ab48f8c27e';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -746,7 +746,10 @@ async function showFranchise(fid) {
   // 2025 Athletics played in West Sacramento. The derivation still earns its
   // keep on the franchise list, where an abandoned city is how a reader finds
   // the club, by search as well as by eye.
-  html += '<h3>What it was called</h3>';
+  // Shown even when there is only one name: a club that never renamed itself
+  // still has a name, and hiding the section for the Mariners reads as
+  // missing data rather than as an absence of renames.
+  html += '<h3>Team Names</h3>';
   html += table(['Name', 'From', 'To', 'Lg'],
     d.eras.map((e) => ({ cells: [
       esc(e.name), e.firstYear, e.lastYear, esc(e.lgID || '')] })),
