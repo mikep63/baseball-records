@@ -15,7 +15,7 @@ OAK,name,Oakland Athletics,1968,2024,OAK,AL
 OAK,name,Athletics,2025,2025,ATH,AL
 OAK,location,Philadelphia,1901,1954,,
 OAK,location,Kansas City,1955,1967,,
-OAK,location,Oakland,1968,2025,,
+OAK,location,Oakland,1968,2024,,
 ATL,name,Boston Red Caps,1876,1882,BSN,NL
 ATL,name,Boston Beaneaters,1883,1906,BSN,NL
 ATL,name,Boston Doves,1907,1910,BSN,NL
@@ -212,7 +212,9 @@ SNH,name,St. Louis Stars,1939,1939,SL3,NAL
 SNH,name,St. Louis-New Orleans Stars,1940,1941,SNS,NAL
 SNH,name,Harrisburg-St. Louis Stars,1943,1943,HSS,NN2
 SNH,location,Indianapolis,1938,1938,,
-SNH,location,St. Louis,1939,1943,,
+SNH,location,St. Louis,1939,1939,,
+SNH,location,St. Louis-New Orleans,1940,1941,,
+SNH,location,Harrisburg-St. Louis,1943,1943,,
 HNA,name,Hartford Dark Blues,1874,1875,HR1,NA
 HNA,location,Hartford,1874,1875,,
 HAR,name,Hartford Dark Blues,1876,1877,HAR,NL

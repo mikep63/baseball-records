@@ -54,13 +54,21 @@ def _split_place(name, vocab):
     Hyphenated pairs ("Cincinnati-Indianapolis Clowns") are split first so
     both halves resolve; the pair is kept as one location, since the club
     really did split its home games between the two.
+
+    Every hyphen is tried, not just one inside the first word, because either
+    half may be a multi-word city: the St. Louis-New Orleans Stars name two
+    cities across four words, and reading only "St." finds neither.
     """
-    head = name.split(" ")[0]
-    if "-" in head or "/" in head:
-        sep = "-" if "-" in head else "/"
-        parts = [PLACE_ALIASES.get(p, p) for p in head.split(sep)]
-        if all(p in vocab for p in parts):
-            return "-".join(parts)
+    for i, ch in enumerate(name):
+        if ch not in "-/":
+            continue
+        left = name[:i].strip()
+        left = PLACE_ALIASES.get(left, left)
+        if left not in vocab:
+            continue
+        right = _split_place(name[i + 1:].strip(), vocab)
+        if right:
+            return left + "-" + right
     for place in vocab:
         if name == place or name.startswith(place + " "):
             return PLACE_ALIASES.get(place, place)
@@ -121,6 +129,19 @@ def _int(v):
 
 
 # --------------------------------------------------------------------- parks
+# Where Lahman contradicts itself: Teams.park spells a ground one way and
+# Parks.parkname another, so the join finds nothing. Keyed by the Teams
+# spelling, valued by the Parks one. Each entry corrects a specific
+# disagreement inside the source; none invents a park Lahman does not have.
+#
+# Sutter Health Park is the Athletics' temporary home from 2025 while the Las
+# Vegas ground is built. Parks files it as "Sutter Health Field"; Teams calls
+# it "Sutter Health Park", which is the name the ballpark actually carries.
+PARK_NAME_FIXES = {
+    "Sutter Health Park": "Sutter Health Field",
+}
+
+
 def park_lookup(park_rows):
     """Park name -> every building it could mean, likeliest first.
 
@@ -151,6 +172,9 @@ def park_lookup(park_rows):
             # caller and sqlite3.Row objects from lahman.sqlite in another.
             if all(c is not p for c in candidates):
                 candidates.append(p)
+    for wrong, right in PARK_NAME_FIXES.items():
+        if wrong not in look and right in look:
+            look[wrong] = look[right]
     return look
 
 
@@ -210,6 +234,18 @@ def resolve_parks(seasons, look):
     return seasons
 
 
+def _sole_city(park_name, look):
+    """The city of a park name that can only mean one building, else "".
+
+    Deliberately gives up on an ambiguous name rather than guessing: the
+    caller uses this as evidence that a club has moved, and a wrong city
+    would invent a relocation. Seasons split over two grounds take the first.
+    """
+    name = (park_name or "").split("/")[0].strip()
+    candidates = look.get(name) or []
+    return _city(candidates[0]) if len(candidates) == 1 else ""
+
+
 def _norm(s):
     """Park names for comparison, ignoring case and punctuation."""
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())
@@ -229,7 +265,11 @@ def other_names(info, recorded):
         return []
     names = [(info.get("parkname") or "").strip()]
     names += [a.strip() for a in (info.get("parkalias") or "").split(";")]
-    return [n for n in names if n and n != recorded]
+    # A spelling PARK_NAME_FIXES corrected is not another name the ground
+    # went by — it is the mistake that made the two tables disagree, and
+    # reprinting it as "also known as" would put the error back on the page.
+    wrong = PARK_NAME_FIXES.get(recorded)
+    return [n for n in names if n and n != recorded and n != wrong]
 
 
 def park_runs(team_rows, look):
@@ -334,15 +374,25 @@ def build(team_rows, franchise_rows, park_rows):
                 "lgID": span[-1].get("lgID") or "",
             })
 
-        # An unknown location carries the previous one forward rather than
-        # breaking the run — a name we cannot parse is missing data, not a
-        # move. (The 2025 Athletics dropped their city from the name.)
-        loc_items, carried = [], None
+        # A location this module cannot read off the name carries the previous
+        # one forward: missing data is not a move, and breaking the run would
+        # list the same city twice around the gap.
+        #
+        # Unless the club is demonstrably somewhere else. The 2025 Athletics
+        # are branded neither Oakland nor Sacramento — just "Athletics" — while
+        # playing 80 miles from the city the run would otherwise extend. A
+        # ballpark in a new city is the evidence that the silence is a move
+        # rather than an omission, so it ends the run instead of prolonging it.
+        loc_items, carried, carried_city = [], None, None
         for r in rows:
+            city = _sole_city(r.get("park"), parks)
             loc = location_of(r["name"], vocab)
             if loc is None:
-                loc = carried
+                moved = city and carried_city and city != carried_city
+                loc = None if moved else carried
             carried = loc
+            if city:
+                carried_city = city
             loc_items.append((_int(r["yearID"]), loc))
         location_runs = [r for r in _runs(loc_items) if r["value"] is not None]
         locations = [{"location": r["value"], "firstYear": r["lo"],
