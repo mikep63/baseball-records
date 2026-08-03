@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = 'ccc6cdec80a7';
+const APP_BUILD = '8c7da33c3882';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -740,14 +740,12 @@ async function showFranchise(fid) {
                   { txtCols: [0, 1, 2, 3] });
   }
 
-  if (d.locations.length > 1) {
-    html += '<h3>Known as</h3><p class="pos-arc">' + d.locations.map((l) => {
-      const span = l.firstYear === l.lastYear ? `${l.firstYear}`
-        : `${l.firstYear}–${l.lastYear}`;
-      return `<span class="pos-run"><b>${esc(l.location)}</b> ${span}</span>`;
-    }).join('<span class="pos-sep">→</span>') + '</p>';
-  }
-
+  // The places a club branded itself with are not listed here: they are the
+  // prefixes of the names below, and the ballparks above already give the
+  // geography with real cities — the only one of the three that can say the
+  // 2025 Athletics played in West Sacramento. The derivation still earns its
+  // keep on the franchise list, where an abandoned city is how a reader finds
+  // the club, by search as well as by eye.
   html += '<h3>What it was called</h3>';
   html += table(['Name', 'From', 'To', 'Lg'],
     d.eras.map((e) => ({ cells: [
