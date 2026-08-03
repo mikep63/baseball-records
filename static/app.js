@@ -709,11 +709,11 @@ async function showFranchise(fid) {
       <p class="note"><a class="team-link" href="#franchises">← all franchises</a></p>
     </div>`;
 
-  // Where it played comes from the ballparks, not the name. The Marlins were
-  // branded Florida then Miami but never left Miami, so a list built from the
-  // name would report a move that did not happen.
+  // The ballparks, not the name: the Marlins were branded Florida then Miami
+  // but never left Miami, so a list built from the name would report a move
+  // that did not happen.
   if (d.parks && d.parks.length) {
-    html += '<h3>Where it played</h3>';
+    html += '<h3>Ballparks</h3>';
     const parkRows = [];
     for (const runs of ballparks(d.parks)) {
       const last = runs[runs.length - 1];
