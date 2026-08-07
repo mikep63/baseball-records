@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '6fe06d07a1c0';
+const APP_BUILD = 'bba5fc057c91';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -833,6 +833,40 @@ function fillStats(sel, cat, selected) {
     `<option value="${k}"${k === selected ? ' selected' : ''}>${label} (${k})</option>`).join('');
 }
 
+/* The question most readers bring to a year pair is a decade — the 1980s in
+   home runs, the 1970s in steals — and dialling one in costs two long menus of
+   scrolling. Derived from the data rather than listed, so a new season opens
+   its own decade and the first one never runs off the front of the record. */
+function decades() {
+  const out = [];
+  for (let d = Math.floor(META.maxYear / 10) * 10;
+       d >= Math.floor(META.minYear / 10) * 10; d -= 10) out.push(d);
+  return out;
+}
+
+/* A decade clipped to the seasons on record: the first one starts partway
+   through, and the current one has not finished. */
+function decadeSpan(d) {
+  return { start: Math.max(d, META.minYear), end: Math.min(d + 9, META.maxYear) };
+}
+
+/* Which decade the year pair is sitting on, read from the two pickers rather
+   than stored beside them, so the menu cannot come to disagree with them. */
+function fillDecades() {
+  const start = +$('#lead-start').value, end = +$('#lead-end').value;
+  const now = decades().find((d) => {
+    const s = decadeSpan(d);
+    return s.start === start && s.end === end;
+  });
+  // Custom is a state the years land in, not one to choose, so it is offered
+  // only while it is what they say. Picking it would mean nothing.
+  const opts = now === undefined ? ['<option value="">Custom</option>'] : [];
+  for (const d of decades()) {
+    opts.push(`<option value="${d}"${d === now ? ' selected' : ''}>${d}s</option>`);
+  }
+  $('#lead-decade').innerHTML = opts.join('');
+}
+
 function initLeaders() {
   fillYears($('#lead-year'), META.maxYear);
   fillYears($('#lead-start'), 1990);
@@ -846,6 +880,20 @@ function initLeaders() {
     syncLeaderControls();
     runLeaders();
   });
+  // A decade is a shortcut through the two year pickers, not a span of its own:
+  // it sets them and then gets out of the way, so From/To stay the record of
+  // what is being asked and can still be nudged off a decade boundary.
+  $('#lead-decade').addEventListener('change', () => {
+    const d = +$('#lead-decade').value;
+    if (!d) return;
+    const s = decadeSpan(d);
+    $('#lead-start').value = s.start;
+    $('#lead-end').value = s.end;
+    fillDecades();
+    runLeaders();
+  });
+  $('#lead-start').addEventListener('change', fillDecades);
+  $('#lead-end').addEventListener('change', fillDecades);
   $('#lead-go').addEventListener('click', runLeaders);
   syncLeaderControls();
   runLeaders();
@@ -873,12 +921,14 @@ function syncLeaderControls() {
   if (custom) custom.style.display = takesCustom ? '' : 'none';
   // Year by Year shows one leader per league-season, so a count has no meaning
   $('#lead-limit-wrap').style.display = mode === 'history' ? 'none' : '';
+  $('#lead-decade-wrap').style.display = pair ? '' : 'none';
   $('#lead-start-wrap').style.display = pair ? '' : 'none';
   $('#lead-end-wrap').style.display = pair ? '' : 'none';
   if (byEra && leadEra === 'custom' && lastLeaderMode !== mode) {
     $('#lead-start').value = META.minYear;
     $('#lead-end').value = META.maxYear;
   }
+  fillDecades();
   lastLeaderMode = mode;
 }
 
