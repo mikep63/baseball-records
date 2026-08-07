@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '03bd65fad62c';
+const APP_BUILD = '6fe06d07a1c0';
 
 /* ---------------------------------------------------------- routing */
 const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
@@ -757,16 +757,18 @@ async function showFranchise(fid) {
 
   if (d.seasons.length) {
     html += '<h3>Season by season</h3>';
-    // manager last: it is the widest column and was pushing the record right
-    html += table(['Year', 'Team', 'Lg', 'W', 'L', 'Pct', 'Finish', '', 'Manager'],
+    // What the season is remembered for reads as the conclusion of the line,
+    // so the result goes last. The manager sits before it: the widest column,
+    // kept off the middle of the row where it was pushing the record right.
+    html += table(['Year', 'Team', 'Lg', 'W', 'L', 'Pct', 'Finish', 'Manager', ''],
       d.seasons.slice().reverse().map((s) => ({ cells: [
         `<a class="team-link" href="#team/${s.yearID}/${esc(s.teamID)}">${s.yearID}</a>`,
         esc(s.name), esc((s.lgID || '') + (s.divID ? ' ' + s.divID : '')),
         fmtInt(s.W), fmtInt(s.L),
         (s.W + s.L) ? fmtRate3(s.W / (s.W + s.L)) : '—',
         s.Rank ? '#' + s.Rank : '—',
-        postBadge(s),
         managerCell(s.managers),
+        postBadge(s),
       ]})),
       { txtCols: [0, 1, 2, 6, 7, 8] });
   }
@@ -794,15 +796,23 @@ function eraRange() {
   return { start: e && e.from ? e.from : META.minYear, end: META.maxYear };
 }
 
+/* Select an era and light the button that says so. Separate from the click
+   handler because a span can drop the era out from under the reader: Career
+   does not take Custom, so arriving there from a custom Season board has to
+   land on something. */
+function setEra(id) {
+  leadEra = id;
+  Array.from($('#lead-era').children).forEach((c) =>
+    c.classList.toggle('on', c.dataset.era === leadEra));
+}
+
 function initEras() {
   $('#lead-era').innerHTML = LEAD_ERAS.map((e) =>
     `<button type="button" data-era="${e.id}"${e.id === leadEra ? ' class="on"' : ''}>${esc(e.label)}</button>`).join('');
   $('#lead-era').addEventListener('click', (ev) => {
     const b = ev.target.closest('button[data-era]');
     if (!b) return;
-    leadEra = b.dataset.era;
-    Array.from($('#lead-era').children).forEach((c) =>
-      c.classList.toggle('on', c.dataset.era === leadEra));
+    setEra(b.dataset.era);
     syncLeaderControls();
     runLeaders();
   });
@@ -848,12 +858,19 @@ function syncLeaderControls() {
   const mode = $('#lead-mode').value;
   // Season picks an era; Multi-Year still takes an explicit year pair, and
   // Season falls back to the same pair when its era is Custom.
-  const byEra = mode === 'season' || mode === 'history';
-  const pair = mode === 'multi' || (byEra && leadEra === 'custom');
-  // the detail row disappears entirely for Career, which needs nothing
-  $('#lead-span-detail').style.display = mode === 'career' ? 'none' : '';
+  const byEra = mode === 'season' || mode === 'history' || mode === 'career';
+  // Career takes a cutoff but not a custom pair. Its eras are open-ended spans
+  // running to today, there to stop the 1890s swamping the counting stats —
+  // not a way to ask about one decade. That question is Multi-Year, and
+  // offering Custom on both would be two doors into the same room.
+  const takesCustom = mode !== 'career';
+  if (!takesCustom && leadEra === 'custom') setEra('all');
+  const pair = mode === 'multi' || (byEra && takesCustom && leadEra === 'custom');
+  $('#lead-span-detail').style.display = '';
   $('#lead-year-wrap').style.display = mode === 'year' ? '' : 'none';
   $('#lead-era-wrap').style.display = byEra ? '' : 'none';
+  const custom = $('#lead-era').querySelector('[data-era="custom"]');
+  if (custom) custom.style.display = takesCustom ? '' : 'none';
   // Year by Year shows one leader per league-season, so a count has no meaning
   $('#lead-limit-wrap').style.display = mode === 'history' ? 'none' : '';
   $('#lead-start-wrap').style.display = pair ? '' : 'none';
@@ -923,9 +940,16 @@ async function runLeaders() {
     heading = `${label} Leaders, ${start}–${end}`;
     qualNote = 'Rate stats require minimum playing time over the span (400 plate appearances or 130 innings pitched per year, capped at 3,000 PA / 1,000 IP).';
   } else {
-    path = `leaders_range?start=${META.minYear}&end=${META.maxYear}&stat=${stat}&cat=${cat}&limit=${limit}`;
-    heading = `Career ${label} Leaders`;
-    qualNote = 'Rate stats require a full career of playing time (3,000 plate appearances or 1,000 innings pitched).';
+    // A cutoff, so the counting stats are not decided by whoever played most
+    // in the 1890s. The span always runs to today; only where it starts moves.
+    const r = eraRange();
+    const suffix = leadEra === 'all' ? ''
+      : ` (${LEAD_ERAS.find((x) => x.id === leadEra).label})`;
+    path = `leaders_range?start=${r.start}&end=${r.end}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    heading = `Career ${label} Leaders${suffix}`;
+    qualNote = leadEra === 'all'
+      ? 'Rate stats require a full career of playing time (3,000 plate appearances or 1,000 innings pitched).'
+      : 'Rate stats require minimum playing time over the span (400 plate appearances or 130 innings pitched per year, capped at 3,000 PA / 1,000 IP).';
   }
 
   note.innerHTML = isRate ? qualNote : '';
@@ -938,13 +962,16 @@ async function runLeaders() {
       el.innerHTML = html + '<p class="note">No qualifying players in this span.</p>';
       return;
     }
+    // The holder is the link and nothing else is, as on every other board.
+    // The year and the club place the title; a row offering three different
+    // destinations invites a mis-tap on the one a reader did not want.
     html += table(['Year', 'Lg', 'Leader', 'Team', label],
       d.rows.map((r) => ({ cells: [
-        `<a class="team-link" href="#teams/${r.yearID}">${r.yearID}</a>`,
+        r.yearID,
         esc(r.lgID),
         r.tied > 2 ? `<span class="tile-tied">${r.tied} tied</span>`
-          : r.leaders.map((l) => esc(l.name)).join(' / '),
-        r.tied === 1 ? teamCell(r.leaders[0].teamID, r.yearID) : '',
+          : r.leaders.map((l) => playerLink(l.playerID, l.name)).join(' / '),
+        r.tied === 1 ? esc(r.leaders[0].teamID || '') : '',
         `<strong>${fmtStat(stat, r.value)}</strong>`] })),
       { txtCols: [0, 1, 2, 3] });
     el.innerHTML = html + `<p class="note">${d.rows.length} league-seasons,

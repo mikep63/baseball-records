@@ -718,7 +718,7 @@ def api_history(q, conn):
                RANK() OVER (PARTITION BY v.yearID, v.lgID
                             ORDER BY ROUND({expr}, 9) {order}) AS rnk
         FROM v WHERE {expr} IS NOT NULL {qual})
-      SELECT r.yearID, r.lgID, r.value, r.teamID, r.nteams,
+      SELECT r.yearID, r.lgID, r.value, r.teamID, r.nteams, r.playerID,
              TRIM(COALESCE(pe.nameFirst,'') || ' ' || COALESCE(pe.nameLast,'')) AS name
       FROM ranked r
       JOIN People pe ON pe.playerID = r.playerID
@@ -729,16 +729,22 @@ def api_history(q, conn):
         table=table, floor=MIN_SCHEDULE, expr=expr, order=order, qual=qual,
         src=src, nonzero=nonzero)
 
+    # playerID travels with the name. The query already had it; without it in
+    # the response the one destination a leader board owes a reader — the
+    # holder's own page — is the one it cannot offer.
+    def leader(r):
+        return {"playerID": r["playerID"], "name": r["name"], "teamID": r["teamID"]}
+
     out = []
     for r in conn.execute(sql, (y0, y1, y0, y1, y0, y1)):
         key = (r["yearID"], r["lgID"])
         if out and (out[-1]["yearID"], out[-1]["lgID"]) == key:
-            out[-1]["leaders"].append({"name": r["name"], "teamID": r["teamID"]})
+            out[-1]["leaders"].append(leader(r))
             out[-1]["tied"] += 1
         else:
             out.append({"yearID": r["yearID"], "lgID": r["lgID"],
                         "value": r["value"], "tied": 1,
-                        "leaders": [{"name": r["name"], "teamID": r["teamID"]}]})
+                        "leaders": [leader(r)]})
     return {"rows": out, "stat": stat, "cat": cat, "start": y0, "end": y1}
 
 

@@ -742,10 +742,12 @@ window.LocalAPI = (function () {
       } else if (v === e.value) e.rows.push(a);
     }
 
+    // playerID travels with the name, as it does on the season dashboard: the
+    // holder's page is the one destination a leader board owes a reader.
     const named = (a) => {
       const pe = IDX.person.get(a.playerID);
-      return { name: pe ? fullName(pe) : a.playerID,
-        teamID: a.teamID };
+      return { playerID: a.playerID, teamID: a.teamID,
+        name: pe ? fullName(pe) : a.playerID };
     };
     // a leader of zero is not a leader; only where more is better, since a
     // 0.00 earned run average is a real result
