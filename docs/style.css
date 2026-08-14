@@ -275,3 +275,12 @@ footer p { line-height: 1.6; }
 .park-alias { display: block; color: var(--muted); font-size: .74rem; }
 /* a name the building carried for a stretch, indented under the building */
 .park-era { display: inline-block; padding-left: 1.1rem; color: var(--muted); }
+
+/* the star that keeps something in favorites — a button, not a link: it
+   changes what this browser holds, it does not go anywhere */
+.fav { background: none; border: 0; cursor: pointer; padding: 0 .35rem;
+       font-size: 1rem; line-height: 1; color: var(--muted);
+       font-family: inherit; }
+.fav.on { color: #b8901a; }
+.fav:hover, .fav:focus-visible { color: var(--accent); }
+h2 .fav { font-size: 1.1rem; vertical-align: middle; }

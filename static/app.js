@@ -135,8 +135,62 @@ const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
 const APP_BUILD = 'dev';
 
+/* ---------------------------------------------------------- favorites
+
+   The first thing this app stores rather than reads. Everything else on a
+   page is Lahman's and identical for every reader; a list of favorites is the
+   reader's own, and there is no server to keep it on — the published site is
+   files on GitHub Pages. So it lives in localStorage, which means it is per
+   browser, and the Favorites tab says so plainly rather than letting anyone
+   assume a phone will have what was starred on a laptop.
+
+   A label is stored beside the id, because drawing six rows should not mean
+   fetching the whole people file to turn ids back into names. */
+const FAV_KEY = 'baseball-records:favorites';
+
+function favRead() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(FAV_KEY));
+    return Array.isArray(raw) ? raw.filter((f) => f && f.kind && f.id) : [];
+  } catch (e) {
+    return [];   // private browsing, no storage, or something else's key
+  }
+}
+
+function favWrite(list) {
+  try {
+    localStorage.setItem(FAV_KEY, JSON.stringify(list));
+    return true;
+  } catch (e) {
+    return false;   // a full or forbidden store; the star just won't stick
+  }
+}
+
+const favHas = (kind, id) => favRead().some((f) => f.kind === kind && f.id === id);
+
+/* Newest first: a list of favorites is more often what you were just looking
+   at than an archive. Returns whether it is now on. */
+function favToggle(kind, id, label, sub) {
+  const list = favRead();
+  const at = list.findIndex((f) => f.kind === kind && f.id === id);
+  if (at >= 0) list.splice(at, 1);
+  else list.unshift({ kind, id, label, sub: sub || '' });
+  favWrite(list);
+  return at < 0;
+}
+
+/* A button rather than a link: it changes what this browser holds, it does
+   not go anywhere. */
+function favStar(kind, id, label, sub) {
+  const on = favHas(kind, id);
+  return `<button class="fav${on ? ' on' : ''}" data-fav="${esc(kind)}"
+    data-id="${esc(id)}" data-label="${esc(label)}" data-sub="${esc(sub || '')}"
+    aria-pressed="${on}" title="${on ? 'Remove from favorites'
+      : 'Keep this in favorites, in this browser'}">${on ? '★' : '☆'}</button>`;
+}
+
 /* ---------------------------------------------------------- routing */
-const TABS = ['players', 'teams', 'franchises', 'leaders', 'about'];
+const TABS = ['players', 'teams', 'franchises', 'leaders', 'favorites', 'about'];
 
 /* Seasons opens the app: standings and a dashboard of every league's leaders
    give something to read straight away, where the search box gives an empty
@@ -163,6 +217,7 @@ function route() {
   if (parts[0] === 'franchise' && parts[1]) showFranchise(parts[1]);
   if (parts[0] === 'teams' && parts[1]) showSeason(+parts[1]);
   if (parts[0] === 'franchises') showFranchiseList();
+  if (parts[0] === 'favorites') showFavorites();
   if (parts[0] === 'about') showAbout();
   // #leaders/<year>/<cat>/<stat> — where the season dashboard tiles point
   if (parts[0] === 'leaders' && parts[1]) openLeaders(+parts[1], parts[2], parts[3]);
@@ -236,9 +291,14 @@ async function showPlayer(pid) {
       }
     });
 
+  // Debut and final game are dates; the star wants the years either side.
+  const played = [b.debut, b.finalGame].filter(Boolean)
+    .map((x) => String(x).slice(0, 4));
+
   let html = `
     <div class="bio-card">
-      <h2>${esc(name)}</h2>
+      <h2>${esc(name)}${favStar('player', pid, name,
+        played.length ? played.join('–') : '')}</h2>
       <p class="bio-line">
         ${born ? esc(born) + ' · ' : ''}
         Bats ${esc(b.bats || '?')} / Throws ${esc(b.throws || '?')}
@@ -571,7 +631,10 @@ async function showRoster(year, teamID) {
   el.innerHTML = '<p class="loading">Loading roster…</p>';
   const d = await api(`roster?year=${year}&team=${encodeURIComponent(teamID)}`);
   const t = d.team;
-  let html = `<h2>${t ? esc(t.name) : esc(teamID)} — ${year}</h2>`;
+  /* Starred only when the season is on file: without the team row there is no
+     name to keep, and an id alone would draw a row saying "NYA". */
+  let html = `<h2>${t ? esc(t.name) : esc(teamID)} — ${year}${
+    t ? favStar('team', `${year}/${teamID}`, t.name, String(year)) : ''}</h2>`;
   if (t) {
     const div = t.divID ? ' ' + (DIV_NAMES[t.divID] || t.divID) : '';
     html += `<p class="note">${esc((t.lgID || '') + div)} · ${t.W}–${t.L},
@@ -701,7 +764,7 @@ async function showFranchise(fid) {
 
   let html = `
     <div class="bio-card">
-      <h2>${esc(f.name)}</h2>
+      <h2>${esc(f.name)}${favStar('franchise', fid, f.name, span)}</h2>
       <p class="bio-line">${span} · ${f.seasons} seasons ·
         ${fmtInt(f.W)}–${fmtInt(f.L)} (${pct}) ·
         ${f.nameCount} name${f.nameCount > 1 ? 's' : ''}</p>
@@ -1076,6 +1139,47 @@ async function runLeaders() {
 /* Reachable from the footer rather than the nav, so browsing keeps the four
    tabs. The attribution here is a licence requirement, not decoration:
    CC BY-SA asks for credit and for changes to be stated. */
+/* ---------------------------------------------------------- favorites tab */
+
+/* Three lists, because a player, a franchise and a single season are read for
+   different reasons, and each row goes back to where its star was pressed. */
+function showFavorites() {
+  const list = favRead();
+  const rows = (kind, href) => list.filter((f) => f.kind === kind).map((f) => ({
+    cells: [
+      kind === 'player' ? playerLink(f.id, f.label)
+        : `<a class="team-link" href="${esc(href(f))}">${esc(f.label)}</a>`,
+      esc(f.sub || ''),
+      `<button class="fav on" data-fav="${esc(f.kind)}" data-id="${esc(f.id)}"
+         data-label="${esc(f.label)}" data-sub="${esc(f.sub || '')}"
+         aria-pressed="true" title="Remove from favorites">★</button>`,
+    ],
+  }));
+
+  const players = rows('player', null);
+  const franchises = rows('franchise', (f) => `#franchise/${f.id}`);
+  // The id is "year/teamID", which is already the shape of the route.
+  const teams = rows('team', (f) => `#team/${f.id}`);
+
+  /* The second column is the span the star was stored with, which reads
+     differently per kind: a career, a franchise's life, a single season. */
+  const section = (title, head, span, rs) => (rs.length
+    ? `<h3>${title}</h3>` + table([head, span, ''], rs, { txtCols: [0, 1, 2] })
+    : '');
+
+  $('#fav-list').innerHTML = `
+    <h2>Favorites</h2>
+    <p class="note">Kept in this browser and nowhere else. There is no account
+      and no server behind this app — it runs on your device — so a list made
+      here is not the list on another machine, and clearing your browser data
+      clears it.</p>
+    ${list.length ? '' : `<p class="note">Nothing yet. The ☆ on a player, a
+      franchise or a team's season puts it here.</p>`}
+    ${section('People', 'Name', 'Seasons', players)}
+    ${section('Franchises', 'Franchise', 'Years', franchises)}
+    ${section('Team seasons', 'Team', 'Season', teams)}`;
+}
+
 function showAbout() {
   const el = $('#about-version');
   if (el && !el.textContent) {
@@ -1091,6 +1195,20 @@ async function boot() {
   initTeams();
   initFranchises();
   initLeaders();
+  /* Delegated from the document: every view rewrites the container its star
+     sits in, and a listener bound to the button would go with it. The
+     favorites tab redraws instead of toggling in place, since removing a row
+     from the list you are looking at should take the row away. */
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest && e.target.closest('[data-fav]');
+    if (!b) return;
+    const on = favToggle(b.dataset.fav, b.dataset.id, b.dataset.label, b.dataset.sub);
+    if (location.hash.slice(1).split('/')[0] === 'favorites') { showFavorites(); return; }
+    b.classList.toggle('on', on);
+    b.textContent = on ? '★' : '☆';
+    b.setAttribute('aria-pressed', String(on));
+    b.title = on ? 'Remove from favorites' : 'Keep this in favorites, in this browser';
+  });
   window.addEventListener('hashchange', route);
   route();
 }

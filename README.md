@@ -100,6 +100,12 @@ use Safari's *Add to Home Screen* to run it like an app.
   gives Nolan Ryan's 383. All-time batting average gives an 1871 oddity;
   Divisional gives Tony Gwynn's .394.
 
+- **Favorites** — the ☆ beside a player, a franchise or a team's season keeps
+  it in a Favorites tab. It is the one thing this app stores rather than reads,
+  and it lives in the browser's own storage: there is no account and no server,
+  so a list made on a laptop is not the list on a phone, and clearing browser
+  data clears it.
+
 ### Stats available
 
 - Batting: G, AB, R, H, 2B, 3B, HR, RBI, SB, BB, SO, TB, AVG, OBP, SLG, OPS
