@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '134e1f7669d6';
+const APP_BUILD = '65499726f3e9';
 
 /* ---------------------------------------------------------- favorites
 
@@ -291,14 +291,17 @@ async function showPlayer(pid) {
       }
     });
 
-  // Debut and final game are dates; the star wants the years either side.
+  /* Debut and final game are dates; the star wants the years either side. A
+     one-day career reads as the single year rather than as a span from itself
+     to itself — Moonlight Graham is 1905, not 1905–1905. */
   const played = [b.debut, b.finalGame].filter(Boolean)
     .map((x) => String(x).slice(0, 4));
+  const careerSpan = played.length === 2 && played[0] === played[1]
+    ? played[0] : played.join('–');
 
   let html = `
     <div class="bio-card">
-      <h2>${esc(name)}${favStar('player', pid, name,
-        played.length ? played.join('–') : '')}</h2>
+      <h2>${esc(name)}${favStar('player', pid, name, careerSpan)}</h2>
       <p class="bio-line">
         ${born ? esc(born) + ' · ' : ''}
         Bats ${esc(b.bats || '?')} / Throws ${esc(b.throws || '?')}
