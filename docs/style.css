@@ -167,6 +167,13 @@ a.player-link:hover, a.team-link:hover { text-decoration: underline; }
 footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 1rem; border-top: 1px solid var(--line); }
 footer a { color: var(--muted); }
 
+/* Name, what this build is, who owns it -- the order an About box has used
+   since long before any of this, and the same three lines on every one of
+   these sites. */
+.colophon { line-height: 1.5; margin-bottom: .7rem; }
+.colophon strong { color: var(--ink); font-size: .9rem; }
+
+
 .loading { color: var(--muted); font-style: italic; padding: 1rem 0; }
 
 /* ------------------------------------------------ iPad / tablet (≤1024px) */
