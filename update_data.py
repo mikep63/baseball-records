@@ -92,6 +92,8 @@ def main():
     ap.add_argument("--url", default=DEFAULT_URL, help="source zip URL")
     ap.add_argument("--zip", dest="zip_path", help="use a local zip file instead of downloading")
     ap.add_argument("--keep-db", action="store_true", help="skip rebuilding lahman.sqlite")
+    ap.add_argument("--no-war", action="store_true",
+                    help="skip refreshing the Baseball-Reference WAR files")
     args = ap.parse_args()
 
     old_year = current_max_year()
@@ -151,6 +153,30 @@ def main():
         print("Data refreshed; still ends at the %d season (no new season yet)." % new_year)
     else:
         print("Data updated: %s -> %d season." % (old_year or "?", new_year))
+
+    # WAR comes from Baseball-Reference, on its own clock: these files are
+    # rebuilt daily where Lahman ships once a year, so B-Ref is nearly always a
+    # season ahead. Refreshing them here rather than by hand is what keeps the
+    # two a consistent pair — fetched months apart, a complete season of
+    # batting lines can end up beside a partial season's WAR, which does not
+    # error and does not look wrong, it just reads low. (build_db.py drops the
+    # incomplete tail as well, so the two guards are independent.)
+    #
+    # A failure here is a warning, not an exit. WAR is an addition to Lahman,
+    # not a precondition for it, and a new season that lands without it should
+    # still install rather than leave the update half done.
+    if args.no_war:
+        print()
+        print("Skipping WAR refresh (--no-war).")
+    else:
+        print()
+        import fetch_war
+        results = fetch_war.fetch_all()
+        if results is None:
+            print("WAR files unchanged; continuing with what is in data/war/.")
+        else:
+            print("WAR data refreshed:")
+            fetch_war.report(results)
 
     if args.keep_db:
         print("Skipping database rebuild (--keep-db); app.py will rebuild on next start.")

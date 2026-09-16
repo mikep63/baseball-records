@@ -10,6 +10,11 @@ import sys
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 CSV_DIR = os.path.join(BASE, "data", "csv")
+# Baseball-Reference's WAR files, which are deliberately not in data/csv/:
+# update_data.py renames that whole directory aside on a Lahman refresh and
+# moves the newly-unzipped folder into its place, so anything of ours in there
+# would be destroyed once a year. Absent is fine — the app runs without it.
+WAR_DIR = os.path.join(BASE, "data", "war")
 DB_PATH = os.path.join(BASE, "lahman.sqlite")
 
 # Indexes to create: table -> list of column tuples
@@ -108,6 +113,15 @@ def main():
     for name in sorted(os.listdir(CSV_DIR)):
         if name.endswith(".csv"):
             load_csv(conn, os.path.join(CSV_DIR, name))
+    if os.path.isdir(WAR_DIR):
+        for name in sorted(os.listdir(WAR_DIR)):
+            if name.endswith(".csv"):
+                load_csv(conn, os.path.join(WAR_DIR, name))
+        print("Linking WAR to Lahman...")
+        import link_war
+        link_war.link(conn)
+    else:
+        print("No data/war/ — building without WAR (run python3 fetch_war.py).")
     print("Creating indexes...")
     for table, idxs in INDEXES.items():
         for cols in idxs:
