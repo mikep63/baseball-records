@@ -124,7 +124,7 @@ The `runs_*` components behind WAR (batting, baserunning, fielding, positional,
 replacement) are deliberately not kept: they are a different feature, and
 adding them is one line in `KEEP`.
 
-### Open: what the blank says
+### The blank stays blank, and About says why · settled 2026-09-16
 
 B-Ref covers 14 leagues including all seven Negro major leagues, but **not** the
 five barnstorming pseudo-leagues — `IND`, `EAS`, `WES`, `NAC`, `INT`. That is
@@ -133,5 +133,17 @@ defends including on the grounds that segregation is why they have no league to
 be listed under.
 
 So the WAR column is blank for exactly the players this app went out of its way
-not to drop, and an empty cell reads as *wasn't good enough*. The page needs to
-say otherwise in its own words. **Not yet written.**
+not to drop, and an empty cell would otherwise read as *wasn't good enough*.
+
+The cell stays blank — no dash, no asterisk, no placeholder figure — and the
+About page carries the reason, which is where this app already puts what the
+source can and cannot say. The wording gives the mechanism rather than an
+apology: WAR is measured against a league's run environment and the replacement
+level drawn from it, and a club that played outside a league structure has no
+such baseline. **A blank there means no figure has been published, not a low
+one.**
+
+**Rejected:** a per-cell footnote marker, which puts an apology on 1,870 rows to
+explain something that is true of a whole category of club; and any imputed or
+estimated value, which would be this app inventing a number that B-Ref
+deliberately does not publish.
