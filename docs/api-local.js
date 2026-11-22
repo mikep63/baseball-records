@@ -444,6 +444,8 @@ window.LocalAPI = (function () {
         G: a.G, AB: a.AB, R: a.R, H: a.H, D2: a['2B'], D3: a['3B'],
         HR: a.HR, RBI: a.RBI, SB: a.SB, BB: a.BB,
         AVG: a.AB > 0 ? a.H / a.AB : null,
+        OBP: batValue('OBP', a), SLG: batValue('SLG', a),
+        OPS: a.AB > 0 ? batValue('OPS', a) : null,
       };
     }).sort((x, y) => nz(y.AB) - nz(x.AB) || nz(y.G) - nz(x.G));
 

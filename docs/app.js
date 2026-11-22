@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '215e10af7198';
+const APP_BUILD = 'a0a547e19f6e';
 
 /* ---------------------------------------------------------- favorites
 
@@ -646,11 +646,13 @@ async function showRoster(year, teamID) {
   }
   if (d.batters.length) {
     html += '<h3>Batters</h3>';
-    html += table(['Player', 'POS', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'BB', 'AVG'],
+    html += table(['Player', 'POS', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'BB',
+      'AVG', 'OBP', 'SLG', 'OPS'],
       d.batters.map((p) => ({ cells: [
         playerLink(p.playerID, p.name), esc(p.POS || ''), fmtInt(p.G), fmtInt(p.AB),
         fmtInt(p.R), fmtInt(p.H), fmtInt(p.D2), fmtInt(p.D3), fmtInt(p.HR),
-        fmtInt(p.RBI), fmtInt(p.SB), fmtInt(p.BB), fmtRate3(p.AVG)] })),
+        fmtInt(p.RBI), fmtInt(p.SB), fmtInt(p.BB), fmtRate3(p.AVG),
+        fmtRate3(p.OBP), fmtRate3(p.SLG), fmtRate3(p.OPS)] })),
       { txtCols: [0, 1] });
   }
   if (d.pitchers.length) {

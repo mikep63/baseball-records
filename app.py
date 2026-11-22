@@ -369,7 +369,19 @@ def api_roster(q, conn):
              SUM(b."2B") D2, SUM(b."3B") D3, SUM(b.HR) HR, SUM(b.RBI) RBI,
              SUM(b.SB) SB, SUM(b.BB) BB,
              CASE WHEN SUM(b.AB) > 0
-                  THEN SUM(b.H)*1.0/SUM(b.AB) END AS AVG
+                  THEN SUM(b.H)*1.0/SUM(b.AB) END AS AVG,
+             CASE WHEN SUM(COALESCE(b.AB,0) + COALESCE(b.BB,0) + COALESCE(b.HBP,0) + COALESCE(b.SF,0)) > 0
+                  THEN SUM(COALESCE(b.H,0) + COALESCE(b.BB,0) + COALESCE(b.HBP,0))*1.0
+                       / SUM(COALESCE(b.AB,0) + COALESCE(b.BB,0) + COALESCE(b.HBP,0) + COALESCE(b.SF,0))
+                  END AS OBP,
+             CASE WHEN SUM(b.AB) > 0
+                  THEN SUM(COALESCE(b.H,0) + COALESCE(b."2B",0) + 2*COALESCE(b."3B",0) + 3*COALESCE(b.HR,0))*1.0
+                       / SUM(b.AB) END AS SLG,
+             CASE WHEN SUM(b.AB) > 0
+                  THEN COALESCE(SUM(COALESCE(b.H,0) + COALESCE(b.BB,0) + COALESCE(b.HBP,0))*1.0
+                       / NULLIF(SUM(COALESCE(b.AB,0) + COALESCE(b.BB,0) + COALESCE(b.HBP,0) + COALESCE(b.SF,0)), 0), 0)
+                       + SUM(COALESCE(b.H,0) + COALESCE(b."2B",0) + 2*COALESCE(b."3B",0) + 3*COALESCE(b.HR,0))*1.0
+                       / SUM(b.AB) END AS OPS
       FROM Batting b JOIN People pe ON pe.playerID = b.playerID
       WHERE b.yearID = ? AND b.teamID = ?
       GROUP BY b.playerID
