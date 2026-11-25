@@ -319,19 +319,21 @@ async function showPlayer(pid) {
     battingHtml += '<h3>Batting</h3>';
     const rows = d.batting.map((s) => ({ cells: [
       yearCell(s.yearID), teamCell(s.teamID, s.yearID), s.lgID || '',
-      fmtInt(s.G), fmtInt(s.AB), fmtInt(s.R), fmtInt(s.H), fmtInt(s.D2),
-      fmtInt(s.D3), fmtInt(s.HR), fmtInt(s.RBI), fmtInt(s.SB), fmtInt(s.BB),
-      fmtInt(s.SO), fmtRate3(s.AVG), fmtRate3(s.OBP), fmtRate3(s.SLG), fmtRate3(s.OPS),
+      fmtInt(s.G), fmtInt(s.AB), fmtInt(s.R), fmtInt(s.H), fmtInt(s.RBI),
+      fmtInt(s.D2), fmtInt(s.D3), fmtInt(s.HR),
+      fmtRate3(s.AVG), fmtRate3(s.OBP), fmtRate3(s.SLG), fmtRate3(s.OPS),
+      fmtInt(s.SB), fmtInt(s.BB), fmtInt(s.SO),
     ]}));
     const t = d.battingTotals;
     if (t) rows.push({ __totals: true, cells: [
       `${t.years} yrs`, '', '',
-      fmtInt(t.G), fmtInt(t.AB), fmtInt(t.R), fmtInt(t.H), fmtInt(t.D2),
-      fmtInt(t.D3), fmtInt(t.HR), fmtInt(t.RBI), fmtInt(t.SB), fmtInt(t.BB),
-      fmtInt(t.SO), fmtRate3(t.AVG), fmtRate3(t.OBP), fmtRate3(t.SLG), fmtRate3(t.OPS),
+      fmtInt(t.G), fmtInt(t.AB), fmtInt(t.R), fmtInt(t.H), fmtInt(t.RBI),
+      fmtInt(t.D2), fmtInt(t.D3), fmtInt(t.HR),
+      fmtRate3(t.AVG), fmtRate3(t.OBP), fmtRate3(t.SLG), fmtRate3(t.OPS),
+      fmtInt(t.SB), fmtInt(t.BB), fmtInt(t.SO),
     ]});
     battingHtml += table(
-      ['Year', 'Team', 'Lg', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'BB', 'SO', 'AVG', 'OBP', 'SLG', 'OPS'],
+      ['Year', 'Team', 'Lg', 'G', 'AB', 'R', 'H', 'RBI', '2B', '3B', 'HR', 'AVG', 'OBP', 'SLG', 'OPS', 'SB', 'BB', 'SO'],
       rows, { txtCols: [0, 1, 2] });
   }
 
