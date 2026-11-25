@@ -87,14 +87,15 @@ use Safari's *Add to Home Screen* to run it like an app.
   had, and a season-by-season record with how each October ended — *WS Champs*,
   *Lost NLCS*, *Lost ALWC* — and the manager who ran the club that year, all of
   them in order when the job changed hands mid-season.
-- **Leaders** — one tab with five spans, top 10/25/50 for any stat:
+- **Leaders** — one tab with six spans, top 10/25/50 for any stat:
   *Season* (the best individual seasons — Bonds' 73 in 2001), *Year by Year*
   (every league's leader in every year, newest first — the whole line of
-  succession on one page), *Career*, *Single Year* (1927 home runs), and
-  *Multi-Year* (totals over a span, e.g. home runs 1990–1999).
+  succession on one page), *Career*, *Single Year* (1927 home runs), *Decade*
+  (totals over one decade, picked from a menu — Schmidt's 313 home runs in the
+  1980s), and *Custom Range* (totals over any year pair, e.g. 1961–1968).
 
   *Season* picks its span by era rather than year pair — **All time**,
-  **Modern 1901–**, **Divisional 1969–**, or Custom — because the answer
+  **Modern 1901–**, **Divisional 1969–**, a Decade, or Custom — because the answer
   changes completely with the era, and that is the point. All-time strikeouts
   gives Matt Kilroy's 513 in 1886, when pitchers threw 500 innings; Divisional
   gives Nolan Ryan's 383. All-time batting average gives an 1871 oddity;

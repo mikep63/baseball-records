@@ -133,7 +133,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '95cd4fc92cda';
+const APP_BUILD = '4d7a6199d0db';
 
 /* ---------------------------------------------------------- favorites
 
@@ -851,25 +851,28 @@ async function showFranchise(fid) {
    from the 1969 expansion and split into divisions. Each label carries its
    year so the span is explicit rather than assumed.
 
-   Custom keeps the From/To pickers reachable: without it "best home run
-   seasons of the 1990s" would no longer be askable. */
+   Decade is the span most readers bring — "best home run seasons of the
+   1990s" — so it is one pick from a menu of decades. Custom is for everything
+   else, and takes a From/To pair. */
 const LEAD_ERAS = [
   { id: 'all', label: 'All time', from: null },
   { id: 'modern', label: 'Modern 1901–', from: 1901 },
   { id: 'divisional', label: 'Divisional 1969–', from: 1969 },
+  { id: 'decade', label: 'Decade', from: null },
   { id: 'custom', label: 'Custom', from: null },
 ];
 let leadEra = 'all';
 
 function eraRange() {
+  if (leadEra === 'decade') return decadeSpan(+$('#lead-decade').value);
   const e = LEAD_ERAS.find((x) => x.id === leadEra);
   return { start: e && e.from ? e.from : META.minYear, end: META.maxYear };
 }
 
 /* Select an era and light the button that says so. Separate from the click
    handler because a span can drop the era out from under the reader: Career
-   does not take Custom, so arriving there from a custom Season board has to
-   land on something. */
+   does not take Decade or Custom, so arriving there from such a Season board
+   has to land on something. */
 function setEra(id) {
   leadEra = id;
   Array.from($('#lead-era').children).forEach((c) =>
@@ -903,10 +906,9 @@ function fillStats(sel, cat, selected) {
     `<option value="${k}"${k === selected ? ' selected' : ''}>${label} (${k})</option>`).join('');
 }
 
-/* The question most readers bring to a year pair is a decade — the 1980s in
-   home runs, the 1970s in steals — and dialling one in costs two long menus of
-   scrolling. Derived from the data rather than listed, so a new season opens
-   its own decade and the first one never runs off the front of the record. */
+/* Every decade the data reaches into, newest first like the year pickers.
+   Derived from the data rather than listed, so a new season opens its own
+   decade and the first one never runs off the front of the record. */
 function decades() {
   const out = [];
   for (let d = Math.floor(META.maxYear / 10) * 10;
@@ -920,27 +922,27 @@ function decadeSpan(d) {
   return { start: Math.max(d, META.minYear), end: Math.min(d + 9, META.maxYear) };
 }
 
-/* Which decade the year pair is sitting on, read from the two pickers rather
-   than stored beside them, so the menu cannot come to disagree with them. */
+/* The decade still being played says where it stops, so a total from six
+   seasons is not read as one from ten. */
+function decadeLabel(d) {
+  return d + 9 > META.maxYear ? `${d}s (through ${META.maxYear})` : `${d}s`;
+}
+
+/* Opens on the latest decade on record in full. The current one is still
+   being played, and opening on a few seasons of it would rank partial totals
+   against nothing. */
 function fillDecades() {
-  const start = +$('#lead-start').value, end = +$('#lead-end').value;
-  const now = decades().find((d) => {
-    const s = decadeSpan(d);
-    return s.start === start && s.end === end;
-  });
-  // Custom is a state the years land in, not one to choose, so it is offered
-  // only while it is what they say. Picking it would mean nothing.
-  const opts = now === undefined ? ['<option value="">Custom</option>'] : [];
-  for (const d of decades()) {
-    opts.push(`<option value="${d}"${d === now ? ' selected' : ''}>${d}s</option>`);
-  }
-  $('#lead-decade').innerHTML = opts.join('');
+  const all = decades();
+  const now = all.find((d) => d + 9 <= META.maxYear) ?? all[all.length - 1];
+  $('#lead-decade').innerHTML = all.map((d) =>
+    `<option value="${d}"${d === now ? ' selected' : ''}>${esc(decadeLabel(d))}</option>`).join('');
 }
 
 function initLeaders() {
   fillYears($('#lead-year'), META.maxYear);
   fillYears($('#lead-start'), 1990);
   fillYears($('#lead-end'), 1999);
+  fillDecades();
   fillStats($('#lead-stat'), 'batting', 'HR');
   initEras();
   $('#lead-cat').addEventListener('change', () =>
@@ -950,20 +952,8 @@ function initLeaders() {
     syncLeaderControls();
     runLeaders();
   });
-  // A decade is a shortcut through the two year pickers, not a span of its own:
-  // it sets them and then gets out of the way, so From/To stay the record of
-  // what is being asked and can still be nudged off a decade boundary.
-  $('#lead-decade').addEventListener('change', () => {
-    const d = +$('#lead-decade').value;
-    if (!d) return;
-    const s = decadeSpan(d);
-    $('#lead-start').value = s.start;
-    $('#lead-end').value = s.end;
-    fillDecades();
-    runLeaders();
-  });
-  $('#lead-start').addEventListener('change', fillDecades);
-  $('#lead-end').addEventListener('change', fillDecades);
+  // One pick is the whole question, so it runs at once, as an era does.
+  $('#lead-decade').addEventListener('change', runLeaders);
   $('#lead-go').addEventListener('click', runLeaders);
   syncLeaderControls();
   runLeaders();
@@ -974,31 +964,34 @@ let lastLeaderMode = null;
 
 function syncLeaderControls() {
   const mode = $('#lead-mode').value;
-  // Season picks an era; Multi-Year still takes an explicit year pair, and
-  // Season falls back to the same pair when its era is Custom.
+  // Season picks an era; Decade and Custom Range pick a decade or a year
+  // pair, and Season falls back to the same pickers when its era says so.
   const byEra = mode === 'season' || mode === 'history' || mode === 'career';
-  // Career takes a cutoff but not a custom pair. Its eras are open-ended spans
-  // running to today, there to stop the 1890s swamping the counting stats —
-  // not a way to ask about one decade. That question is Multi-Year, and
-  // offering Custom on both would be two doors into the same room.
+  // Career takes a cutoff but not a decade or a custom pair. Its eras are
+  // open-ended spans running to today, there to stop the 1890s swamping the
+  // counting stats — not a way to ask about one decade. Those questions are
+  // Decade and Custom Range, and offering them on Career too would be two
+  // doors into the same room.
   const takesCustom = mode !== 'career';
-  if (!takesCustom && leadEra === 'custom') setEra('all');
-  const pair = mode === 'multi' || (byEra && takesCustom && leadEra === 'custom');
+  if (!takesCustom && (leadEra === 'custom' || leadEra === 'decade')) setEra('all');
+  const oneDecade = mode === 'decade' || (byEra && takesCustom && leadEra === 'decade');
+  const pair = mode === 'range' || (byEra && takesCustom && leadEra === 'custom');
   $('#lead-span-detail').style.display = '';
   $('#lead-year-wrap').style.display = mode === 'year' ? '' : 'none';
   $('#lead-era-wrap').style.display = byEra ? '' : 'none';
-  const custom = $('#lead-era').querySelector('[data-era="custom"]');
-  if (custom) custom.style.display = takesCustom ? '' : 'none';
+  for (const id of ['decade', 'custom']) {
+    const b = $('#lead-era').querySelector(`[data-era="${id}"]`);
+    if (b) b.style.display = takesCustom ? '' : 'none';
+  }
   // Year by Year shows one leader per league-season, so a count has no meaning
   $('#lead-limit-wrap').style.display = mode === 'history' ? 'none' : '';
-  $('#lead-decade-wrap').style.display = pair ? '' : 'none';
+  $('#lead-decade-wrap').style.display = oneDecade ? '' : 'none';
   $('#lead-start-wrap').style.display = pair ? '' : 'none';
   $('#lead-end-wrap').style.display = pair ? '' : 'none';
   if (byEra && leadEra === 'custom' && lastLeaderMode !== mode) {
     $('#lead-start').value = META.minYear;
     $('#lead-end').value = META.maxYear;
   }
-  fillDecades();
   lastLeaderMode = mode;
 }
 
@@ -1032,6 +1025,7 @@ async function runLeaders() {
       const r = eraRange();
       start = r.start; end = r.end;
       suffix = leadEra === 'all' ? ''
+        : leadEra === 'decade' ? `, ${decadeLabel(+$('#lead-decade').value)}`
         : ` (${LEAD_ERAS.find((x) => x.id === leadEra).label})`;
     }
     path = `best_seasons?start=${start}&end=${end}&stat=${stat}&cat=${cat}&limit=${limit}`;
@@ -1049,7 +1043,13 @@ async function runLeaders() {
     path = `history?start=${r.start}&end=${r.end}&stat=${stat}&cat=${cat}`;
     heading = `Year by Year: ${label}`;
     qualNote = 'Rate stats require qualifying playing time in that season (≈3.1 plate appearances or 1 inning pitched per game the league scheduled).';
-  } else if (mode === 'multi') {
+  } else if (mode === 'decade') {
+    const d = +$('#lead-decade').value;
+    const s = decadeSpan(d);
+    path = `leaders_range?start=${s.start}&end=${s.end}&stat=${stat}&cat=${cat}&limit=${limit}`;
+    heading = `${label} Leaders, ${decadeLabel(d)}`;
+    qualNote = 'Rate stats require minimum playing time over the span (400 plate appearances or 130 innings pitched per year, capped at 3,000 PA / 1,000 IP).';
+  } else if (mode === 'range') {
     const start = $('#lead-start').value, end = $('#lead-end').value;
     if (+end < +start) {
       note.innerHTML = `<span class="warn">⚠ The ending year (${esc(end)}) is before the starting year (${esc(start)}) — please swap them.</span>`;
