@@ -136,7 +136,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = 'c22dc4e3c7a3';
+const APP_BUILD = '1df986857708';
 
 /* ---------------------------------------------------------- favorites
 
@@ -360,6 +360,7 @@ async function showPlayer(pid) {
       fmtInt(s.D2), fmtInt(s.D3), fmtInt(s.HR),
       fmtRate3(s.AVG), fmtRate3(s.OBP), fmtRate3(s.SLG), fmtRate3(s.OPS),
       fmtInt(s.SB), fmtInt(s.CS), fmtInt(s.BB), fmtInt(s.SO),
+      fmtInt(s.TB), fmtInt(s.HBP), fmtInt(s.SH), fmtInt(s.SF),
     ]}));
     const t = d.battingTotals;
     if (t) rows.push({ __totals: true, cells: [
@@ -368,9 +369,10 @@ async function showPlayer(pid) {
       fmtInt(t.D2), fmtInt(t.D3), fmtInt(t.HR),
       fmtRate3(t.AVG), fmtRate3(t.OBP), fmtRate3(t.SLG), fmtRate3(t.OPS),
       fmtInt(t.SB), fmtInt(t.CS), fmtInt(t.BB), fmtInt(t.SO),
+      fmtInt(t.TB), fmtInt(t.HBP), fmtInt(t.SH), fmtInt(t.SF),
     ]});
     battingHtml += table(
-      ['Year', 'Team', 'Lg', 'G', 'AB', 'R', 'H', 'RBI', '2B', '3B', 'HR', 'AVG', 'OBP', 'SLG', 'OPS', 'SB', 'CS', 'BB', 'SO'],
+      ['Year', 'Team', 'Lg', 'G', 'AB', 'R', 'H', 'RBI', '2B', '3B', 'HR', 'AVG', 'OBP', 'SLG', 'OPS', 'SB', 'CS', 'BB', 'SO', 'TB', 'HBP', 'SH', 'SF'],
       rows, { txtCols: [0, 1, 2] });
   }
 
@@ -380,17 +382,17 @@ async function showPlayer(pid) {
       yearCell(s.yearID), teamCell(s.teamID, s.yearID), s.lgID || '',
       fmtInt(s.W), fmtInt(s.L), fmt2(s.ERA), fmtInt(s.G), fmtInt(s.GS),
       fmtInt(s.CG), fmtInt(s.SHO), fmtInt(s.SV), fmtIP(s.IP), fmtInt(s.H),
-      fmtInt(s.BB), fmtInt(s.SO), fmt2(s.WHIP),
+      fmtInt(s.ER), fmtInt(s.HR), fmtInt(s.BB), fmtInt(s.SO), fmt2(s.WHIP),
     ]}));
     const t = d.pitchingTotals;
     if (t) rows.push({ __totals: true, cells: [
       `${t.years} yrs`, '', '',
       fmtInt(t.W), fmtInt(t.L), fmt2(t.ERA), fmtInt(t.G), fmtInt(t.GS),
       fmtInt(t.CG), fmtInt(t.SHO), fmtInt(t.SV), fmtIP(t.IP), fmtInt(t.H),
-      fmtInt(t.BB), fmtInt(t.SO), fmt2(t.WHIP),
+      fmtInt(t.ER), fmtInt(t.HR), fmtInt(t.BB), fmtInt(t.SO), fmt2(t.WHIP),
     ]});
     pitchingHtml += table(
-      ['Year', 'Team', 'Lg', 'W', 'L', 'ERA', 'G', 'GS', 'CG', 'SHO', 'SV', 'IP', 'H', 'BB', 'SO', 'WHIP'],
+      ['Year', 'Team', 'Lg', 'W', 'L', 'ERA', 'G', 'GS', 'CG', 'SHO', 'SV', 'IP', 'H', 'ER', 'HR', 'BB', 'SO', 'WHIP'],
       rows, { txtCols: [0, 1, 2] });
   }
 
@@ -698,11 +700,11 @@ async function showRoster(year, teamID) {
   }
   if (d.pitchers.length) {
     html += '<h3>Pitchers</h3>';
-    html += table(['Player', 'W', 'L', 'ERA', 'G', 'GS', 'SV', 'IP', 'SO', 'BB'],
+    html += table(['Player', 'W', 'L', 'ERA', 'G', 'GS', 'SV', 'IP', 'BB', 'SO'],
       d.pitchers.map((p) => ({ cells: [
         playerLink(p.playerID, p.name), fmtInt(p.W), fmtInt(p.L), fmt2(p.ERA),
-        fmtInt(p.G), fmtInt(p.GS), fmtInt(p.SV), fmtIP(p.IP), fmtInt(p.SO),
-        fmtInt(p.BB)] })),
+        fmtInt(p.G), fmtInt(p.GS), fmtInt(p.SV), fmtIP(p.IP), fmtInt(p.BB),
+        fmtInt(p.SO)] })),
       { txtCols: [0] });
   }
   el.innerHTML = html;

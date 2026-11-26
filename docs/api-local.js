@@ -36,9 +36,9 @@ window.LocalAPI = (function () {
     SB: 'Stolen Bases', BB: 'Walks', SO: 'Strikeouts', TB: 'Total Bases',
   };
   const PITCHING_STATS = {
-    W: 'Wins', L: 'Losses', G: 'Games', GS: 'Starts', CG: 'Complete Games',
-    SHO: 'Shutouts', SV: 'Saves', IP: 'Innings Pitched', SO: 'Strikeouts',
-    BB: 'Walks', ERA: 'ERA', WHIP: 'WHIP',
+    W: 'Wins', L: 'Losses', ERA: 'ERA', G: 'Games', GS: 'Starts',
+    CG: 'Complete Games', SHO: 'Shutouts', SV: 'Saves', IP: 'Innings Pitched',
+    BB: 'Walks', SO: 'Strikeouts', WHIP: 'WHIP',
   };
   /* The column that must actually have been recorded for a stat to mean
      anything in a given league-season. Stolen bases went unrecorded in 22
@@ -305,7 +305,8 @@ window.LocalAPI = (function () {
     const batting = batRows.map((s) => ({
       yearID: s.yearID, stint: s.stint, teamID: s.teamID, lgID: s.lgID,
       G: s.G, AB: s.AB, R: s.R, H: s.H, D2: s['2B'], D3: s['3B'], HR: s.HR,
-      RBI: s.RBI, SB: s.SB, CS: s.CS, BB: s.BB, SO: s.SO, HBP: s.HBP, SF: s.SF,
+      RBI: s.RBI, SB: s.SB, CS: s.CS, BB: s.BB, SO: s.SO, HBP: s.HBP, SH: s.SH,
+      SF: s.SF,
       TB: batValue('TB', s), AVG: batValue('AVG', s), OBP: batValue('OBP', s),
       SLG: batValue('SLG', s), OPS: batValue('OPS', s),
     }));
@@ -319,7 +320,7 @@ window.LocalAPI = (function () {
       battingTotals = {
         years: years.size, G: acc.G, AB: acc.AB, R: acc.R, H: acc.H,
         D2: acc['2B'], D3: acc['3B'], HR: acc.HR, RBI: acc.RBI, SB: acc.SB,
-        CS: acc.CS, BB: acc.BB, SO: acc.SO,
+        CS: acc.CS, BB: acc.BB, SO: acc.SO, HBP: acc.HBP, SH: acc.SH, SF: acc.SF,
         TB: batValue('TB', acc), AVG: batValue('AVG', acc),
         OBP: batValue('OBP', acc), SLG: batValue('SLG', acc),
         OPS: acc.AB > 0 ? batValue('OPS', acc) : null,

@@ -109,8 +109,8 @@ use Safari's *Add to Home Screen* to run it like an app.
 
 ### Stats available
 
-- Batting: G, AB, R, H, 2B, 3B, HR, RBI, SB, BB, SO, TB, AVG, OBP, SLG, OPS
-- Pitching: W, L, G, GS, CG, SHO, SV, IP, SO, BB, ERA, WHIP
+- Batting: G, AB, R, H, RBI, 2B, 3B, HR, AVG, OBP, SLG, OPS, SB, BB, SO, TB
+- Pitching: W, L, ERA, G, GS, CG, SHO, SV, IP, BB, SO, WHIP
 
 ### How leaderboards are scoped
 

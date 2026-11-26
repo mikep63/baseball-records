@@ -34,10 +34,10 @@ BATTING_STATS = {
     "TB":   "Total Bases",
 }
 PITCHING_STATS = {
-    "W": "Wins", "L": "Losses", "G": "Games", "GS": "Starts",
+    "W": "Wins", "L": "Losses", "ERA": "ERA", "G": "Games", "GS": "Starts",
     "CG": "Complete Games", "SHO": "Shutouts", "SV": "Saves",
-    "IP": "Innings Pitched", "SO": "Strikeouts", "BB": "Walks",
-    "ERA": "ERA", "WHIP": "WHIP",
+    "IP": "Innings Pitched", "BB": "Walks", "SO": "Strikeouts",
+    "WHIP": "WHIP",
 }
 RATE_BATTING = {"AVG", "OBP", "SLG", "OPS"}
 RATE_PITCHING = {"ERA", "WHIP"}
@@ -221,7 +221,7 @@ def _career_batting(conn, pid):
     seasons = rows_to_dicts(conn.execute('''
       SELECT b.yearID, b.stint, b.teamID, b.lgID, b.G, b.AB, b.R, b.H,
              b."2B" AS D2, b."3B" AS D3, b.HR, b.RBI, b.SB, b.CS, b.BB, b.SO,
-             b.HBP, b.SF,
+             b.HBP, b.SH, b.SF,
              %s AS TB, %s AS AVG, %s AS OBP, %s AS SLG, %s AS OPS
       FROM Batting b WHERE b.playerID = ?
       ORDER BY b.yearID, b.stint''' % (
@@ -231,7 +231,8 @@ def _career_batting(conn, pid):
       SELECT COUNT(DISTINCT b.yearID) AS years, SUM(b.G) G, SUM(b.AB) AB,
              SUM(b.R) R, SUM(b.H) H, SUM(b."2B") D2, SUM(b."3B") D3,
              SUM(b.HR) HR, SUM(b.RBI) RBI, SUM(b.SB) SB, SUM(b.CS) CS,
-             SUM(b.BB) BB, SUM(b.SO) SO, SUM(b.HBP) HBP, SUM(b.SF) SF
+             SUM(b.BB) BB, SUM(b.SO) SO, SUM(b.HBP) HBP, SUM(b.SH) SH,
+             SUM(b.SF) SF
       FROM Batting b WHERE b.playerID = ?''', (pid,)).fetchone()
     totals = dict(total) if total and total["G"] else None
     if totals:
