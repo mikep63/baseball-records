@@ -11,7 +11,7 @@ window.LocalAPI = (function () {
   const NUMERIC = {
     people: ['birthYear', 'height', 'weight', 'careerG'],
     batting: ['yearID', 'stint', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR',
-      'RBI', 'SB', 'BB', 'SO', 'HBP', 'SH', 'SF'],
+      'RBI', 'SB', 'CS', 'BB', 'SO', 'HBP', 'SH', 'SF'],
     pitching: ['yearID', 'stint', 'W', 'L', 'G', 'GS', 'CG', 'SHO', 'SV',
       'IPouts', 'H', 'ER', 'HR', 'BB', 'SO'],
     fielding: ['yearID', 'G', 'PO', 'A', 'E', 'DP'],
@@ -27,11 +27,13 @@ window.LocalAPI = (function () {
     franchise_parks: ['firstYear', 'lastYear'],
   };
 
+  // In the order the stat menu lists them, which is the order a player's
+  // batting table uses: RBI after hits, the rate stats before the rest.
   const BATTING_STATS = {
-    G: 'Games', AB: 'At Bats', R: 'Runs', H: 'Hits', '2B': 'Doubles',
-    '3B': 'Triples', HR: 'Home Runs', RBI: 'RBI', SB: 'Stolen Bases',
-    BB: 'Walks', SO: 'Strikeouts', TB: 'Total Bases',
+    G: 'Games', AB: 'At Bats', R: 'Runs', H: 'Hits', RBI: 'RBI',
+    '2B': 'Doubles', '3B': 'Triples', HR: 'Home Runs',
     AVG: 'Batting Average', OBP: 'On-Base %', SLG: 'Slugging %', OPS: 'OPS',
+    SB: 'Stolen Bases', BB: 'Walks', SO: 'Strikeouts', TB: 'Total Bases',
   };
   const PITCHING_STATS = {
     W: 'Wins', L: 'Losses', G: 'Games', GS: 'Starts', CG: 'Complete Games',
@@ -279,11 +281,18 @@ window.LocalAPI = (function () {
     };
   }
 
+  /* A total keeps a blank blank, as SQL's SUM does: whole eras went without
+     caught stealing, strikeouts or sacrifice flies, and a career of unknowns
+     is not a career of zeros. The rate helpers read through nz(), so a blank
+     still counts as nothing there. */
   function sumInto(acc, row, cols) {
-    for (const c of cols) acc[c] = nz(acc[c]) + nz(row[c]);
+    for (const c of cols) {
+      if (row[c] != null) acc[c] = nz(acc[c]) + row[c];
+      else if (!(c in acc)) acc[c] = null;
+    }
   }
   const BAT_SUM_COLS = ['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB',
-    'BB', 'SO', 'HBP', 'SH', 'SF'];
+    'CS', 'BB', 'SO', 'HBP', 'SH', 'SF'];
   const PIT_SUM_COLS = ['W', 'L', 'G', 'GS', 'CG', 'SHO', 'SV', 'IPouts',
     'H', 'ER', 'HR', 'BB', 'SO'];
 
@@ -296,7 +305,7 @@ window.LocalAPI = (function () {
     const batting = batRows.map((s) => ({
       yearID: s.yearID, stint: s.stint, teamID: s.teamID, lgID: s.lgID,
       G: s.G, AB: s.AB, R: s.R, H: s.H, D2: s['2B'], D3: s['3B'], HR: s.HR,
-      RBI: s.RBI, SB: s.SB, BB: s.BB, SO: s.SO, HBP: s.HBP, SF: s.SF,
+      RBI: s.RBI, SB: s.SB, CS: s.CS, BB: s.BB, SO: s.SO, HBP: s.HBP, SF: s.SF,
       TB: batValue('TB', s), AVG: batValue('AVG', s), OBP: batValue('OBP', s),
       SLG: batValue('SLG', s), OPS: batValue('OPS', s),
     }));
@@ -304,11 +313,13 @@ window.LocalAPI = (function () {
     if (batRows.length) {
       const acc = {};
       const years = new Set();
-      for (const s of batRows) { sumInto(acc, s, BAT_SUM_COLS); years.add(s.yearID); }
+      for (const s of batRows) {
+        sumInto(acc, s, BAT_SUM_COLS); years.add(s.yearID);
+      }
       battingTotals = {
         years: years.size, G: acc.G, AB: acc.AB, R: acc.R, H: acc.H,
         D2: acc['2B'], D3: acc['3B'], HR: acc.HR, RBI: acc.RBI, SB: acc.SB,
-        BB: acc.BB, SO: acc.SO,
+        CS: acc.CS, BB: acc.BB, SO: acc.SO,
         TB: batValue('TB', acc), AVG: batValue('AVG', acc),
         OBP: batValue('OBP', acc), SLG: batValue('SLG', acc),
         OPS: acc.AB > 0 ? batValue('OPS', acc) : null,
@@ -442,7 +453,7 @@ window.LocalAPI = (function () {
         name: pe ? fullName(pe) : a.playerID,
         POS: (posBest.get(a.playerID) || {}).pos || '',
         G: a.G, AB: a.AB, R: a.R, H: a.H, D2: a['2B'], D3: a['3B'],
-        HR: a.HR, RBI: a.RBI, SB: a.SB, BB: a.BB,
+        HR: a.HR, RBI: a.RBI, SB: a.SB, CS: a.CS, BB: a.BB,
         AVG: a.AB > 0 ? a.H / a.AB : null,
         OBP: batValue('OBP', a), SLG: batValue('SLG', a),
         OPS: a.AB > 0 ? batValue('OPS', a) : null,

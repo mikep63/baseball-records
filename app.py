@@ -24,12 +24,14 @@ PITCHING_SUMS = ["W", "L", "G", "GS", "CG", "SHO", "SV", "IPouts", "H", "ER",
                  "HR", "BB", "SO", "WP", "HBP", "BFP", "GF", "R"]
 
 # name -> (label, kind) kind: count = plain summed column, rate = derived
+# In the order the stat menu lists them, which is the order a player's batting
+# table uses: RBI after hits, the rate stats before the rest.
 BATTING_STATS = {
-    "G":    "Games", "AB": "At Bats", "R": "Runs", "H": "Hits",
-    "2B":   "Doubles", "3B": "Triples", "HR": "Home Runs", "RBI": "RBI",
-    "SB":   "Stolen Bases", "BB": "Walks", "SO": "Strikeouts",
-    "TB":   "Total Bases", "AVG": "Batting Average", "OBP": "On-Base %",
-    "SLG":  "Slugging %", "OPS": "OPS",
+    "G":    "Games", "AB": "At Bats", "R": "Runs", "H": "Hits", "RBI": "RBI",
+    "2B":   "Doubles", "3B": "Triples", "HR": "Home Runs",
+    "AVG":  "Batting Average", "OBP": "On-Base %", "SLG": "Slugging %",
+    "OPS":  "OPS", "SB": "Stolen Bases", "BB": "Walks", "SO": "Strikeouts",
+    "TB":   "Total Bases",
 }
 PITCHING_STATS = {
     "W": "Wins", "L": "Losses", "G": "Games", "GS": "Starts",
@@ -218,7 +220,7 @@ def api_search(q, conn):
 def _career_batting(conn, pid):
     seasons = rows_to_dicts(conn.execute('''
       SELECT b.yearID, b.stint, b.teamID, b.lgID, b.G, b.AB, b.R, b.H,
-             b."2B" AS D2, b."3B" AS D3, b.HR, b.RBI, b.SB, b.BB, b.SO,
+             b."2B" AS D2, b."3B" AS D3, b.HR, b.RBI, b.SB, b.CS, b.BB, b.SO,
              b.HBP, b.SF,
              %s AS TB, %s AS AVG, %s AS OBP, %s AS SLG, %s AS OPS
       FROM Batting b WHERE b.playerID = ?
@@ -228,8 +230,8 @@ def _career_batting(conn, pid):
     total = conn.execute('''
       SELECT COUNT(DISTINCT b.yearID) AS years, SUM(b.G) G, SUM(b.AB) AB,
              SUM(b.R) R, SUM(b.H) H, SUM(b."2B") D2, SUM(b."3B") D3,
-             SUM(b.HR) HR, SUM(b.RBI) RBI, SUM(b.SB) SB, SUM(b.BB) BB,
-             SUM(b.SO) SO, SUM(b.HBP) HBP, SUM(b.SF) SF
+             SUM(b.HR) HR, SUM(b.RBI) RBI, SUM(b.SB) SB, SUM(b.CS) CS,
+             SUM(b.BB) BB, SUM(b.SO) SO, SUM(b.HBP) HBP, SUM(b.SF) SF
       FROM Batting b WHERE b.playerID = ?''', (pid,)).fetchone()
     totals = dict(total) if total and total["G"] else None
     if totals:
@@ -367,7 +369,7 @@ def api_roster(q, conn):
                ORDER BY f.G DESC LIMIT 1) AS POS,
              SUM(b.G) G, SUM(b.AB) AB, SUM(b.R) R, SUM(b.H) H,
              SUM(b."2B") D2, SUM(b."3B") D3, SUM(b.HR) HR, SUM(b.RBI) RBI,
-             SUM(b.SB) SB, SUM(b.BB) BB,
+             SUM(b.SB) SB, SUM(b.CS) CS, SUM(b.BB) BB,
              CASE WHEN SUM(b.AB) > 0
                   THEN SUM(b.H)*1.0/SUM(b.AB) END AS AVG,
              CASE WHEN SUM(COALESCE(b.AB,0) + COALESCE(b.BB,0) + COALESCE(b.HBP,0) + COALESCE(b.SF,0)) > 0

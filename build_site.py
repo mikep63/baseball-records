@@ -108,8 +108,8 @@ def export_data():
                for r in read_csv("People.csv")])
 
     bat_cols = ["playerID", "yearID", "stint", "teamID", "lgID", "G", "AB",
-                "R", "H", "2B", "3B", "HR", "RBI", "SB", "BB", "SO", "HBP",
-                "SH", "SF"]
+                "R", "H", "2B", "3B", "HR", "RBI", "SB", "CS", "BB", "SO",
+                "HBP", "SH", "SF"]
     write_csv("batting.csv", bat_cols,
               [[r[c] for c in bat_cols] for r in read_csv("Batting.csv")])
 

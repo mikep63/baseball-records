@@ -195,7 +195,8 @@
   <!-- ============ Leaders ============ -->
   <section id="tab-leaders" class="tab">
     <div class="controls">
-      <label>Span <select id="lead-mode">
+      <span id="lead-fixed"></span>
+      <label class="lead-free">Span <select id="lead-mode">
         <option value="season">Season</option>
         <option value="history">Year by Year</option>
         <option value="career">Career</option>
@@ -203,7 +204,7 @@
         <option value="decade">Decade</option>
         <option value="range">Custom Range</option>
       </select></label>
-      <div id="lead-span-detail">
+      <div id="lead-span-detail" class="lead-free">
         <label id="lead-year-wrap">Year <select id="lead-year"></select></label>
         <span id="lead-era-wrap"><span class="seg-label">Era</span>
           <span id="lead-era" class="segmented" role="group" aria-label="Era"></span></span>
@@ -211,15 +212,15 @@
         <label id="lead-start-wrap">From <select id="lead-start"></select></label>
         <label id="lead-end-wrap">To <select id="lead-end"></select></label>
       </div>
-      <label>Category <select id="lead-cat">
+      <label class="lead-free">Category <select id="lead-cat">
         <option value="batting">Batting</option>
         <option value="pitching">Pitching</option>
       </select></label>
-      <label>Stat <select id="lead-stat"></select></label>
+      <label class="lead-free">Stat <select id="lead-stat"></select></label>
       <label id="lead-limit-wrap">Show <select id="lead-limit">
         <option>10</option><option>25</option><option>50</option>
       </select></label>
-      <button id="lead-go">Go</button>
+      <button id="lead-go" class="lead-free">Go</button>
     </div>
     <p class="note" id="lead-note"></p>
     <div id="lead-results"></div>

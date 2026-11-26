@@ -83,7 +83,10 @@ function fmtRate3(v) { // .342
   return v.toFixed(3).replace(/^0\./, '.');
 }
 function fmt2(v) { return v == null ? '—' : v.toFixed(2); }
-function fmtInt(v) { return v == null ? '0' : String(v); }
+/* A blank is a count nobody recorded — caught stealing in the NL before
+   1951, strikeouts in the 1880s — so it reads as a dash, as in the app, and
+   never as a zero that was never counted. */
+function fmtInt(v) { return v == null ? '—' : String(v); }
 function fmtIP(v) { return v == null ? '—' : v.toFixed(1); }
 
 function fmtStat(stat, v) {
@@ -133,7 +136,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '4d7a6199d0db';
+const APP_BUILD = 'c22dc4e3c7a3';
 
 /* ---------------------------------------------------------- favorites
 
@@ -221,7 +224,37 @@ function route() {
   if (parts[0] === 'about') showAbout();
   // #leaders/<year>/<cat>/<stat> — where the season dashboard tiles point
   if (parts[0] === 'leaders' && parts[1]) openLeaders(+parts[1], parts[2], parts[3]);
+  if (parts[0] === 'leaders' && !parts[1]) closeFixedLeaders();
   window.scrollTo(0, 0);
+}
+
+/* A season tile opens that season's board and nothing more: the stat and the
+   year are fixed, and only the count can change. It opens on the top 50,
+   since a tile asks who else led that year. Every other way of asking is on
+   the Leaders tab, so there is one place for the full set of options rather
+   than two. The tab's own settings are put aside while the tile's board is
+   showing, and come back when the reader returns to the tab. */
+let leadSaved = null;
+
+function leaderControls() {
+  return { mode: $('#lead-mode').value, year: $('#lead-year').value,
+           cat: $('#lead-cat').value, stat: $('#lead-stat').value,
+           limit: $('#lead-limit').value };
+}
+
+function closeFixedLeaders() {
+  if (!leadSaved) return;
+  const s = leadSaved;
+  leadSaved = null;
+  $('#tab-leaders').classList.remove('fixed');
+  $('#lead-mode').value = s.mode;
+  $('#lead-year').value = s.year;
+  $('#lead-cat').value = s.cat;
+  fillStats($('#lead-stat'), s.cat, s.stat);
+  $('#lead-stat').value = s.stat;
+  $('#lead-limit').value = s.limit;
+  syncLeaderControls();
+  runLeaders();
 }
 
 function openLeaders(year, cat, stat) {
@@ -229,8 +262,12 @@ function openLeaders(year, cat, stat) {
   const c = cat === 'pitching' ? 'pitching' : 'batting';
   const stats = c === 'pitching' ? META.pitchingStats : META.battingStats;
   const s = stat in stats ? stat : (c === 'pitching' ? 'W' : 'HR');
+  if (!leadSaved) leadSaved = leaderControls();
+  $('#tab-leaders').classList.add('fixed');
+  $('#lead-fixed').textContent = `Single Year · ${year}`;
   $('#lead-mode').value = 'year';
   $('#lead-year').value = year;
+  $('#lead-limit').value = '50';
   $('#lead-cat').value = c;
   fillStats($('#lead-stat'), c, s);
   $('#lead-stat').value = s;   // set it outright, not via the selected attribute
@@ -322,7 +359,7 @@ async function showPlayer(pid) {
       fmtInt(s.G), fmtInt(s.AB), fmtInt(s.R), fmtInt(s.H), fmtInt(s.RBI),
       fmtInt(s.D2), fmtInt(s.D3), fmtInt(s.HR),
       fmtRate3(s.AVG), fmtRate3(s.OBP), fmtRate3(s.SLG), fmtRate3(s.OPS),
-      fmtInt(s.SB), fmtInt(s.BB), fmtInt(s.SO),
+      fmtInt(s.SB), fmtInt(s.CS), fmtInt(s.BB), fmtInt(s.SO),
     ]}));
     const t = d.battingTotals;
     if (t) rows.push({ __totals: true, cells: [
@@ -330,10 +367,10 @@ async function showPlayer(pid) {
       fmtInt(t.G), fmtInt(t.AB), fmtInt(t.R), fmtInt(t.H), fmtInt(t.RBI),
       fmtInt(t.D2), fmtInt(t.D3), fmtInt(t.HR),
       fmtRate3(t.AVG), fmtRate3(t.OBP), fmtRate3(t.SLG), fmtRate3(t.OPS),
-      fmtInt(t.SB), fmtInt(t.BB), fmtInt(t.SO),
+      fmtInt(t.SB), fmtInt(t.CS), fmtInt(t.BB), fmtInt(t.SO),
     ]});
     battingHtml += table(
-      ['Year', 'Team', 'Lg', 'G', 'AB', 'R', 'H', 'RBI', '2B', '3B', 'HR', 'AVG', 'OBP', 'SLG', 'OPS', 'SB', 'BB', 'SO'],
+      ['Year', 'Team', 'Lg', 'G', 'AB', 'R', 'H', 'RBI', '2B', '3B', 'HR', 'AVG', 'OBP', 'SLG', 'OPS', 'SB', 'CS', 'BB', 'SO'],
       rows, { txtCols: [0, 1, 2] });
   }
 
@@ -648,13 +685,15 @@ async function showRoster(year, teamID) {
   }
   if (d.batters.length) {
     html += '<h3>Batters</h3>';
-    html += table(['Player', 'POS', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB', 'BB',
-      'AVG', 'OBP', 'SLG', 'OPS'],
+    // The order a player's batting table uses: RBI after hits, the rate
+    // stats before SB, CS and BB.
+    html += table(['Player', 'POS', 'G', 'AB', 'R', 'H', 'RBI', '2B', '3B', 'HR',
+      'AVG', 'OBP', 'SLG', 'OPS', 'SB', 'CS', 'BB'],
       d.batters.map((p) => ({ cells: [
         playerLink(p.playerID, p.name), esc(p.POS || ''), fmtInt(p.G), fmtInt(p.AB),
-        fmtInt(p.R), fmtInt(p.H), fmtInt(p.D2), fmtInt(p.D3), fmtInt(p.HR),
-        fmtInt(p.RBI), fmtInt(p.SB), fmtInt(p.BB), fmtRate3(p.AVG),
-        fmtRate3(p.OBP), fmtRate3(p.SLG), fmtRate3(p.OPS)] })),
+        fmtInt(p.R), fmtInt(p.H), fmtInt(p.RBI), fmtInt(p.D2), fmtInt(p.D3),
+        fmtInt(p.HR), fmtRate3(p.AVG), fmtRate3(p.OBP), fmtRate3(p.SLG),
+        fmtRate3(p.OPS), fmtInt(p.SB), fmtInt(p.CS), fmtInt(p.BB)] })),
       { txtCols: [0, 1] });
   }
   if (d.pitchers.length) {
@@ -955,6 +994,11 @@ function initLeaders() {
   // One pick is the whole question, so it runs at once, as an era does.
   $('#lead-decade').addEventListener('change', runLeaders);
   $('#lead-go').addEventListener('click', runLeaders);
+  // On a season tile's board the count is the only control and there is no
+  // Go button, so a new count runs at once.
+  $('#lead-limit').addEventListener('change', () => {
+    if ($('#tab-leaders').classList.contains('fixed')) runLeaders();
+  });
   syncLeaderControls();
   runLeaders();
 }
