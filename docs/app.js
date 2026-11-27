@@ -136,7 +136,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '29c19b57d699';
+const APP_BUILD = 'fd528fb6027f';
 
 /* ---------------------------------------------------------- favorites
 
@@ -336,12 +336,27 @@ async function doSearch(q) {
       '<div class="result-list">' + data.players.map((p) => `
       <div class="result-item" onclick="location.hash='player/${esc(p.playerID)}'">
         <span><strong>${esc(p.name)}</strong></span>
-        <span class="meta">${p.debut || p.finalGame
-          ? `${esc(p.debut)}–${esc(p.finalGame)} · ${p.careerG} G`
-          : 'no playing record'}</span>
+        <span class="meta">${searchMeta(p)}</span>
       </div>`).join('') + '</div>';
   }
   el.innerHTML = html;
+}
+
+/* A span of years, or the one year when it starts and ends together. */
+function span(a, b) { return a === b ? `${a}` : `${a}–${b}`; }
+
+/* When he played, and when he managed. A manager who never played reads as
+   one rather than as "no playing record": Earl Weaver ran the Orioles for
+   seventeen years, which is what a reader searching for him came for. */
+function searchMeta(p) {
+  const managed = p.managedFrom
+    ? `${span(p.managedFrom, p.managedTo)}` : '';
+  if (p.debut || p.finalGame) {
+    return `${esc(p.debut)}–${esc(p.finalGame)} · ${p.careerG} G` +
+      (managed ? ` · managed ${managed}` : '');
+  }
+  if (managed) return `Manager ${managed} · ${p.managerG} G`;
+  return 'no playing record';
 }
 
 async function showPlayer(pid) {
@@ -374,8 +389,12 @@ async function showPlayer(pid) {
      to itself — Moonlight Graham is 1905, not 1905–1905. */
   const played = [b.debut, b.finalGame].filter(Boolean)
     .map((x) => String(x).slice(0, 4));
+  const managing = d.managing || [];
   const careerSpan = played.length === 2 && played[0] === played[1]
-    ? played[0] : played.join('–');
+    ? played[0] : played.length ? played.join('–')
+    // someone who only managed is kept under the years he managed
+    : managing.length
+      ? span(managing[0].yearID, managing[managing.length - 1].yearID) : '';
 
   let html = `
     <div class="bio-card">
@@ -460,6 +479,8 @@ async function showPlayer(pid) {
       { txtCols: [0] });
   }
 
+  if (managing.length) html += managingTable(managing, d.managingTotals);
+
   const major = d.awards.filter((a) => MAJOR_AWARDS.has(a.awardID));
   const minor = d.awards.filter((a) => !MAJOR_AWARDS.has(a.awardID));
 
@@ -497,8 +518,9 @@ async function showPlayer(pid) {
     }
   }
   // People carries managers, coaches and others who never played; without
-  // this their page is a bio that simply stops.
-  if (!d.batting.length && !d.pitching.length && !d.fielding.length) {
+  // this their page is a bio that simply stops. A manager's page doesn't.
+  if (!d.batting.length && !d.pitching.length && !d.fielding.length
+      && !managing.length) {
     html += '<p class="note">No playing statistics recorded for this person.</p>';
   }
 
@@ -546,13 +568,50 @@ function postBadge(s) {
 
 /* Who ran the club that year. 516 seasons had two managers and one had nine,
    so the first two are named and the rest counted rather than filling the
-   column. A dagger marks a player-manager. */
+   column; the count opens to name them too, so every one is a link. A dagger
+   marks a player-manager. */
 function managerCell(mgrs) {
   if (!mgrs || !mgrs.length) return '—';
-  const shown = mgrs.slice(0, 2).map((m) =>
-    esc(m.name) + (m.playerMgr ? '<span class="mgr-p" title="player-manager">†</span>' : ''));
-  const rest = mgrs.length - shown.length;
-  return shown.join(', ') + (rest ? `<span class="mgr-more"> +${rest}</span>` : '');
+  const name = (m) =>
+    `<a class="mgr-link" href="#player/${esc(m.playerID)}" title="${m.W}–${m.L}">${esc(m.name)}</a>` +
+    (m.playerMgr ? '<span class="mgr-p" title="player-manager">†</span>' : '');
+  const shown = mgrs.slice(0, 2).map(name).join(', ');
+  const rest = mgrs.slice(2);
+  // A hidden span and a button rather than <details>: Safari lays out an open
+  // details element's contents as a block, which put the rest on a new line
+  // that began with a comma.
+  return shown + (rest.length
+    ? `<span class="mgr-rest" hidden>, ${rest.map(name).join(', ')}</span>` +
+      `<button type="button" class="mgr-more" title="${rest.length} more"
+        onclick="this.previousElementSibling.hidden = false; this.remove()">+${rest.length}</button>`
+    : '');
+}
+
+/* A manager's record, a stint to a row: who he ran, how they did while he
+   had them, where they finished, and how October went if he was still there
+   for it. */
+function managingTable(rows, t) {
+  const pct = (w, l) => (w + l) ? fmtRate3(w / (w + l)) : '—';
+  const out = rows.map((r) => ({ cells: [
+    yearCell(r.yearID), teamCell(r.teamID, r.yearID), esc(r.lgID || ''),
+    fmtInt(r.G), fmtInt(r.W), fmtInt(r.L), pct(r.W, r.L),
+    r.Rank ? '#' + r.Rank : '—', postBadge(r),
+  ]}));
+  // What he won goes under the table rather than in its totals row, where
+  // the phrase widened the last column and pushed every result off a phone.
+  const won = [];
+  if (t) {
+    if (t.pennants) won.push(`${t.pennants} pennant${t.pennants > 1 ? 's' : ''}`);
+    if (t.titles) won.push(`${t.titles} World Series title${t.titles > 1 ? 's' : ''}`);
+    out.push({ __totals: true, cells: [
+      `${t.years} yrs`, '', '', fmtInt(t.G), fmtInt(t.W), fmtInt(t.L),
+      pct(t.W, t.L), '', '',
+    ]});
+  }
+  return '<h3>Managing</h3>' + table(
+    ['Year', 'Team', 'Lg', 'G', 'W', 'L', 'Pct', 'Finish', ''], out,
+    { txtCols: [0, 1, 2, 7, 8] }) +
+    (won.length ? `<p class="note">${won.join(' · ')}</p>` : '');
 }
 
 /* The season a line belongs to, opening the Seasons tab on it — standings,

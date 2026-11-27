@@ -150,6 +150,8 @@ window.LocalAPI = (function () {
       if (!IDX.mgrByTeamYear.has(k)) IDX.mgrByTeamYear.set(k, []);
       IDX.mgrByTeamYear.get(k).push(m);
     }
+    IDX.mgrByPlayer = groupBy(D.managers || [], 'playerID');
+    IDX.teamByYear = new Map(D.teams.map((t) => [t.yearID + '|' + t.teamID, t]));
     readyResolve();
   }
 
@@ -254,6 +256,20 @@ window.LocalAPI = (function () {
     return 3;
   }
 
+  /* Games in uniform, managed as well as played: Earl Weaver never played a
+     major-league game and managed 2,541, and counting only the playing put
+     him behind every Weaver who batted once. */
+  function managed(pid) {
+    const rows = IDX.mgrByPlayer.get(pid) || [];
+    let g = 0, from = null, to = null;
+    for (const m of rows) {
+      g += nz(m.G);
+      if (from == null || m.yearID < from) from = m.yearID;
+      if (to == null || m.yearID > to) to = m.yearID;
+    }
+    return { g, from, to };
+  }
+
   function apiSearch(q) {
     const term = (q.q || '').trim();
     if (term.length < 2) return { players: [] };
@@ -265,19 +281,25 @@ window.LocalAPI = (function () {
       const full = fullName(p);
       if (rx.test(full) || rx.test(p.nameLast)) hits.push(p);
     }
+    const mgr = new Map(hits.map((p) => [p.playerID, managed(p.playerID)]));
+    const inUniform = (p) => nz(p.careerG) + mgr.get(p.playerID).g;
     hits.sort((a, b) =>
       matchTier(low, a) - matchTier(low, b) ||
       (IDX.hofIds.has(a.playerID) ? 0 : 1) - (IDX.hofIds.has(b.playerID) ? 0 : 1) ||
-      nz(b.careerG) - nz(a.careerG));
+      inUniform(b) - inUniform(a));
     return {
-      players: hits.slice(0, 25).map((p) => ({
-        playerID: p.playerID,
-        name: fullName(p),
-        birthYear: p.birthYear,
-        debut: (p.debut || '').slice(0, 4),
-        finalGame: (p.finalGame || '').slice(0, 4),
-        careerG: nz(p.careerG),
-      })),
+      players: hits.slice(0, 25).map((p) => {
+        const m = mgr.get(p.playerID);
+        return {
+          playerID: p.playerID,
+          name: fullName(p),
+          birthYear: p.birthYear,
+          debut: (p.debut || '').slice(0, 4),
+          finalGame: (p.finalGame || '').slice(0, 4),
+          careerG: nz(p.careerG),
+          managerG: m.g, managedFrom: m.from, managedTo: m.to,
+        };
+      }),
     };
   }
 
@@ -390,13 +412,44 @@ window.LocalAPI = (function () {
     const allstar = D.allstar.filter((a) => a.playerID === pid)
       .map((a) => a.yearID).sort((a, b) => a - b);
     const hofRow = D.hof.find((h) => h.playerID === pid);
+    const [managing, managingTotals] = managingRecord(pid);
     return {
       bio: p,
       batting, battingTotals, pitching, pitchingTotals,
-      fielding, positions, awards, allstar,
+      fielding, positions, managing, managingTotals, awards, allstar,
       hof: hofRow ? { yearid: hofRow.yearid, votedBy: hofRow.votedBy, category: hofRow.category } : null,
       postBatting: null,
     };
+  }
+
+  /* Every club he ran, one row per stint: Cochrane ran the 1936 Tigers,
+     handed them to Del Baker for 34 games and came back, so that year is two
+     rows. October goes to whoever was in the dugout at the end — the 1978
+     Yankees' title is Bob Lemon's, not Billy Martin's. Same as app.py. */
+  function managingRecord(pid) {
+    const rows = (IDX.mgrByPlayer.get(pid) || []).slice()
+      .sort((a, b) => a.yearID - b.yearID || a.inseason - b.inseason);
+    if (!rows.length) return [[], null];
+    const out = rows.map((m) => {
+      const k = m.yearID + '|' + m.teamID;
+      const t = IDX.teamByYear.get(k) || {};
+      const crew = IDX.mgrByTeamYear.get(k) || [];
+      const finished = crew.length && crew[crew.length - 1].inseason === m.inseason;
+      return {
+        yearID: m.yearID, teamID: m.teamID, lgID: t.lgID, divID: t.divID,
+        name: t.name, inseason: m.inseason, G: m.G, W: m.W, L: m.L,
+        Rank: t.Rank, playerMgr: m.plyrMgr === 'Y' ? 1 : 0,
+        wonWS: finished && t.WSWin === 'Y' ? 1 : 0,
+        wonLg: finished && t.LgWin === 'Y' ? 1 : 0,
+        post: finished ? (IDX.postByTeamYear.get(k) || []) : [],
+      };
+    });
+    const sum = (f) => out.reduce((n, r) => n + nz(r[f]), 0);
+    return [out, {
+      years: new Set(out.map((r) => r.yearID)).size,
+      G: sum('G'), W: sum('W'), L: sum('L'),
+      pennants: sum('wonLg'), titles: sum('wonWS'),
+    }];
   }
 
   function apiTeams(q) {
@@ -683,8 +736,8 @@ window.LocalAPI = (function () {
         managers: (IDX.mgrByTeamYear.get(t.yearID + '|' + t.teamID) || [])
           .map((m) => {
             const pe = IDX.person.get(m.playerID);
-            return { name: pe ? fullName(pe) : m.playerID,
-              playerMgr: m.plyrMgr === 'Y' };
+            return { playerID: m.playerID, name: pe ? fullName(pe) : m.playerID,
+              playerMgr: m.plyrMgr === 'Y', W: m.W, L: m.L };
           }),
       }));
     return {

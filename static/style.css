@@ -285,7 +285,15 @@ footer p { line-height: 1.6; }
 
 /* franchise season list: manager column */
 .mgr-p { color: var(--accent); font-weight: bold; }
-.mgr-more { color: var(--muted); font-size: .8em; }
+a.mgr-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--muted); }
+a.mgr-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+/* the managers after the first two, behind their count */
+button.mgr-more {
+  border: 0; background: none; padding: 0 .2em; margin-left: .2em; cursor: pointer;
+  color: var(--muted); font: inherit; font-size: .8em;
+}
+button.mgr-more:hover { color: var(--accent); background: none; }
+@media (pointer: coarse) { button.mgr-more { min-height: 0; font-size: .8em; } }
 /* reached the postseason but did not win it */
 .badge.post { background: #e8e3d6; color: var(--muted); border: 1px solid var(--line); }
 /* a ballpark's other names — Parks records them without dates */

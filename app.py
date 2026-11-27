@@ -174,6 +174,10 @@ def api_search(q, conn):
 
     Match quality comes first regardless: a term buried mid-word ("ruth" in
     Caruthers) should not outrank the players actually named for it.
+
+    Playing time is games in uniform, managed as well as played. Earl Weaver
+    never played a major-league game and managed 2,541; counting only the
+    playing put him behind every Weaver who batted once.
     """
     term = (q.get("q", [""])[0]).strip()
     if len(term) < 2:
@@ -185,6 +189,12 @@ def api_search(q, conn):
              p.debut, p.finalGame,
              (SELECT COALESCE(SUM(G_all),0) FROM Appearances a
                WHERE a.playerID = p.playerID) AS careerG,
+             (SELECT COALESCE(SUM(G),0) FROM Managers m
+               WHERE m.playerID = p.playerID) AS managerG,
+             (SELECT MIN(yearID) FROM Managers m
+               WHERE m.playerID = p.playerID) AS managedFrom,
+             (SELECT MAX(yearID) FROM Managers m
+               WHERE m.playerID = p.playerID) AS managedTo,
              CASE WHEN EXISTS(SELECT 1 FROM HallOfFame h
                     WHERE h.playerID = p.playerID AND h.inducted = 'Y')
                   THEN 0 ELSE 1 END AS notHof,
@@ -201,7 +211,7 @@ def api_search(q, conn):
       FROM People p
       WHERE (p.nameFirst || ' ' || p.nameLast) LIKE ? COLLATE NOCASE
          OR p.nameLast LIKE ? COLLATE NOCASE
-      ORDER BY tier, notHof, careerG DESC
+      ORDER BY tier, notHof, careerG + managerG DESC
       LIMIT 25'''
     args = (low, low, low + "%", low + "%", low + "%", like, like)
     out = []
@@ -213,6 +223,9 @@ def api_search(q, conn):
             "debut": (r["debut"] or "")[:4],
             "finalGame": (r["finalGame"] or "")[:4],
             "careerG": r["careerG"],
+            "managerG": r["managerG"],
+            "managedFrom": r["managedFrom"],
+            "managedTo": r["managedTo"],
         })
     return {"players": out}
 
@@ -300,6 +313,60 @@ def _position_runs(conn, pid):
     return out
 
 
+def _managing(conn, pid):
+    """Every club he ran, one row per stint, and the career it adds up to.
+
+    A stint, not a season: Cochrane ran the 1936 Tigers, handed them to Del
+    Baker for 34 games, and came back, so that year is two rows.
+
+    October goes to whoever was in the dugout at the end. The 1978 Yankees'
+    title is Bob Lemon's, not Billy Martin's, though Martin ran the first 94
+    games; the finish beside each stint is still the club's, since that is the
+    only one Lahman records.
+    """
+    rows = rows_to_dicts(conn.execute('''
+      SELECT m.yearID, m.teamID, t.lgID, t.divID, t.name, m.inseason,
+             m.G, m.W, m.L, t.Rank,
+             CASE WHEN m.plyrMgr = 'Y' THEN 1 ELSE 0 END AS playerMgr,
+             CASE WHEN m.inseason = (SELECT MAX(x.inseason) FROM Managers x
+                    WHERE x.yearID = m.yearID AND x.teamID = m.teamID)
+                  THEN 1 ELSE 0 END AS finished,
+             CASE WHEN t.WSWin = 'Y' THEN 1 ELSE 0 END AS wonWS,
+             CASE WHEN t.LgWin = 'Y' THEN 1 ELSE 0 END AS wonLg
+      FROM Managers m
+      LEFT JOIN Teams t ON t.yearID = m.yearID AND t.teamID = m.teamID
+      WHERE m.playerID = ? ORDER BY m.yearID, m.inseason''', (pid,)))
+    if not rows:
+        return [], None
+    post = {}
+    for r in conn.execute('''
+      SELECT s.yearID, s.round, s.teamIDwinner AS tid, 1 AS won
+        FROM SeriesPost s JOIN (SELECT DISTINCT yearID, teamID FROM Managers
+                                WHERE playerID = ?) m
+          ON m.yearID = s.yearID AND m.teamID = s.teamIDwinner
+      UNION ALL
+      SELECT s.yearID, s.round, s.teamIDloser, 0
+        FROM SeriesPost s JOIN (SELECT DISTINCT yearID, teamID FROM Managers
+                                WHERE playerID = ?) m
+          ON m.yearID = s.yearID AND m.teamID = s.teamIDloser''', (pid, pid)):
+        post.setdefault((r["yearID"], r["tid"]), []).append(
+            {"round": r["round"], "won": r["won"]})
+    for r in rows:
+        finished = r.pop("finished")
+        r["post"] = (post.get((r["yearID"], r["teamID"]), []) if finished else [])
+        if not finished:
+            r["wonWS"] = r["wonLg"] = 0
+    totals = {
+        "years": len({r["yearID"] for r in rows}),
+        "G": sum(r["G"] or 0 for r in rows),
+        "W": sum(r["W"] or 0 for r in rows),
+        "L": sum(r["L"] or 0 for r in rows),
+        "pennants": sum(r["wonLg"] for r in rows),
+        "titles": sum(r["wonWS"] for r in rows),
+    }
+    return rows, totals
+
+
 def api_player(pid, conn):
     p = conn.execute('SELECT * FROM People WHERE playerID = ?', (pid,)).fetchone()
     if not p:
@@ -323,11 +390,13 @@ def api_player(pid, conn):
     post_b = conn.execute('''
       SELECT SUM(G) G, SUM(AB) AB, SUM(H) H, SUM(HR) HR, SUM(RBI) RBI
       FROM BattingPost WHERE playerID = ?''', (pid,)).fetchone()
+    managing, managing_tot = _managing(conn, pid)
     return {
         "bio": bio,
         "batting": batting, "battingTotals": batting_tot,
         "pitching": pitching, "pitchingTotals": pitching_tot,
         "fielding": fielding, "positions": _position_runs(conn, pid),
+        "managing": managing, "managingTotals": managing_tot,
         "awards": awards, "allstar": allstar,
         "hof": dict(hof) if hof else None,
         "postBatting": dict(post_b) if post_b and post_b["G"] else None,
@@ -543,13 +612,14 @@ def api_franchise(fid, conn):
     # managers and one had nine, so this is a list rather than a name
     mgrs = {}
     for r in conn.execute('''
-      SELECT m.yearID, m.teamID, m.plyrMgr, %s AS name
+      SELECT m.yearID, m.teamID, m.playerID, m.plyrMgr, m.W, m.L, %s AS name
       FROM Managers m JOIN People p ON p.playerID = m.playerID
       JOIN Teams t ON t.yearID = m.yearID AND t.teamID = m.teamID
       WHERE t.franchID = ? ORDER BY m.yearID, m.inseason''' % full_name("p"),
                           (fid,)):
         mgrs.setdefault((r["yearID"], r["teamID"]), []).append(
-            {"name": r["name"], "playerMgr": r["plyrMgr"] == "Y"})
+            {"playerID": r["playerID"], "name": r["name"],
+             "playerMgr": r["plyrMgr"] == "Y", "W": r["W"], "L": r["L"]})
     # every series the club played that October. The rounds are sent raw and
     # ranked in the browser, which already orders them for the postseason
     # bracket — duplicating that ordering here would be a second copy to drift.
