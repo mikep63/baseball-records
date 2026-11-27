@@ -136,7 +136,7 @@ async function api(path) {
    that is live. */
 const APP_NAME = 'Baseball Records';
 const APP_VERSION = '1.0 beta';
-const APP_BUILD = '51f05e0197d1';
+const APP_BUILD = 'dd984cee18b7';
 
 /* ---------------------------------------------------------- favorites
 

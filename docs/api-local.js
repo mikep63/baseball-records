@@ -422,10 +422,25 @@ window.LocalAPI = (function () {
     };
   }
 
+  /* The stint that managed the club in October; crew is that club-year's
+     managers in inseason order. The last stint, unless it was a stand-in:
+     fewer than 20 games after the season's first manager, as when a coach
+     runs the last game once a club has clinched (Torre's Yankees, 2004-2007).
+     Sveum's 2008 Brewers and Alomar's 2020 Indians were real changes. See
+     OCTOBER_MANAGER in app.py. */
+  const REAL_LATE_CHANGES = new Set(['2008|MIL', '2020|CLE']);
+  function octoberInseason(crew, yearID, teamID) {
+    const last = crew[crew.length - 1];
+    if (nz(last.G) < 20 && last.inseason === 2 &&
+        !REAL_LATE_CHANGES.has(yearID + '|' + teamID)) return 1;
+    return last.inseason;
+  }
+
   /* Every club he ran, one row per stint: Cochrane ran the 1936 Tigers,
      handed them to Del Baker for 34 games and came back, so that year is two
      rows. October goes to whoever was in the dugout at the end — the 1978
-     Yankees' title is Bob Lemon's, not Billy Martin's. Same as app.py. */
+     Yankees' title is Bob Lemon's, not Billy Martin's — unless that was a
+     stand-in (octoberInseason). Same as app.py. */
   function managingRecord(pid) {
     const rows = (IDX.mgrByPlayer.get(pid) || []).slice()
       .sort((a, b) => a.yearID - b.yearID || a.inseason - b.inseason);
@@ -434,7 +449,7 @@ window.LocalAPI = (function () {
       const k = m.yearID + '|' + m.teamID;
       const t = IDX.teamByYear.get(k) || {};
       const crew = IDX.mgrByTeamYear.get(k) || [];
-      const finished = crew.length && crew[crew.length - 1].inseason === m.inseason;
+      const finished = crew.length && octoberInseason(crew, m.yearID, m.teamID) === m.inseason;
       return {
         yearID: m.yearID, teamID: m.teamID, lgID: t.lgID, divID: t.divID,
         name: t.name, inseason: m.inseason, G: m.G, W: m.W, L: m.L,

@@ -313,6 +313,35 @@ def _position_runs(conn, pid):
     return out
 
 
+# The stint that managed the club in October, for the Managers row m.
+#
+# Lahman does not say who managed in the postseason, so it is the club's last
+# stint of the season, with one exception: a stand-in. When a club has
+# clinched, or its manager is suspended or ill, a coach often runs the last
+# few games, and Lahman records him as the last manager although the regular
+# one is back for October. Joe Torre ran 160 or more games for the Yankees in
+# each of 2004-2007, and Willie Randolph, Joe Girardi, Lee Mazzilli and Don
+# Mattingly the final one or two; Bobby Cox, Ron Gardenhire, Terry Francona
+# and Dusty Baker have seasons like it. So a final stint of fewer than 20
+# games that follows the season's first manager hands October back to him.
+#
+# Two short final stints were real changes, and keep October: Dale Sveum took
+# the 2008 Brewers for their last 12 games and the Division Series, and Sandy
+# Alomar the 2020 Indians for their last 7 and the Wild Card Series. Where the
+# regular manager came back and Lahman says so (Cochrane's 1936 Tigers, a
+# third stint), he is the last stint already.
+#
+# The same rule is in static/api-local.js and BaseballKit's Player.swift.
+OCTOBER_MANAGER = """(
+  SELECT CASE WHEN l.G < 20 AND l.inseason = 2
+               AND NOT (l.yearID = 2008 AND l.teamID = 'MIL')
+               AND NOT (l.yearID = 2020 AND l.teamID = 'CLE')
+              THEN 1 ELSE l.inseason END
+    FROM Managers l
+   WHERE l.yearID = m.yearID AND l.teamID = m.teamID
+   ORDER BY l.inseason DESC LIMIT 1)"""
+
+
 def _managing(conn, pid):
     """Every club he ran, one row per stint, and the career it adds up to.
 
@@ -322,14 +351,13 @@ def _managing(conn, pid):
     October goes to whoever was in the dugout at the end. The 1978 Yankees'
     title is Bob Lemon's, not Billy Martin's, though Martin ran the first 94
     games; the finish beside each stint is still the club's, since that is the
-    only one Lahman records.
+    only one Lahman records. A stand-in is the exception (OCTOBER_MANAGER).
     """
-    rows = rows_to_dicts(conn.execute('''
+    rows = rows_to_dicts(conn.execute(f'''
       SELECT m.yearID, m.teamID, t.lgID, t.divID, t.name, m.inseason,
              m.G, m.W, m.L, t.Rank,
              CASE WHEN m.plyrMgr = 'Y' THEN 1 ELSE 0 END AS playerMgr,
-             CASE WHEN m.inseason = (SELECT MAX(x.inseason) FROM Managers x
-                    WHERE x.yearID = m.yearID AND x.teamID = m.teamID)
+             CASE WHEN m.inseason = {OCTOBER_MANAGER}
                   THEN 1 ELSE 0 END AS finished,
              CASE WHEN t.WSWin = 'Y' THEN 1 ELSE 0 END AS wonWS,
              CASE WHEN t.LgWin = 'Y' THEN 1 ELSE 0 END AS wonLg
