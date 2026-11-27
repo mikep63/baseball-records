@@ -594,8 +594,8 @@ function managingTable(rows, t) {
   const pct = (w, l) => (w + l) ? fmtRate3(w / (w + l)) : '—';
   const out = rows.map((r) => ({ cells: [
     yearCell(r.yearID), teamCell(r.teamID, r.yearID), esc(r.lgID || ''),
-    fmtInt(r.G), fmtInt(r.W), fmtInt(r.L), pct(r.W, r.L),
-    r.Rank ? '#' + r.Rank : '—', postBadge(r),
+    r.Rank ? '#' + r.Rank : '—',
+    fmtInt(r.G), fmtInt(r.W), fmtInt(r.L), pct(r.W, r.L), postBadge(r),
   ]}));
   // What he won goes under the table rather than in its totals row, where
   // the phrase widened the last column and pushed every result off a phone.
@@ -604,13 +604,13 @@ function managingTable(rows, t) {
     if (t.pennants) won.push(`${t.pennants} pennant${t.pennants > 1 ? 's' : ''}`);
     if (t.titles) won.push(`${t.titles} World Series title${t.titles > 1 ? 's' : ''}`);
     out.push({ __totals: true, cells: [
-      `${t.years} yrs`, '', '', fmtInt(t.G), fmtInt(t.W), fmtInt(t.L),
-      pct(t.W, t.L), '', '',
+      `${t.years} yrs`, '', '', '', fmtInt(t.G), fmtInt(t.W), fmtInt(t.L),
+      pct(t.W, t.L), '',
     ]});
   }
   return '<h3>Managing</h3>' + table(
-    ['Year', 'Team', 'Lg', 'G', 'W', 'L', 'Pct', 'Finish', ''], out,
-    { txtCols: [0, 1, 2, 7, 8] }) +
+    ['Year', 'Team', 'Lg', 'Finish', 'G', 'W', 'L', 'Pct', ''], out,
+    { txtCols: [0, 1, 2, 3, 8] }) +
     (won.length ? `<p class="note">${won.join(' · ')}</p>` : '');
 }
 
