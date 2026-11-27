@@ -36,6 +36,10 @@ nav#tabs a {
 }
 nav#tabs a.active { background: var(--cream); color: var(--green); font-weight: bold; }
 nav#tabs a:not(.active):hover { background: var(--green-light); }
+/* Search is the magnifying glass at the end of the bar, as in the app: an
+   icon keeps the bar narrow enough for a phone, and on a wide screen it sits
+   apart at the far right. */
+nav#tabs a.search-tab { margin-left: auto; display: flex; align-items: center; }
 
 main { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1.5rem 3rem; }
 
@@ -198,7 +202,7 @@ footer a { color: var(--muted); }
     scrollbar-width: none;
   }
   nav#tabs::-webkit-scrollbar { display: none; }
-  nav#tabs a { flex: 0 0 auto; font-size: .88rem; padding: .55rem .8rem; }
+  nav#tabs a { flex: 0 0 auto; font-size: .88rem; padding: .55rem .6rem; }
 
   main { padding: .9rem .75rem 2rem; }
 

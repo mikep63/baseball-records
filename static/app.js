@@ -212,8 +212,11 @@ function route() {
   TABS.forEach((t) => {
     $('#tab-' + t).classList.toggle('active', t === tab);
   });
-  document.querySelectorAll('nav#tabs a').forEach((a) =>
-    a.classList.toggle('active', a.dataset.tab === tab));
+  document.querySelectorAll('nav#tabs a').forEach((a) => {
+    a.classList.toggle('active', a.dataset.tab === tab);
+    // On a phone the bar scrolls sideways: keep the open tab in sight.
+    if (a.dataset.tab === tab) a.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  });
 
   if (parts[0] === 'player' && parts[1]) showPlayer(parts[1]);
   if (parts[0] === 'team' && parts[2]) showRoster(+parts[1], parts[2]);
@@ -287,20 +290,58 @@ function initPlayers() {
   });
 }
 
+/* Search finds franchises as well as players: someone typing "Yankees" or
+   "Brooklyn" into a box called Search expects the club back. Five clubs is
+   enough to find the one meant without pushing the players out of sight.
+   Clubs still playing come first, since a one-season club of the 1870s
+   shouldn't push the Twins off the list; within each, a club named for the
+   term comes before one that only used to play there. Same rule as the app. */
+const SEARCH_FRANCHISE_LIMIT = 5;
+
+async function franchiseMatches(q) {
+  if (!FRANCHISES) FRANCHISES = (await api('franchises')).franchises;
+  const term = q.toLowerCase();
+  const named = (f) => f.name.toLowerCase().includes(term);
+  const rank = (f) => (f.active === 'Y' ? 0 : 2) + (named(f) ? 0 : 1);
+  return FRANCHISES
+    .map((f, i) => ({ f, i }))
+    .filter(({ f }) => named(f) || f.former.some((c) => c.toLowerCase().includes(term)))
+    .sort((a, b) => rank(a.f) - rank(b.f) || a.i - b.i)
+    .slice(0, SEARCH_FRANCHISE_LIMIT)
+    .map(({ f }) => f);
+}
+
 async function doSearch(q) {
-  const data = await api('search?q=' + encodeURIComponent(q));
+  const [data, clubs] = await Promise.all([
+    api('search?q=' + encodeURIComponent(q)), franchiseMatches(q)]);
+  // A slower answer to an older term must not overwrite a newer one.
+  if ($('#player-search').value.trim() !== q) return;
   const el = $('#player-results');
-  if (!data.players.length) {
-    el.innerHTML = '<p class="note">No players found.</p>';
+  if (!data.players.length && !clubs.length) {
+    el.innerHTML = '<p class="note">Nothing found.</p>';
     return;
   }
-  el.innerHTML = '<div class="result-list">' + data.players.map((p) => `
-    <div class="result-item" onclick="location.hash='player/${esc(p.playerID)}'">
-      <span><strong>${esc(p.name)}</strong></span>
-      <span class="meta">${p.debut || p.finalGame
-        ? `${esc(p.debut)}–${esc(p.finalGame)} · ${p.careerG} G`
-        : 'no playing record'}</span>
-    </div>`).join('') + '</div>';
+  let html = '';
+  if (clubs.length) {
+    html += '<h2>Franchises</h2><div class="result-list">' + clubs.map((f) => `
+      <div class="result-item" onclick="location.hash='franchise/${esc(f.franchID)}'">
+        <span><strong>${esc(f.name)}</strong>${f.former.length
+          ? ` <span class="meta">formerly ${esc(f.former.join(', '))}</span>` : ''}</span>
+        <span class="meta">${f.firstYear === f.lastYear ? f.firstYear
+          : `${f.firstYear}–${f.lastYear}`}</span>
+      </div>`).join('') + '</div>';
+  }
+  if (data.players.length) {
+    html += (clubs.length ? '<h2>Players</h2>' : '') +
+      '<div class="result-list">' + data.players.map((p) => `
+      <div class="result-item" onclick="location.hash='player/${esc(p.playerID)}'">
+        <span><strong>${esc(p.name)}</strong></span>
+        <span class="meta">${p.debut || p.finalGame
+          ? `${esc(p.debut)}–${esc(p.finalGame)} · ${p.careerG} G`
+          : 'no playing record'}</span>
+      </div>`).join('') + '</div>';
+  }
+  el.innerHTML = html;
 }
 
 async function showPlayer(pid) {
